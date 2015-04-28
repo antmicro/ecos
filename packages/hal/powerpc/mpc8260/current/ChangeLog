@@ -1,0 +1,50 @@
+2003-04-03  Patrick Doyle  <wpd@delcomsys.com>
+
+	* include/var_cache.h (HAL_DCACHE_SYNC): Step through twice the
+	number of lines in order to ensure that dirty lines in the first
+	16Kbytes of memory are flushed.
+
+2003-03-04  Paul Fine <pfine@delcomsys.com>
+	
+	* include/var_cache.h: Modify the HAL_DCACHE_SYNC macro to look
+	like the MACRO defined in the PPC60x HAL.
+	
+
+2002-12-12  Gary Thomas  <gthomas@ecoscentric.com>
+2002-12-12  Patrick Doyle <wpd@delcomsys.com>
+
+	* src/variant.S: 
+	* src/var_misc.c: 
+	* src/var_intr.c: 
+	* src/quicc2_diag.c: 
+	* include/variant.inc: 
+	* include/var_regs.h: 
+	* include/var_intr.h: 
+	* include/var_cache.h: 
+	* include/mpc8260.h: 
+	* cdl/hal_powerpc_mpc8260.cdl: New package - variant support for
+	Motorola MPC8260 based systems.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,289 @@
+##==========================================================================
+##
+##      hal_cortexm_stm32_stm32f4discovery.cdl
+##
+##      Cortex-M STM32F4-Discovery platform HAL configuration data
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2013 Free Software Foundation, Inc.                        
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):    jld
+## Based on:     stm32x0g_eval CDL by jlarmour
+## Date:         2013-06-05
+##
+######DESCRIPTIONEND####
+##
+##==========================================================================
+
+cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
+    display       "STMicroelectronics STM32F4-Discovery board HAL"
+    parent        CYGPKG_HAL_CORTEXM_STM32
+
+    requires      { CYGHWR_HAL_CORTEXM == "M4" }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F4" &&
+                    CYGHWR_HAL_CORTEXM_STM32_F4 == "F407VG" }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_SOURCE == "HSE" }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_PREDIV == 8 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_MUL == 336 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_SYSCLK_DIV == 2 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLLQ_DIV == 7 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_HCLK_DIV == 1 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK1_DIV == 4 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK2_DIV == 2 }
+
+    include_dir   cyg/hal
+    hardware
+    doc           ref/hal-cortexm-stm32f4discovery-part.html
+    description   "
+        The STM32F4-Discovery HAL package provides the support needed to run
+        eCos on the STMicroelectronics STM32F4-Discovery board."
+
+    compile       stm32f4discovery_misc.c
+
+    define_proc {
+        puts $::cdl_system_header "#define CYGBLD_HAL_TARGET_H   <pkgconf/hal_cortexm.h>"
+        puts $::cdl_system_header "#define CYGBLD_HAL_VARIANT_H  <pkgconf/hal_cortexm_stm32.h>"
+        puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_cortexm_stm32_stm32f4discovery.h>"
+        puts $::cdl_header "#define HAL_PLATFORM_CPU    \"Cortex-M4\""
+        puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"STMicroelectronics STM32F4-Discovery\""
+        puts $::cdl_header "#define HAL_PLATFORM_EXTRA  \"\""
+    }
+
+    # use UART4 at PC10,11 for diagnostic I/O (named UART3 in the STM32 variant HAL)
+    implements CYGINT_HAL_STM32_UART3
+
+    implements CYGINT_HAL_FPV4_SP_D16
+
+    cdl_component CYG_HAL_STARTUP {
+        display       "Startup type"
+        flavor        data
+        default_value {"JTAG"}
+        legal_values  {"JTAG" "ROM"}
+        no_define
+        define -file system.h CYG_HAL_STARTUP
+        description   "
+            Select 'JTAG' when building applications to download into on-chip RAM
+            using the on-board ST-LINK/V2 serial wire debugging interface. Select
+            'ROM' when building an application which will be written to on-chip
+            Flash memory for immediate execution on system reset."
+    }
+
+    cdl_component CYGHWR_MEMORY_LAYOUT {
+        display "Memory layout"
+        flavor data
+        no_define
+        calculated    { (CYG_HAL_STARTUP == "ROM"    ) ? "cortexm_stm32f4discovery_rom"      :
+                        (CYG_HAL_STARTUP == "JTAG"   ) ? "cortexm_stm32f4discovery_jtag"     :
+                                                         "undefined" }
+
+        cdl_option CYGHWR_MEMORY_LAYOUT_LDI {
+                display "Memory layout linker script fragment"
+                flavor data
+                no_define
+                define -file system.h CYGHWR_MEMORY_LAYOUT_LDI
+                calculated { "<pkgconf/mlt_" . CYGHWR_MEMORY_LAYOUT . ".ldi>" }
+        }
+
+        cdl_option CYGHWR_MEMORY_LAYOUT_H {
+                display "Memory layout header file"
+                flavor data
+                no_define
+                define -file system.h CYGHWR_MEMORY_LAYOUT_H
+                calculated { "<pkgconf/mlt_" . CYGHWR_MEMORY_LAYOUT . ".h>" }
+        }
+
+    }
+
+    cdl_option CYGARC_HAL_CORTEXM_STM32_INPUT_CLOCK {
+        display         "Input clock frequency"
+        flavor          data
+        default_value   8000000
+        legal_values    0 to 1000000000
+        description     "Main clock input."
+    }
+
+    cdl_option CYGNUM_HAL_CORTEXM_STM32_FLASH_WAIT_STATES {
+        display         "Flash read wait states"
+        flavor          data
+        default_value   5
+        legal_values    0 to 7
+        description     "
+            This option gives the number of wait states to use for accessing
+            the flash for reads. The correct setting for this value depends
+            on both the CPU clock (HCLK) frequency and the voltage. Consult
+            the STM32 Flash programming manual (PM0059) for appropriate
+            values for different clock speeds or voltages. The default of
+            5 reflects a supply voltage of 3.3V and HCLK of 168MHz."
+    }
+
+    cdl_option CYGHWR_HAL_CORTEXM_STM32_FLASH {
+        display         "Flash driver support"
+        parent          CYGPKG_IO_FLASH
+        active_if       CYGPKG_IO_FLASH
+        compile         -library=libextras.a stm32f4discovery_flash.c
+        default_value   1
+        description     "Control flash device support for STM32F4-Discovery board."
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_COMM_CHANNELS {
+        display      "Number of communication channels on the board"
+        flavor       data
+        calculated   1
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL {
+        display          "Debug serial port"
+        active_if        CYGPRI_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL_CONFIGURABLE
+        flavor data
+        calculated       0
+        description      "
+            The STM32F4-Discovery board has one serial port enabled. This option
+            informs the rest of the system which port will be used to connect
+            to a host running GDB."
+     }
+
+     cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL {
+         display          "Diagnostic serial port"
+         active_if        CYGPRI_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_CONFIGURABLE
+         flavor data
+         calculated       0
+         description      "
+            The STM32F4-Discovery board has one serial port enabled. This option
+            informs the rest of the system which port will be used for
+            diagnostic output."
+     }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_BAUD {
+        display       "Diagnostic serial port baud rate"
+        flavor        data
+        legal_values  9600 19200 38400 57600 115200
+        default_value 115200
+        description   "
+            This option controls the default baud rate used for the
+            console connection."
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL_BAUD {
+        display       "Debug serial port baud rate"
+        flavor        data
+        calculated    CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_BAUD
+        description   "
+            This option controls the default baud rate used for the
+            GDB connection."
+    }
+
+    cdl_component CYGBLD_GLOBAL_OPTIONS {
+        display "Global build options"
+        flavor  none
+        parent  CYGPKG_NONE
+        description   "
+            Global build options including control over
+            compiler flags, linker flags and choice of toolchain."
+
+
+        cdl_option CYGBLD_GLOBAL_COMMAND_PREFIX {
+            display "Global command prefix"
+            flavor  data
+            no_define
+            default_value { "arm-eabi" }
+            description "
+                This option specifies the command prefix used when
+                invoking the build tools."
+        }
+
+        cdl_option CYGBLD_GLOBAL_CFLAGS {
+            display "Global compiler flags"
+            flavor  data
+            no_define
+            default_value { CYGBLD_GLOBAL_WARNFLAGS . "-mcpu=cortex-m3 -mthumb -g -O2 -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions" }
+            description   "
+                This option controls the global compiler flags which are used to
+                compile all packages by default. Individual packages may define
+                options which override these global flags."
+        }
+
+        cdl_option CYGBLD_GLOBAL_LDFLAGS {
+            display "Global linker flags"
+            flavor  data
+            no_define
+            default_value { "-mcpu=cortex-m3 -mthumb -Wl,--gc-sections -Wl,-static -Wl,-n -g -nostdlib" }
+            description   "
+                This option controls the global linker flags. Individual
+                packages may define options which override these global flags."
+        }
+    }
+
+    cdl_component CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_OPTIONS {
+        display "STM32F4-Discovery HAL build options"
+        flavor  none
+        description   "
+            Package specific build options including control over
+            compiler flags used only in building this HAL package."
+
+        cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_CFLAGS_ADD {
+            display "Additional compiler flags"
+            flavor  data
+            no_define
+            default_value { "-Werror" }
+            description   "
+                This option modifies the set of compiler flags
+                for building this HAL. These flags are used
+                in addition to the set of global flags."
+        }
+        cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_CFLAGS_REMOVE {
+            display "Suppressed compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags
+                for building this HAL. These flags are
+                removed from the set of global flags if
+                present."
+        }
+    }
+
+    cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_TESTS {
+        display "STM32F4-Discovery tests"
+        flavor  data
+        no_define
+        calculated { "tests/gpio" }
+        description   "
+            This option specifies the set of tests for the STM32F4-Discovery HAL."
+    }
+
+}
+
+# EOF hal_cortexm_stm32_stm32f4discovery.cdl

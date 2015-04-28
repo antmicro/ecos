@@ -1,0 +1,110 @@
+2013-04-09  Ilija Kocho <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl:
+
+	Add requirement for WRITETHRU data cache startup mode when eDMA is in use.
+	Sync with change in eDMA driver [ Bugzilla 1001838 ]
+
+2013-04-09  Ilija Kocho <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl:
+	* include/plf_io.h:
+	Implemented support for I2C  [Bugzilla 1001397]
+
+2013-04-01  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* src/twr_k70f120m_misc.c: Clock gating synchronised with variant.
+	[ Bugzilla 1001814 ]
+
+2013-03-09  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* misc/redboot_K70_ROM_FPU.ecm: Add ECM file
+
+2012-11-30  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl: Sync with variant changes due to
+	hardware floating point support. Implements CYGINT_HAL_FPV4_SP_D16.
+	Changed maximum peripheral bus clocks to 75MHz.
+	[Bugzilla 1001607]
+
+2012-11-04  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/pkgconf/mlt_kinetis_flash_sram2s_extram_ram.ldi
+	* include/pkgconf/mlt_kinetis_flash_unisram_extram_ram.ldi:
+	Recognize 256 Bytes space for virtual vectors in sram.
+
+	* twr_k70f120m/current/cdl/hal_cortexm_kinetis_twr_k70f120m.cdl:
+	Add settings for Kinetis internal flash.  [Bugzilla 1001561]
+
+2012-09-28  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl
+	* include/pkgconf/mlt_kinetis_flash_sram2s_extram_ram.h
+	* include/pkgconf/mlt_kinetis_flash_sram2s_extram_ram.ldi
+	* include/pkgconf/mlt_kinetis_flash_sram2s_extram_rom.h
+	* current/include/pkgconf/mlt_kinetis_flash_sram2s_extram_rom.ldi
+	* current/include/pkgconf/mlt_kinetis_flash_unisram_extram_ram.h
+	* current/include/pkgconf/mlt_kinetis_flash_unisram_extram_ram.ldi
+	* include/pkgconf/mlt_kinetis_flash_unisram_extram_rom.h
+	* include/pkgconf/mlt_kinetis_flash_unisram_extram_rom.ldi
+	* src/twr_k70f120m_misc.c:
+	Synchronized with Kinetis variant changes to SDRAM controller support.
+	Memory layouts adapted to separate data and code cacing partitions.
+	                                            [Bugzilla 1001606]
+
+2012-05-19  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl: Reference per-package
+	documentation.
+
+2012-05-18  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* doc/twr_k70f120m.sgml:
+	New file -- TWR-K70F120M platform documentation. [Bug 1001580]
+
+2012-05-17  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl:
+	Bug fix: Do not implement external memory interface if Platform startup is
+	not selected. [ Bugzilla 1001590 ]
+
+2012-02-25  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k70f120m.cdl:
+	* include/plf_arch.h:
+	* include/plf_intr.h:
+	* include/plf_io.h:
+	* pkgconf/mlt_kinetis_flash_sram2s_extram_ram.h:
+	* pkgconf/mlt_kinetis_flash_sram2s_extram_ram.ldi:
+	* pkgconf/mlt_kinetis_flash_sram2s_extram_rom.h:
+	* pkgconf/mlt_kinetis_flash_sram2s_extram_rom.ldi:
+	* pkgconf/mlt_kinetis_flash_unisram_extram_ram.h:
+	* pkgconf/mlt_kinetis_flash_unisram_extram_ram.ldi:
+	* pkgconf/mlt_kinetis_flash_unisram_extram_rom.h:
+	* pkgconf/mlt_kinetis_flash_unisram_extram_rom.ldi:
+	* src/twr_k70f120m_misc.c:	
+	New package -- Freescale TWR-K70F120M board. [Bugzilla 1001579]
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2012 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,162 @@
+# ====================================================================
+#
+#      hal_arm_hwz7zc702.cdl
+#
+#      ARM HWZ7ZC702 development board package configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####
+## -------------------------------------------
+## This file is part of eCos, the Embedded Configurable Operating System.
+## Copyright (C) 2006 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under
+## the terms of the GNU General Public License as published by the Free
+## Software Foundation; either version 2 or (at your option) any later
+## version.
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+## for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with eCos; if not, write to the Free Software Foundation, Inc.,
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## As a special exception, if other files instantiate templates or use
+## macros or inline functions from this file, or you compile this file
+## and link it with other works to produce a work based on this file,
+## this file does not by itself cause the resulting work to be covered by
+## the GNU General Public License. However the source code for this file
+## must still be made available in accordance with section (3) of the GNU
+## General Public License v2.
+##
+## This exception does not invalidate any other reasons why a work based
+## on this file might be covered by the GNU General Public License.
+## -------------------------------------------
+## ####ECOSGPLCOPYRIGHTEND####
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      ITR-GmbH
+# Contributors:
+# Date:           2012-06-25
+#
+#####DESCRIPTIONEND####
+
+cdl_package CYGPKG_HAL_ARM_HWZ7ZC702 {
+    display       "Xilinx HWZ7ZC702 board HAL"
+    parent        CYGPKG_HAL_ARM
+    define_header hal_arm_hwz7zc702.h
+    include_dir   cyg/hal
+    hardware
+    description   "
+    The HWZ7ZC702 HAL package provides the support needed to run
+    eCos on an Xilinx HWZ7ZC702 development board."
+
+    compile       hwz7zc702_misc.c
+    compile       hwz7zc702_mmu.c hwz7zc702_spi.c
+    compile       -library=libextras.a hwz7zc702_flash.c hwz7zc702_redboot.c
+
+    implements    CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9
+
+    define_proc {
+    puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_arm_hwz7zc702.h>"
+    puts $::cdl_header "/***** proc output start *****/"
+    puts $::cdl_header "#include <pkgconf/hal_arm_xc7z.h>"
+    puts $::cdl_header "#define HAL_PLATFORM_CPU    \"Cortex-A9 MP\""
+    puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"Xilinx HWZ7ZC702\""
+    puts $::cdl_header "#define HAL_PLATFORM_EXTRA  \"\""
+    puts $::cdl_header "/****** proc output end ******/"
+    }
+    cdl_option CYGSEM_HAL_ROM_MONITOR {
+        display       "Behave as a ROM monitor"
+        flavor        bool
+        default_value 0
+        parent        CYGPKG_HAL_ROM_MONITOR
+        requires      { CYG_HAL_STARTUP == "ROM" } 
+        description   "
+            Enable this option if this program is to be used as a ROM monitor,
+            i.e. applications will be loaded into RAM on the board, and this
+            ROM monitor may process exceptions or interrupts generated from the
+            application. This enables features such as utilizing a separate
+            interrupt stack when exceptions are generated."
+    }
+
+    cdl_option CYGSEM_HAL_USE_ROM_MONITOR {
+         display       "Work with a ROM monitor"
+         flavor        booldata
+         legal_values  { "Generic" "GDB_stubs" }
+         default_value { CYG_HAL_STARTUP == "RAM" ? "GDB_stubs" : 0 }
+         parent        CYGPKG_HAL_ROM_MONITOR
+         requires      { CYG_HAL_STARTUP == "RAM" }
+         description   "
+             Support can be enabled for different varieties of ROM monitor.
+             This support changes various eCos semantics such as the encoding
+             of diagnostic output, or the overriding of hardware interrupt
+             vectors.
+             Firstly there is \"Generic\" support which prevents the HAL
+             from overriding the hardware vectors that it does not use, to
+             instead allow an installed ROM monitor to handle them. This is
+             the most basic support which is likely to be common to most
+             implementations of ROM monitor.
+             \"GDB_stubs\" provides support when GDB stubs are included in
+             the ROM monitor or boot ROM."
+    }
+
+    cdl_component CYGPKG_REDBOOT_HAL_OPTIONS {
+        display       "Redboot HAL options"
+        flavor        none
+        no_define
+        parent        CYGPKG_REDBOOT
+        active_if     CYGPKG_REDBOOT
+        description   "
+            This option lists the target's requirements for a valid Redboot
+            configuration."
+
+        cdl_option CYGBLD_BUILD_REDBOOT_BIN {
+            display       "Build Redboot ROM binary image"
+            active_if     CYGBLD_BUILD_REDBOOT
+            default_value 1
+            no_define
+            description "This option enables the conversion of the Redboot ELF
+                         image to a binary image suitable for ROM programming."
+    
+            make -priority 325 {
+                <PREFIX>/bin/redboot.bin : <PREFIX>/bin/redboot.elf
+                $(OBJCOPY) --strip-debug $< $(@:.bin=.img) 
+                $(OBJCOPY) -O srec $< $(@:.bin=.srec)
+                $(OBJCOPY) -O binary $< $@
+            }
+        }
+    }
+    cdl_component CYGHWR_MEMORY_LAYOUT {
+    display "Memory layout"
+    flavor data
+    no_define
+    calculated { (CYG_HAL_STARTUP == "RAM") ? \
+             "arm_hwz7zc702_ram" :
+             "arm_hwz7zc702_rom" }
+
+    cdl_option CYGHWR_MEMORY_LAYOUT_LDI {
+        display "Memory layout linker script fragment"
+        flavor data
+        no_define
+        define -file system.h CYGHWR_MEMORY_LAYOUT_LDI
+        calculated { (CYGPKG_REDBOOT) ? \
+         "<pkgconf/mlt_arm_hwz7zc702_redboot.ldi>" :
+         "<pkgconf/mlt_arm_hwz7zc702_app.ldi>" }
+    }
+
+    cdl_option CYGHWR_MEMORY_LAYOUT_H {
+        display "Memory layout header file"
+        flavor data
+        no_define
+        define -file system.h CYGHWR_MEMORY_LAYOUT_H
+        calculated { (CYGPKG_REDBOOT) ? \
+         "<pkgconf/mlt_arm_hwz7zc702_redboot.h>" :
+         "<pkgconf/mlt_arm_hwz7zc702_app.h>" }
+    }
+    }
+}

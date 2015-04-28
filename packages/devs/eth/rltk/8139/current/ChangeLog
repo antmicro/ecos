@@ -1,0 +1,84 @@
+2009-07-15  John Dallaway  <john@dallaway.org.uk>
+
+	* src/if_8139.c: Add 0x1186/0x1300 for D-Link DFE-530TX+ PCI card.
+
+2007-05-30  Hajime Ishitani <pigmon@mail.snd.co.jp>
+
+	* src/if_8139.c:
+	* cdl/rltk_8139_eth_drivers.cdl
+	add write in MAC address at EEPROM by SIOCSIFHWADDR.
+
+2006-12-17  Hajime Ishitani <pigmon@mail.snd.co.jp>
+
+	* src/if_8139.c:
+	added 0x10ec/0x8129 for RTL8139C(L) of a known device.
+
+2006-11-13  Hajime Ishitani <pigmon@mail.snd.co.jp>
+
+	* src/if_8139.c: Enabled "PUN/LinkChg" interrupt.
+
+2005-12-02  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/if_8139.c (rltk8139_deliver): Fix the compiler warnings by
+	adding some casts.
+
+2005-11-25  Hajime Ishitani <pigmon@mail.snd.co.jp>
+
+	* src/if_8139.h:
+	* src/if_8139.c: Added a priority level field
+
+2005-03-03  Bob Koninckx <bob.koninckx@fmtc.be>
+
+	* src/if_8139.c: fixed bug that prevented rltk8139_find to find
+	anything but first device.
+
+2004-10-18  Andrew Dyer  <adyer@righthandtech.com>
+
+	* src/if_8139.c (rltk8139_recv): if eth_drv_recv() wants to
+	discard an incoming packet it sets the buffer address == 0. Add a
+	check for this and skip the memcpy if found.
+
+2004-04-21  Yoshinori Sato <ysato@users.sourceforge.jp>
+
+	* src/if_8139.c:
+	add known device 0x11db/0x1234 from Dreamcast Broadband Adapter.
+	add Platform depend Initialize entry.
+
+2003-11-21  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/if_8139.c: Use cyg_drv_isr_lock/unlock functions for ISR
+	critical sections - much better than calling cyg_interrupt_enable
+	directly.
+
+2003-07-09  Eric Doenges <Eric.Doenges@DynaPel.com>
+
+	* src/if_8139.h: 
+	* src/if_8139.c: 
+	* doc/README: 
+	* cdl/rltk_8139_eth_drivers.cdl: 
+	New package - PCI ethernet driver for RTL8139 cards,
+	(using the Intel 82259 driver as inspiration).
+	
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

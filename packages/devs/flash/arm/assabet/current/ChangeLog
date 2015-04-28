@@ -1,0 +1,67 @@
+2001-03-17  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash_unlock_block.c: 
+	* src/flash_query.c: 
+	* src/flash_program_buf.c: 
+	* src/flash_lock_block.c: 
+	* src/flash_erase_block.c: 
+	* src/flash.h: 
+	* src/assabet_flash.c: Removed - everything now generic.
+
+	* include/assabet_strataflash.inl: 
+	* cdl/flash_assabet.cdl: Change to use generic StrataFLASH driver.
+
+2000-12-05  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* src/assabet_flash.c (flash_code_overlaps): Define stext/etext
+	as array types so no assumptions can be made by the compiler about
+	location.
+
+2000-10-24  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash_unlock_block.c (flash_unlock_block): 
+	* src/flash_lock_block.c (flash_lock_block): 
+	* src/flash_program_buf.c (flash_program_buf): 
+	* src/flash_erase_block.c (flash_erase_block): Support up to 32M FLASH.
+
+2000-09-10  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash_unlock_block.c: 
+	* src/flash_lock_block.c: New file(s).
+
+	* src/flash.h: 
+	* cdl/flash_assabet.cdl: Add region locking functions.
+
+2000-08-29  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_flash.c: Improve error decoding.
+
+2000-08-24  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash_query.c: 
+	* src/flash_erase_block.c: 
+	* src/flash.h: FLASH support for Intel SA1110 Assabet.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,71 @@
+2013-05-13  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/hal_arm_lpc2xxx_olpce2294.cdl: Add support for all 4 CAN
+	interfaces.
+
+2012-03-07  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* include/hal_platform_setup.h: Fix assembler warning (s suffix on
+	comparison instruction is deprecated), s/cmps/cmp/.
+
+2009-02-02  Sergei Gavrikov <sergei.gavrikov@gmail.com>
+
+ 	* cdl/hal_arm_lpc2xxx_olpce2294.cdl: Expanded a list the legal baud
+ 	rates for both diagnostic and debug channels (upon 230400 bps).
+ 	* include/hal_platform_setup.h, include/plf_io.h: Extra tabs expanded.
+ 	* include/hal_platform_setup.h: Fixed a comment about JTAG pinouts.
+ 
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_lpc2xxx_olpce2294.cdl: update compiler flags for gcc 4.x
+
+2008-12-03  Sergei Gavrikov <sergei.gavrikov@gmail.com>
+
+	* misc/redboot_*.ecm: Rebuilt since target uses flash_olpcx2294_v2
+	driver.
+
+2008-11-23  Sergei Gavrikov <sergei.gavrikov@gmail.com>
+
+	* include/plf_io.h: Useless and not-portable IO macros removed.
+	* src/olpce2294_misc.c: LCD driver reworked with a use eCos I/O
+          macros.
+
+2008-08-31  Sergei Gavrikov <sergei.gavrikov@gmail.com>
+
+	* LPC-E2294 development board package
+	* cdl/hal_arm_lpc2xxx_olpce2294.cdl
+	* include/hal_platform_setup.h
+	* include/pkgconf/mlt_arm_lpc2xxx_olpce2294_ram.h
+	* include/pkgconf/mlt_arm_lpc2xxx_olpce2294_ram.ldi
+	* include/pkgconf/mlt_arm_lpc2xxx_olpce2294_rom.h
+	* include/pkgconf/mlt_arm_lpc2xxx_olpce2294_rom.ldi
+	* include/plf_io.h
+	* misc/redboot_ROM.ecm
+	* src/btn_drv.c
+	* src/olpce2294_misc.c
+	* src/redboot_cmds.c
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2008 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+	

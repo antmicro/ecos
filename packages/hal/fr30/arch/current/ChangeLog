@@ -1,0 +1,50 @@
+2008-09-19  Lars Poeschel  <larsi@wh2.tu-dresden.de>
+
+    * include/hal_cache.h: Basic cache support
+
+2008-07-01  Lars Poeschel  <larsi@wh2.tu-dresden.de>
+
+    * src/vectors.S:
+    * include/arch.inc:
+    * include/hal_arch.h: Introduced CYGPKG_HAL_FR30_LMA_OFFSET for supporting
+                          remapping a flash chip during initialisation.
+
+2007-07-09  Lars Poeschel  <larsi@wh2.tu-dresden.de>
+
+    * src/context.S:
+    * src/fr30_stub.c:
+    * src/hal_misc.c:
+    * src/vectors.S:
+    * include/arch.inc:
+    * include/basetype.h:
+    * include/fr30.inc:
+    * include/fr30_stub.h:
+    * include/hal_arch.h:
+    * include/hal_cache.h:
+    * include/hal_intr.h:
+    * include/hal_io.h:
+    * cdl/hal_fr30.cdl: Initial fr30 ecos port
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2007 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

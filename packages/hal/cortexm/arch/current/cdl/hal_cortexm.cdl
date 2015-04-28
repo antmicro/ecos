@@ -1,0 +1,275 @@
+##==========================================================================
+##
+##      hal_cortexm.cdl
+##
+##      Cortex-M architectural HAL configuration data
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2008, 2011, 2014 Free Software Foundation, Inc.                  
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):       nickg
+## Contributor(s):  jld
+## Date:            2008-07-30
+##
+######DESCRIPTIONEND####
+##
+##==========================================================================
+
+cdl_package CYGPKG_HAL_CORTEXM {
+    display       "Cortex-M Architecture"
+    parent        CYGPKG_HAL
+    hardware
+    include_dir   cyg/hal
+    define_header hal_cortexm.h
+    description   "
+        This package provides generic support for the ARM Cortex-M architecture.
+        It is also necessary to select a variant and platform HAL package."
+
+    implements    CYGINT_PROFILE_HAL_MCOUNT
+
+    compile       hal_misc.c context.S cortexm_stub.c
+
+    requires { CYGHWR_HAL_CORTEXM_BIGENDIAN implies
+        is_substr(CYGBLD_GLOBAL_CFLAGS,   " -mbig-endian ") &&
+        is_substr(CYGBLD_GLOBAL_LDFLAGS,  " -mbig-endian ") }
+    requires { !CYGHWR_HAL_CORTEXM_BIGENDIAN implies
+        !is_substr(CYGBLD_GLOBAL_CFLAGS,  " -mbig-endian ") &&
+        !is_substr(CYGBLD_GLOBAL_LDFLAGS, " -mbig-endian ") }
+
+    make {
+        <PREFIX>/lib/vectors.o : <PACKAGE>/src/vectors.S
+        $(CC) -Wp,-MD,vectors.tmp $(INCLUDE_PATH) $(CFLAGS) -c -o $@ $<
+        @echo $@ ": \\" > $(notdir $@).deps
+        @tail -n +2 vectors.tmp >> $(notdir $@).deps
+        @echo >> $(notdir $@).deps
+        @rm vectors.tmp
+    }
+
+    make {
+        <PREFIX>/lib/target.ld: <PACKAGE>/src/cortexm.ld
+        $(CC) -E -P -Wp,-MD,target.tmp -xc $(INCLUDE_PATH) $(ACTUAL_CFLAGS) -o $@ $<
+        @echo $@ ": \\" > $(notdir $@).deps
+        @tail -n +2 target.tmp >> $(notdir $@).deps
+        @echo >> $(notdir $@).deps
+        @rm target.tmp
+    }
+
+    cdl_interface CYGINT_HAL_CORTEXM_BIGENDIAN {
+        display "The platform and architecture supports Big Endian operation"
+    }
+
+    cdl_option CYGHWR_HAL_CORTEXM_BIGENDIAN {
+        display          "Use big-endian mode"
+        active_if        { CYGINT_HAL_CORTEXM_BIGENDIAN != 0 }
+        default_value    0
+        description      "
+            Use the CPU in big-endian mode."
+    }
+
+    cdl_option CYGHWR_HAL_CORTEXM {
+        display          "Cortex-M CPU family"
+        flavor           data
+        legal_values     { "M3" "M4" }
+        default_value    { "M3" }
+        description      "
+            The Cortex-M architecture has two variants at present. The
+            M3 and M4 are based on the ARMV7 architecture specification
+            and execute the Thumb2 instruction set. The M4 in addition
+            to M3 instruction set has SIMD and optional single precision
+            floating point instructions."
+    }
+
+    cdl_option CYGHWR_HAL_CORTEXM_SYSTICK_CLK_SOURCE {
+        display          "System tick timer clock"
+        flavor           data
+        legal_values     { "EXTERNAL" "INTERNAL" }
+        default_value    { "EXTERNAL" }
+        description      "Select the Cortex-M system tick timer clock source."
+    }
+
+    cdl_component CYGPKG_HAL_CORTEXM_FPU {
+        display        "Floating Point Support"
+        flavor         data
+        calculated     { !CYGHWR_HAL_CORTEXM_FPU ? "SOFT" :
+                          "HARD: " . CYGHWR_HAL_CORTEXM_FPU_SWITCH }
+        no_define
+        active_if      { CYGHWR_HAL_CORTEXM == "M4" }
+        description    "
+            Floating point arithmetics can be executed in software or,
+            on devices with floating point unit - FPU, in hardware.
+            FPU is optional on Cortex-M4 architecture, and is present
+            on Cortex-M4F cores."
+
+        script         hal_cortexm_fpu.cdl
+    }
+
+    cdl_option CYGIMP_HAL_ARCH_ENDIAN {
+        display       "Architecture optimized endian functions"
+        flavor        bool
+        default_value 1
+        description   "
+            Cortex-M architecture implements instructions for endian
+            manipulation (byte swapping).  If enabled, this feature
+            can produce shorter and faster code for that."
+
+        define_proc {
+            puts $::cdl_system_header "#define CYGBLD_HAL_ENDIAN_H <cyg/hal/cortexm_endian.h>"
+        }
+    }
+
+    cdl_option CYGNUM_HAL_CORTEXM_PRIORITY_MAX {
+         display         "Maximum usable priority"
+         flavor          data
+         calculated      1<<(8-CYGNUM_HAL_CORTEXM_PRIORITY_LEVEL_BITS)
+         description     "
+             Calculate the maximum exception priority that can be set by interrupts.
+             Higher priorities are reserved for the DEBUG and SVC traps."
+    }
+
+    cdl_option CYGBLD_HAL_CORTEXM_MCOUNT {
+        display           "Support call-graph profiling"
+        flavor            bool
+        no_define
+        active_if         CYGPKG_PROFILE_GPROF
+        calculated        CYGPKG_PROFILE_CALLGRAPH
+        compile           mcount.S
+        description       "
+            Calculate whether mcount functions should be built
+            to support call-graph profiling."
+    }
+
+    cdl_option CYGBLD_LINKER_SCRIPT {
+        display "Linker script"
+        flavor data
+        no_define
+        calculated  { "src/cortexm.ld" }
+    }
+
+    cdl_option CYGNUM_HAL_BREAKPOINT_LIST_SIZE {
+            display       "Number of breakpoints supported by the HAL."
+            flavor        data
+            default_value 8
+            description   "
+                This option determines the number of breakpoints supported by the HAL."
+    }
+
+    cdl_component CYGBLD_ARCH_CPUFLAGS {
+        display      "Architecture related build flags"
+        flavor data
+        no_define
+
+        calculated { CYGHWR_HAL_CORTEXM == "M3" ? " -mcpu=cortex-m3" :
+                     CYGHWR_HAL_CORTEXM_FPU     ? " -mcpu=cortex-m4" : " " }
+
+        description "This component defines flags that code generation dependent on specific
+            CPU type or CPU features."
+
+        cdl_option CYGBLD_ARCH_CPUFLAGX_M3 {
+            display    "Exclude Cortex-M3 build flag"
+            flavor     data
+            no_define
+
+            calculated { CYGHWR_HAL_CORTEXM_FPU ? "-mcpu=cortex-m3" : "no_exclude" }
+        }
+
+        cdl_option CYGBLD_ARCH_CPUFLAGX_M4 {
+            display    "Exclude Cortex-M4 build flag"
+            flavor     data
+            no_define
+
+            calculated { (CYGHWR_HAL_CORTEXM != "M4") ? "-mcpu=cortex-m4" : "no_exclude" }
+        }
+
+        cdl_component CYGBLD_ARCH_CPUFLAG_FLOAT_ABI {
+            display    "Float ABI build flags"
+            flavor     data
+            no_define
+            calculated { CYGHWR_HAL_CORTEXM_FPU ? " -mfloat-abi=hard" : "" }
+
+            cdl_option CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI {
+                display    "Float ABI flag to exclude"
+                flavor     data
+                no_define
+                calculated { CYGHWR_HAL_CORTEXM_FPU ? "-mfloat-abi=soft" : "-mfloat-abi=hard" }
+            }
+
+            cdl_option CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT {
+                display    "Alt. float flag to exclude"
+                flavor     data
+                no_define
+                calculated { CYGHWR_HAL_CORTEXM_FPU ? "-msoft-float" : "-mhard-float" }
+            }
+
+            cdl_component CYGBLD_ARCH_CPUFLAG_FPV4SPD16 {
+                display    "FPv4-SP-D16 flags"
+                flavor     data
+                no_define
+                calculated { CYGHWR_HAL_FPV4_SP_D16 ? " -mfpu=fpv4-sp-d16" : "" }
+
+                cdl_option CYGBLD_ARCH_CPUFLAGX_FPV4SPD16 {
+                    display    "Exclude FPv4-SP-D16 flag"
+                    flavor     data
+                    no_define
+                    calculated { CYGHWR_HAL_FPV4_SP_D16 ? "do_not_exclude" : "-mfpu=fpv4-sp-d16" }
+                }
+            }
+        }
+
+        requires {
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M3)             &&
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M4)             &&
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI)      &&
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT) &&
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV4SPD16)      &&
+
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)
+        }
+        requires {
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M3)             &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M4)             &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI)      &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT) &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV4SPD16)      &&
+
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)
+        }
+    }
+}
+
+# EOF hal_cortexm.cdl

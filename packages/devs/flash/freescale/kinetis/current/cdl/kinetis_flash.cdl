@@ -1,0 +1,104 @@
+## ====================================================================
+##
+##      kinetis_flash.cdl
+##
+##      FLASH memory - Hardware support for kinetis on-chip flash
+##
+## ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2012 Free Software Foundation, Inc.                        
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+## ====================================================================
+######DESCRIPTIONBEGIN####
+##
+## Author(s):      Nicolas Aujoux
+## Date:           2012-03-19
+##
+#####DESCRIPTIONEND####
+##
+## ====================================================================
+
+cdl_package CYGPKG_DEVS_FLASH_KINETIS {
+    display       "Kinetis FLASH memory support"
+    parent        CYGPKG_IO_FLASH
+    active_if     CYGPKG_IO_FLASH
+    implements    CYGHWR_IO_FLASH_DEVICE
+
+    include_dir   cyg/io
+
+    description "
+        Flash memory support for kinetis"
+
+    cdl_component CYGHWR_HAL_CORTEXM_KINETIS_FLASH {
+        display         "Use Kinetis Flash driver"
+        flavor          bool
+        default_value   1
+
+        compile   -library=libextras.a kinetis_flash.c
+
+        cdl_option CYGNUM_DEVS_KINETIS_FLASH_LOGIC_ERROR_BUG {
+            display     "Disable cache aliasing and speculation logic"
+            flavor           bool
+            default_value    { 1 }
+            description "
+                There is a logical error which prevent from accessing flash
+                properly if cache or prefetch options are enable in the Flash
+                Memory Controler register.
+                The prefetch option is not supported on program flash only or
+                program flash only with swap feature devices.
+                The cache aliasing is not supported on 512 KB and 384 KB
+                program flash. This option disables this two features."
+        }
+
+        cdl_option CYGNUM_DEVS_KINETIS_FLASH_BLOCK_SIZE {
+            display         "Block size"
+            flavor          data
+            legal_values    { 0 0x800 0x1000 }
+            default_value   0x800
+            description "
+                Size of a flash block (called sector in freescale datasheets) :
+                    0x800 (2KB for k60 with 100M clock and ?)
+                    0x1000 (4KB for k60 with 120M and 150M clock and ?)"
+        }
+
+        cdl_option CYGNUM_DEVS_KINETIS_FLASH_LONGWORD_SIZE {
+            display         "Longword/phrase size"
+            flavor          data
+            legal_values    { 4 8 }
+            default_value   4
+            description "
+                Size of a flash writing word, called LONGWORD (4 bytes)
+                or PHRASE (8 bytes) freescale datasheets."
+        }
+    }
+}
+
+# End of kinetis_flash.cdl

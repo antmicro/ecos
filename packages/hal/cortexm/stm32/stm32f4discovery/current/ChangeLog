@@ -1,0 +1,42 @@
+2013-08-09  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_cortexm_stm32_stm32f4discovery.cdl: Merge CDL goal
+	expressions to avoid confusing the eCos Configuration Tool during
+	initial inference of STM32 variant HAL options.
+
+2013-06-09  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_cortexm_stm32_stm32f4discovery.cdl,
+	include/plf_arch.h, include/plf_intr.h, include/plf_io.h,
+	include/pkgconf/mlt_cortexm_stm32f4discovery_jtag.h,
+	include/pkgconf/mlt_cortexm_stm32f4discovery_jtag.ldi,
+	include/pkgconf/mlt_cortexm_stm32f4discovery_rom.h,
+	include/pkgconf/mlt_cortexm_stm32f4discovery_rom.ldi,
+	src/stm32f4discovery_flash.c, src/stm32f4discovery_misc.c,
+	tests/gpio.c, misc/openocd-misc.cfg, doc/stm32f4discovery.sgml:
+	New STM32F4-Discovery platform HAL package. Derived from
+	STM32x0G-EVAL platform HAL package.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
+// Copyright (C) 2013 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 or (at your option) any
+// later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc., 51 Franklin Street,
+// Fifth Floor, Boston, MA  02110-1301, USA.
+// -------------------------------------------
+// ####GPLCOPYRIGHTEND####
+//===========================================================================

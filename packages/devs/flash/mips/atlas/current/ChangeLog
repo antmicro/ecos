@@ -1,0 +1,56 @@
+2008-11-17  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/atlas_flash.c:
+	Explicitly include <cyg/io/flash_dev.h> rather than just
+	defining _FLASH_PRIVATE_. (From bartv in flash_v2 branch)
+
+	* cdl/flash_atlas.cdl: Indicate that this driver uses
+	the legacy flash device API.
+
+2003-09-23  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/flash_atlas.cdl: Added requirements for strncmp.
+
+2003-09-16  Jani Monoses <jani@iv.ro>
+	
+	* cdl/flash_atlas.cdl:
+	* src/flash_lock_block.c (flash_lock_block): 
+	* src/flash_unlock_block.c (flash_unlock_block): 
+	* src/flash_erase_block.c (flash_erase_block): 
+	* src/flash_query.c (flash_query): 
+	* src/flash_program_buf.c (flash_program_buf): Use .2ram sections
+	for putting flash functions to RAM instead of the old method. Use
+	generic flash_dev_query.
+
+2001-06-11  Gary Thomas  <gthomas@redhat.com>
+
+	* src/atlas_flash.c: Remove dependency on printf() via user functions.
+
+2001-05-23  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/flash_atlas.cdl: Needs IO controller to copy functions to
+	RAM.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

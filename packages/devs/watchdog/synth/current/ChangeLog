@@ -1,0 +1,77 @@
+2009-07-14  Bart Veer  <bartv@ecoscentric.com>
+
+	* host/configure.in: allow builds on x86_64 machines.
+
+	* host/configure, host/Makefile.in, host/aclocal.m4: regenerate.
+
+2009-02-04  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/synth_watchdog.cxx: use the generic watchdog package's
+	prioritized constructor.
+
+2008-08-18  Bart Veer  <bartv@ecoscentric.com>
+
+	* host/Makefile.am: update host-side configury
+	* host/Makefile.in, host/aclocal.m4, host/configure: regenerate.
+
+2003-03-23  Iztok Zupet<iz@vsr.si>
+
+	* doc/synth_watchdog.sgml: Replaced .gif with .png to allow for
+	PDF build.
+
+	* doc/asleep.gif, doc/awake.gif: Converted to *.png and deleted.
+	* doc/asleep.png, doc/awake.png: New files.
+
+2003-02-25  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* doc/synth_watchdog.sgml: Declare as <part> not <reference> to get
+	correct TOC numbering.
+
+2003-02-24  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/synth_watchdog.cdl: Add doc link.
+
+	* doc/synth_watchdog.sgml: Comment out DOCTYPE for now to allow
+	building with standard doc build.
+	Add an enclosing <reference> so it's structured better with standard
+	doc build.
+
+2003-02-12  Bart Veer  <bartv@ecoscentric.com>
+
+	* host/Makefile.in:
+	Regenerate after toplevel acinclude.m4 update
+
+2002-09-16  Bart Veer  <bartv@ecoscentric.com>
+
+	* cdl/synth_watchdog.cdl:
+	Synthetic watchdog device should only be active if the
+	generic watchdog support is present
+
+2002-09-04  Bart Veer  <bartv@ecoscentric.com>
+
+	* Synthetic target watchdog package created
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2002, 2003, 2009 Free Software Foundation, Inc.                  
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+

@@ -1,0 +1,41 @@
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_h8300_h8s_sim.cdl: update compiler flags for gcc 4.x
+
+2004-03-18  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* src/hal_diag.c
+	fix warning.
+
+2004-02-24  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* cdl/hal_h8300_h8s_sim.cdl
+	add Linker flags "-mrelax"
+
+2003-02-21  Yoshinori Sato  <qzb04471@nifty.ne.jp>
+
+	* New package.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,114 @@
+##==========================================================================
+##
+##      io_adc.cdl
+##
+##      Generic ADC driver layer
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2008 Free Software Foundation, Inc.                        
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):    nickg
+## Date:         2008-03-31
+## Description:  Implements generic layer of ADC drivers.
+##
+######DESCRIPTIONEND####
+##
+##========================================================================*/
+
+
+cdl_package CYGPKG_IO_ADC {
+    display       "ADC device drivers"
+    doc           ref/io-adc.html
+    parent        CYGPKG_IO
+    active_if     CYGPKG_IO
+    requires      CYGPKG_ERROR
+    include_dir   cyg/io
+    description   "
+        This option enables drivers for basic I/O services on
+        ADC devices."
+
+    compile       -library=libextras.a adc.c
+
+    cdl_component CYGPKG_IO_ADC_DEVICES {
+        display       "Hardware ADC device drivers"
+        flavor        bool
+        default_value 0
+        description   "
+            This option enables the hardware device drivers
+	    for the current platform."
+    }
+
+    cdl_option CYGNUM_IO_ADC_SAMPLE_SIZE {
+        display       "Sample size"
+        flavor        data
+        default_value 16
+        legal_values  0 to 32
+
+        description   "This option defines the sample size for the ADC devices.
+                       Given in bits, it will be rounded up to 8, 16 or 32 to define
+                       the cyg_adc_sample_t type."
+    }
+    
+    cdl_option CYGPKG_IO_ADC_SELECT_SUPPORT {
+	display "Enable ADC device select support"
+	flavor bool
+	active_if CYGPKG_IO_FILEIO
+	requires  { CYGFUN_IO_FILEIO_SELECT == 1 }
+	default_value 1
+	description "
+	    This option enables support for the select() API function on all
+	    ADC devices."
+    }
+    
+    cdl_component CYGPKG_IO_ADC_TESTS {
+        display     "ADC device driver tests"
+        flavor      data
+        no_define
+        calculated  { "tests/adc1 tests/adc2" }
+        description "
+            This option specifies the set of tests for the ADC device drivers."
+            
+            
+        cdl_option CYGNUM_IO_ADC_PERFORMANCE_TEST_RATE {
+            display         "ADC performance test rate"
+            flavor          data
+            legal_values    1 to 10000
+            default_value   1000
+            description     "
+                This option specifies the sampling rate used for the ADC device
+                driver performance test."
+        }
+    }
+}    

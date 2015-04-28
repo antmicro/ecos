@@ -1,0 +1,368 @@
+# ====================================================================
+#
+#      io_can.cdl
+#
+#      eCos IO configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      Uwe Kindler
+# Original data:  gthomas
+# Contributors:
+# Date:           2005-05-17
+#
+#####DESCRIPTIONEND####
+#
+# ====================================================================
+
+cdl_package CYGPKG_IO_CAN {
+    display       "CAN device drivers"
+    parent        CYGPKG_IO
+    active_if     CYGPKG_IO
+    requires      CYGPKG_ERROR
+    include_dir   cyg/io
+    description   "
+        This option enables drivers for basic I/O services on
+        CAN devices."
+    doc           ref/io.html
+
+    compile       -library=libextras.a can.c
+ 
+    define_proc {
+	puts $::cdl_header "/***** proc output start *****/"
+	puts $::cdl_header "#include <pkgconf/system.h>"
+	puts $::cdl_header "#ifdef CYGDAT_IO_CAN_DEVICE_HEADER"
+	puts $::cdl_header "# include CYGDAT_IO_CAN_DEVICE_HEADER"
+	puts $::cdl_header "#endif "
+	puts $::cdl_header "/****** proc output end ******/"
+    }
+    
+    #-----------------------------------------------------------------
+    # Interfaces
+    # A hardware device driver should implement each interface it
+    # supports
+    #
+    cdl_interface CYGINT_IO_CAN_TIMESTAMP {
+        display "CAN driver supports timestamps"
+    }
+    
+    cdl_interface CYGINT_IO_CAN_STD_CAN_ID {
+        display "11 Bit standard CAN ID support"
+    }
+    
+    cdl_interface CYGINT_IO_CAN_EXT_CAN_ID {
+        display "29 Bit extended CAN ID support"
+    }
+    
+    cdl_interface CYGINT_IO_CAN_RUNTIME_MBOX_CFG {
+        display "CAN driver supports message box runtime configuration"
+    }
+    
+    cdl_interface CYGINT_IO_CAN_REMOTE_BUF {
+        display "CAN driver supports remote response buffers"
+    }
+    
+    cdl_interface CYGINT_IO_CAN_AUTOBAUD {
+        display "CAN driver supports automatic baudrate detection"
+    }
+    
+    cdl_interface CYGINT_IO_CAN_TX_EVENTS {
+        display "CAN driver supports TX events"
+    }
+    
+    #-----------------------------------------------------------------
+    # Each single channel of a CAN chip or on chip CAN module should
+    # implement this interface. It counts the number of available
+    # CAN channels
+    #
+    cdl_interface CYGINT_IO_CAN_CHANNELS {
+        display "Number of CAN channels"
+    }
+    
+    
+    #-----------------------------------------------------------------
+    # Generic CAN driver configuration
+    #
+    cdl_component CYGPKG_IO_CAN_DEVICES {
+        display       "Hardware CAN device drivers"
+        flavor        bool
+        default_value 1
+        description   "
+            This option enables the hardware device drivers
+	        for the current platform."
+    }
+    
+    cdl_option CYGOPT_IO_CAN_SUPPORT_TIMESTAMP {
+        display       "Support CAN event timestamps"
+        requires      { CYGINT_IO_CAN_TIMESTAMP > 0 }
+        active_if     { CYGINT_IO_CAN_TIMESTAMP > 0 }
+        default_value 0
+        description "
+            If the CAN hardware driver supports some kind of timestamps
+            then this option enables propagation of timestamps to higher layers. 
+            This may add some extra code to hardware drivers."
+    }
+    
+    cdl_option CYGOPT_IO_CAN_TX_EVENT_SUPPORT {
+        display       "Support TX events"
+        requires      { CYGINT_IO_CAN_TX_EVENTS > 0 }
+        active_if     { CYGINT_IO_CAN_TX_EVENTS > 0 }
+        default_value 0
+        description "
+            This option enables support for TX events. If a CAN message is
+            transmitted successfully a TX event will be inserted into the
+            receive event queue and propagated to higher layers. If this
+            option is enabled the RX event queue will be filled faster."
+    }
+    
+    cdl_option CYGOPT_IO_CAN_STD_CAN_ID {
+        display "11 Bit standard CAN ID support"
+        requires      { CYGINT_IO_CAN_STD_CAN_ID > 0 }
+        active_if     { CYGINT_IO_CAN_STD_CAN_ID > 0 }
+        default_value { CYGINT_IO_CAN_STD_CAN_ID > 0 ? 1 : 0 }
+        description "
+               This option enables support for 11 Bit standard CAN identifiers.
+               If the application deals only with 29 Bit extended CAN messages
+               then disabling this option may reduce codesize or increase
+               performance."
+    }
+    
+    cdl_option CYGOPT_IO_CAN_EXT_CAN_ID {
+        display "29 Bit extended CAN ID support"
+        requires      { CYGINT_IO_CAN_EXT_CAN_ID > 0 }
+        active_if     { CYGINT_IO_CAN_EXT_CAN_ID > 0 }
+        default_value { CYGINT_IO_CAN_EXT_CAN_ID > 0 ? 1 : 0 }
+        description "
+               This option enables support for 29 Bit extended CAN identifiers.
+               If the application deals only with 11 Bit standard CAN messages
+               then disabling this option may reduce codesize or increase
+               performance."
+    }
+    
+     cdl_option CYGOPT_IO_CAN_AUTOBAUD {
+        display "Support automatic baudrate detection."
+        requires      { CYGINT_IO_CAN_AUTOBAUD > 0 }
+        active_if     { CYGINT_IO_CAN_AUTOBAUD > 0 }
+        default_value 0
+        description "
+                If the CAN hardware device driver supports any kind of automatic
+                baudrate detection then this option enables support for this feature.
+                If automatic baudrate detection is not required, then disabling this
+                option may reduce codesize."
+    }
+    
+    cdl_option CYGOPT_IO_CAN_RUNTIME_MBOX_CFG {
+        display "Message box runtime configuration support"
+        requires      { CYGINT_IO_CAN_RUNTIME_MBOX_CFG > 0 }
+        active_if     { CYGINT_IO_CAN_RUNTIME_MBOX_CFG > 0 }
+        default_value 1
+        description "
+                Message box runtime configuration is required for for hardware message 
+                filtering and for hardware remote response buffers. If no hardware
+                filtering is required and if the application does not need remote
+                response buffers this option can be disabled to decrease codesize."
+    }
+    
+    cdl_option CYGOPT_IO_CAN_REMOTE_BUF {
+        display "Remote response buffer support"
+        requires { CYGOPT_IO_CAN_RUNTIME_MBOX_CFG }
+        requires { CYGINT_IO_CAN_REMOTE_BUF > 0}
+        active_if  { CYGINT_IO_CAN_REMOTE_BUF > 0 }
+        default_value 1
+        description "
+                If the driver should handle remote requests automatically then remote
+                response buffers are required. Disabling this option may save some 
+                bytes of ROM memory."
+    }
+        
+    cdl_option CYGOPT_IO_CAN_SUPPORT_NONBLOCKING {
+        display       "Support non-blocking read and write calls"
+        default_value 0
+        description   "
+            This option enables extra code in the generic CAN driver
+            which allows clients to switch read() and write() call
+            semantics from blocking to non-blocking."
+    }
+
+    cdl_option CYGOPT_IO_CAN_SUPPORT_CALLBACK {
+        display       "Support callback on events"
+        default_value 0
+        description   "
+            This option enables extra code in the generic CAN driver
+            which allows application to register a callback for
+            events. The callback function is called from DSR
+            context so you should be careful to only call API
+            functions that are safe in DSR context."
+    }
+
+    cdl_component CYGOPT_IO_CAN_SUPPORT_TIMEOUTS {
+        display       "Support read/write timeouts"
+        flavor        bool
+        default_value 0
+        active_if     CYGPKG_KERNEL
+        requires      CYGMFN_KERNEL_SYNCH_CONDVAR_TIMED_WAIT
+        requires      CYGOPT_IO_CAN_SUPPORT_NONBLOCKING
+        description   "
+             Read and write operations are blocking calls. If no CAN message
+             arrives for a long time the calling thread remains blocked. If
+             nonblocking calls are enabled but the call should return after 
+             a certain amount of time then this option should be enabled."
+             
+        cdl_option CYGNUM_IO_CAN_DEFAULT_TIMEOUT_READ {
+            display "Default read timeout."
+            flavor  data
+            default_value 100
+            description   "
+                The initial timeout value in clock ticks for cyg_io_read() calls."
+        }
+        
+        cdl_option CYGNUM_IO_CAN_DEFAULT_TIMEOUT_WRITE {
+            display "Default write timeout."
+            flavor  data
+            default_value 100
+            description   "
+                The initial timeout value in clock ticks for cyg_io_write() calls."
+        }
+    }
+
+    cdl_component CYGPKG_IO_CAN_OPTIONS {
+        display "CAN device driver build options"
+        flavor  none
+        description   "
+            Package specific build options including control over
+            compiler flags used only in building this package,
+            and details of which tests are built."
+
+
+        cdl_option CYGPKG_IO_CAN_CFLAGS_ADD {
+            display "Additional compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the CAN device drivers. These flags are used
+                in addition to the set of global flags."
+        }
+
+        cdl_option CYGPKG_IO_CAN_CFLAGS_REMOVE {
+            display "Suppressed compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the CAN device drivers. These flags are
+                removed from the set of global flags if present."
+        }
+
+    }
+
+    cdl_option CYGBLD_IO_CAN_EXTRA_TESTS {
+        display "Build extra CAN tests"
+        default_value 0
+        no_define
+        description "
+            This option enables the building of some extra tests which
+            can be used when testing / debugging CAN drivers. These
+            are not built by default since they do not use the dedicated
+            testing infrastructure. All tests require a properly configured
+            CAN network with a second CAN node that can send and receive
+            CAN messages."
+    
+        make -priority 320 {
+            <PREFIX>/bin/can_load : <PACKAGE>/tests/can_load.c
+            @sh -c "mkdir -p tests $(dir $@)"
+            $(CC) -c $(INCLUDE_PATH) -Wp,-MD,deps.tmp -I$(dir $<) $(CFLAGS) -o tests/can_load.o $<
+            @echo $@ ": \\" > $(notdir $@).deps
+            @echo $(wildcard $(PREFIX)/lib/*) " \\" >> $(notdir $@).deps
+            @tail -n +2 deps.tmp >> $(notdir $@).deps
+            @echo >> $(notdir $@).deps
+            @rm deps.tmp
+            $(CC) $(LDFLAGS) -L$(PREFIX)/lib -Ttarget.ld -o $@ tests/can_load.o
+        }
+        
+        make -priority 320 {
+            <PREFIX>/bin/can_remote : <PACKAGE>/tests/can_remote.c
+            @sh -c "mkdir -p tests $(dir $@)"
+            $(CC) -c $(INCLUDE_PATH) -Wp,-MD,deps.tmp -I$(dir $<) $(CFLAGS) -o tests/can_remote.o $<
+            @echo $@ ": \\" > $(notdir $@).deps
+            @echo $(wildcard $(PREFIX)/lib/*) " \\" >> $(notdir $@).deps
+            @tail -n +2 deps.tmp >> $(notdir $@).deps
+            @echo >> $(notdir $@).deps
+            @rm deps.tmp
+            $(CC) $(LDFLAGS) -L$(PREFIX)/lib -Ttarget.ld -o $@ tests/can_remote.o
+        }
+                
+        make -priority 320 {
+            <PREFIX>/bin/can_tx : <PACKAGE>/tests/can_tx.c
+            @sh -c "mkdir -p tests $(dir $@)"
+            $(CC) -c $(INCLUDE_PATH) -Wp,-MD,deps.tmp -I$(dir $<) $(CFLAGS) -o tests/can_tx.o $<
+            @echo $@ ": \\" > $(notdir $@).deps
+            @echo $(wildcard $(PREFIX)/lib/*) " \\" >> $(notdir $@).deps
+            @tail -n +2 deps.tmp >> $(notdir $@).deps
+            @echo >> $(notdir $@).deps
+            @rm deps.tmp
+            $(CC) $(LDFLAGS) -L$(PREFIX)/lib -Ttarget.ld -o $@ tests/can_tx.o
+        }
+        
+        make -priority 320 {
+            <PREFIX>/bin/can_filter : <PACKAGE>/tests/can_filter.c
+            @sh -c "mkdir -p tests $(dir $@)"
+            $(CC) -c $(INCLUDE_PATH) -Wp,-MD,deps.tmp -I$(dir $<) $(CFLAGS) -o tests/can_filter.o $<
+            @echo $@ ": \\" > $(notdir $@).deps
+            @echo $(wildcard $(PREFIX)/lib/*) " \\" >> $(notdir $@).deps
+            @tail -n +2 deps.tmp >> $(notdir $@).deps
+            @echo >> $(notdir $@).deps
+            @rm deps.tmp
+            $(CC) $(LDFLAGS) -L$(PREFIX)/lib -Ttarget.ld -o $@ tests/can_filter.o
+        }
+        
+        make -priority 320 {
+            <PREFIX>/bin/can_hdi : <PACKAGE>/tests/can_hdi.c
+            @sh -c "mkdir -p tests $(dir $@)"
+            $(CC) -c $(INCLUDE_PATH) -Wp,-MD,deps.tmp -I$(dir $<) $(CFLAGS) -o tests/can_hdi.o $<
+            @echo $@ ": \\" > $(notdir $@).deps
+            @echo $(wildcard $(PREFIX)/lib/*) " \\" >> $(notdir $@).deps
+            @tail -n +2 deps.tmp >> $(notdir $@).deps
+            @echo >> $(notdir $@).deps
+            @rm deps.tmp
+            $(CC) $(LDFLAGS) -L$(PREFIX)/lib -Ttarget.ld -o $@ tests/can_hdi.o
+        }
+    }
+}
+
+# EOF io_can.cdl

@@ -1,0 +1,64 @@
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_at91_jtst.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_at91_jtst.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc. Remove -mno-short-load-words.
+
+2004-10-8  Andrew Lunn	<andrew.lunn@ascom.ch>
+
+	* support/jtstflash.{c|cpp}: Host tools for programming the
+	flash on the jtst boards. See the redboot documentation.
+	
+2004-10-6  Andrea Michelotti  <amichelotti@atmel.com>
+
+	* include/plf_io.h: removed SPI definitions. They are defined in
+	the variant HAL.
+
+2004-10-4  Andrea Michelotti  <amichelotti@atmel.com>
+
+	* include/hal_platform_setup.h: added generation of three
+	different clocks for watchdog.
+	
+2004-06-6  Andrea Michelotti  <amichelotti@atmel.com>
+
+	* cdl/hal_arm_at91_jtst.cdl: 
+	* include/plf_io.h: 
+	* include/hal_platform_setup.h: 
+	* include/hal_platform_ints.h: 
+	* include/pkgconf/mlt_arm_at91_jtst_ram.ldi: 
+	* include/pkgconf/mlt_arm_at91_jtst_ram.h: 
+	* include/pkgconf/mlt_arm_at91_jtst_rom.ldi: 
+	* include/pkgconf/mlt_arm_at91_jtst_rom.h: 
+	* include/pkgconf/mlt_arm_at91_jtst_romram.ldi: 
+	* include/pkgconf/mlt_arm_at91_jtst_romram.h: 
+	* src/jtst_misc.c: 
+	New HAL added to support Atmel JTST board (based on Diopsis chip). 
+	Adapted from the EB40 and EB40A HALs by Thomas Koeller and Tim Drury.
+
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

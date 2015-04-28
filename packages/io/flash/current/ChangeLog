@@ -1,0 +1,743 @@
+2011-12-21  John Dallaway  <john@dallaway.org.uk>
+
+	* doc/flash.sgml: Fix block_info field name. Issue reported by Keith
+	Smith. [ Bugzilla 1001431 ]
+
+2011-05-13  John Dallaway  <john@dallaway.org.uk>
+
+	* doc/flash.sgml: Fix cyg_flash_get_into_addr() function name. Issue
+	reported by Christophe Coutand. [ Bugzilla 1001233 ]
+
+2010-05-15  Christophe Coutand <ccoutand@stmi.com>
+
+	* src/flashiodev.c (flashiodev_lookup): Fix wrong code execution if
+	CYGFUN_IO_FLASH_BLOCK_FROM_FIS is enabled and
+	CYGFUN_IO_FLASH_BLOCK_FROM_DEVOFFSET is disabled.
+
+2010-03-25  Daniel Helgason  <dhelgason@shaw.ca>
+
+	* cdl/io_flash.cdl: Fix "requires" constraint on
+	CYGNUM_IO_FLASH_BLOCK_OFFSET_n to allow positioning of block
+	device at offset 0 in flash when using static configuration via
+	offset.  Fix display string for CYGSEM_IO_FLASH_LEGACY_API option.
+
+2010-01-17  John Dallaway  <john@dallaway.org.uk>
+
+	* src/flashiodevlegacy.c: Specify flash block device lengths correctly
+	when using static configuration via absolute addresses. Issue reported
+	by Daniel Helgason.
+	* cdl/io_flash.cdl: Fix display strings for
+	CYGNUM_IO_FLASH_BLOCK_ABSOLUTE_START_[12].
+
+2009-03-02  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* doc/flash.sgml: Fixed typos in a FLASH API listing.
+
+2009-02-20  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* include/flash.h: Reinstate printf arg to cyg_flash_init, but it
+	will now be officially required to be set to NULL.
+	* src/flash.c (cyg_flash_init): Act on printf arg again (even though
+	it's not meant to be non-NULL).
+	* src/flashiodev.c (flashiodev_init): Call cyg_flash_init with NULL.
+	* src/flashiodevlegacy.c (flashiodev_init): Ditto.
+	* src/legacy_api.c (flash_init): Ditto.
+	* doc/flash.sgml: Update cyg_flash_init as above, deprecating use of
+	non-NULL parameter.
+
+2009-02-18  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* include/flash.h: Modest API change: cyg_flash_init() no longer
+	takes a printf function argument. Instead two new API functions
+	are available: cyg_flash_set_printf() and
+	cyg_flash_set_global_printf().
+	
+	* src/flash.c (CHATTER): Don't attempt output if printf function
+	is NULL.
+	(cyg_flash_init): No longer takes printf arg.
+	(cyg_flash_set_printf): New. Set per-device printf function, locking
+	if needed.
+	(cyg_flash_set_global_printf): New. Set printf function for all
+	devices, locking if needed.
+	
+	* src/flashiodev.c (flashiodev_init): cyg_flash_init no longer takes
+	printf arg, and we can leave global printf at default.
+	* src/flashiodevlegacy.c (flashiodev_init): Ditto.
+
+	* src/legacy_api.c (flash_init): cyg_flash_init no longer takes
+	printf arg. So call cyg_flash_set_global_printf as well.
+
+	* src/legacy_dev.c (legacy_flash_init): legacy drivers can't handle
+	NULL printf function, so provide a dummy.
+
+	* doc/flash.sgml: Document removal of printf functionality of
+	cyg_flash_init() and document cyg_flash_set_printf() and
+	cyg_flash_set_global_printf().
+
+2009-02-13  Bart Veer  <bartv@ecoscentric.com>
+
+	* doc/flash.sgml: remove incomplete sentence.
+
+	* cdl/io_flash.cdl: remove CYGHWR_IO_FLASH_DEVICE_NOT_IN_RAM, no
+	longer needed.
+
+2008-11-24  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* tests/flashdev.c: Some warnings cleanup. [ Bugzilla 1000643 ]
+
+2008-11-23  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* doc/flash.sgml: Fix flash.h header name typos.
+
+2008-11-18  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flash.c (cyg_flash_init): Allow repeated calls to
+	change the printf function for all devices. There are
+	times you don't any output, eg you are downloading an
+	image over the serial port.
+
+2008-08-29  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/flashiodev.c (flashiodev_init): Assign
+	CYG_DEVTAB_STATUS_BLOCK to status field of device table
+	entries. This causes devfs to call the right read/write
+	operations.
+
+2008-06-10  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* tests/flashdev.c (FLASH_TEST_LENGTH): Reduce to a
+	multiple of 0x20000 as some flash parts (especially if
+	they are in fact multiple chips in parallel) have that
+	block size.
+	Try opening jffs2test FIS partition if flashtest doesn't exist.
+
+2007-05-14  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flashiodev.c (flashiodev_get_config): Support new
+	CYG_IO_GET_CONFIG_FLASH_DEVADDR key to get flash device
+	base address.
+	* include/flash.h: Associated structure for key.
+	* doc/flash.sgml: Document CYG_IO_GET_CONFIG_FLASH_DEVADDR.
+
+2006-12-18  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* tests/flash1.c: Replace FLASH_ERR_OK with CYG_FLASH_ERR_OK.
+	* tests/flashdev.c: Ditto. Also flash_errmsg ->
+	cyg_flash_errmsg. And some warning cleanups.
+
+	* src/flashiodev.c (flashiodev_lookup): Correct misplaced else
+	with respect to #ifdefs. Fix for bug 1000355.
+
+2006-12-18  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/flash_legacy.h (FLASH_Enable, FLASH_Disable): Add casts to
+	these macros since the calls in the source don't present the right
+	types. This is mainly an exercise in suppressing compiler
+	warnings.
+
+2006-12-07  Nick Garnett  <nickg@ecoscentric.com>
+
+	* tests/flashdev.c (cyg_start): Fix bug, b.offset should be
+	initialized to 0. Until now it was some random value on the stack,
+	why this has never bitten us before is a mystery.
+
+2006-10-31  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/legacy_dev.c (legacy_flash_program): Define block_size.
+
+2006-10-03  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* doc/flash.sgml: Bring into line with actual implementation.
+	Also some trivial typos.
+
+2006-08-01  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flash.c (cyg_flash_devfn_lock_nop): Don't return error
+	if this is used with one of multiple flash devices in a
+	system where a different one does support locking.
+	(cyg_flash_devfn_unlock_nop): Ditto.
+
+2006-06-06  John Dallaway  <jld@ecoscentric.com>
+
+	* cdl/io_flash.cdl: Fix reference to package documentation.
+
+2006-05-23  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flash.c (cyg_flash_erase): Report errors and error
+	addresses correctly.
+	(cyg_flash_program): Ditto.
+
+2005-12-21  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* doc/flash.sgml: Document flash block device lock/unlock config keys.
+
+2005-10-26  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/flash.h (cyg_io_flash_getconfig_lock_t) 
+	(cyg_io_flash_getconfig_unlock_t): Added these aliases for
+	cyg_io_flash_getconfig_erase_t. 
+
+	* cdl/io_flash.cdl: Added configury to control compilation of
+	flash1 test. Added flashdev test.
+
+	* src/legacy_api.c (flash_lock, flash_unlock): Added these functions.
+
+	* src/flashiodev.c (flashiodev_get_config): Added support for lock
+	and unlock operations.
+
+	* tests/flashdev.c: Added this test to exercise flash /dev/flash
+	device. Functionally it is similar to the flash1 test.
+
+	* tests/flash1.c : Changed test for legacy API.
+	(cyg_start): Added tests for lock and unlock functions.
+
+2005-09-28  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flash.c (flash_sort_and_check): Allow for Flash
+	device initialisation to fail, and thus not put this device
+	on the Flash device list.
+
+2005-09-26  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/flash.c: put init flag into .bss rather than .data, avoids
+	some problems when performing soft resets.
+
+2005-08-16  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flash.c (cyg_flash_read): Comment out chatter. It's not
+	very useful for this function.
+
+2005-08-02  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* tests/flash1.c (cyg_start): Compiler warning fixes.
+
+2005-05-27  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* tests/flash1.c (cyg_start): Call CYG_TEST_INIT().
+
+2005-03-27  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* tests/flash1.c: Fixed compiler warning with diag_printf.
+
+2005-02-28  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* include/flash.h: Getconfig/setconfig definitions are relevant for
+	both new and legacy block device support.
+
+2005-01-28  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/legacy_dev.c (legacy_flash_init): Assign flash_info.pf from
+	flash device field. Otherwise drivers try to call an invalid
+	address.
+	(legacy_flash_program): The last argument to flash_program_buf()
+	is not the block size but the programming buffer size.
+
+2005-01-21  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* doc/flash.sgml: Document Flash block devices.
+
+2005-01-19  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flashiodev.c: Redesign to use more flexible flash names.
+	* src/flashiodevlegacy.c: Previous version of flashiodev.c renamed
+	to this.
+	* cdl/io_flash.cdl: Support new flashiodev design.
+	* include/flash.h: don't double indirect err_address address
+	pointer in cyg_io_flash_getconfig_erase_t.
+	* src/flash_legacy.h: Undef HAL_FLASH_CACHES_* macros if the HAL
+	supplied them and they're not needed.
+
+	* src/legacy_api.c (flash_errmsg): Was missing. Add.
+
+	* tests/flash1.c (cyg_start): Silence warning.
+
+2004-12-02  Bart Veer  <bartv@ecoscentric.com>
+
+	* include/flash_dev.h: now provides everything needed by flash
+	device drivers.
+
+	* include/flash_priv.h: removed, subsumed by flash_dev.h
+	
+	* include/flash.h, src/flash.c, src/flashiodev.c,
+	  src/legacy_api.c, src/legacy_dev.c:
+	Replace implicit #include's of <cyg/io/flash_priv.h> with explicit
+	#include's of <cyg/io/flash_dev.h>
+
+2004-11-29  Bart Veer  <bartv@ecoscentric.com>
+	
+	* include/flash_priv.h, src/flash.c, src/legacy_dev.c: remove
+	hwr_map_error() from V2 drivers
+
+	* include/flash_priv.h, src/flash.c, src/legacy_dev.c: provide
+	dummy init/query/lock/unlock functions for use by device drivers
+	which do not support/need this functionality. Export the
+	anonymizer function.
+
+2004-11-28  John Dallaway  <jld@ecoscentric.com>
+
+	* doc/flash.sgml: Fix minor SGML tag problems.
+
+2004-11-28  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/flash.c (flash_sort_and_check): previous patch would have
+	resulted in init failure if only one device initialized.
+	(cyg_flash_get_info): handle per-device init flag
+
+2004-11-25  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flash.c (flash_sort_and_check): Don't add devices which
+	failed to initialise onto the list. Don't bother sorting the
+	list if its empty or only has one entry.
+	* src/flash.c (find_dev): All devices on the list are initialised so
+	don't both checking the init flag.
+
+2004-11-24  Bart Veer  <bartv@ecoscentric.com>
+
+	* cdl/io_flash.cdl, src/flash.c, src/flash_legacy.h,
+	src/legacy_dev.c: add support for V2 drivers which can take care
+	of the cache and interrupts themselves.
+
+	* tests/flash1.c (cyg_start): mark N/A for now if a V2 driver is
+	being used.
+	* Merge from flash V2 branch
+	
+  2004-11-22  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/legacy_dev.c: remove .2ram attributes. These functions do
+	not manipulate the hardware, there is no need for them to live in
+	ram rather than flash
+	* include/flash_priv.h, src/legacy_dev.c: clean up the interface
+	between the generic flash code and the device drivers
+	* include/flash_priv, src/flash_legacy.h, src/flash.c,
+	src/legacy_dev.c: move cache stuff andother legacy macros
+	to an internal header.
+	* include/flash.h, include/flash_priv.h, doc/flash.sgml,
+	src/flash.c, src/legacy_dev.c: put const in the right places,
+	and rename cyg_block_info to cyg_flash_block_info
+
+  2004-11-21  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/flash.c, include/flash_priv.h, cdl/io_flash.h: optimize
+	for the case of a single flash device.
+	* include/flash.h, src/flash.c, doc/flash.sgml: remove
+	cyg_flash_code_overlaps()
+	* include/flash_priv.h, include/flash.h:
+	CYGSEM_IO_FLASH_LEGACY_DEVICE_API has been removed, test
+	CYGHWR_IO_FLASH_DEVICE_LEGACY instead 
+	* cdl/io_flash.cdl: lots of clean-ups
+	* src/legacy_dev.c (legacy_flash_read): only needed if the
+	underlying legacy driver required indirect reads.
+	* src/flash.c: encapsulate various optional bits of code in
+	macros, to cut down on the #ifdef's in the main code
+
+  2004-11-20  Bart Veer  <bartv@ecoscentric.com>
+
+	* cdl/io_flash.cdl, src/flash.c(cyg_flash_read): add an interface
+	for hardware which requires indirect reads, and suppress
+	unnecessary code if direct reads are always available.
+	* src/flash.c: rearrange loops to avoid address comparisons, which
+	tend to go wrong if the flash is at the end of the address space
+
+  2004-10-06  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/legacy_dev.c (legacy_flash_init): The end is the size plus
+	the start.
+
+  2004-09-30  Savin Zlobec <savin@elatec.si>
+
+	* src/flash.c: Offset into the block is not calculated correctly
+	when the flash start is not aligned on a flash block.
+	* src/legacy_dev.c (legacy_flash_read): Fixed typo.
+
+  2004-09-14  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flash.c (cyg_flash_init): Add assert checking that the
+	end address matches the block information.
+	* src/legacy_dev.c (legacy_flash_init): Ensure that the end
+	address is the last valid address, not the first invalid address.
+
+  2004-09-09  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flash.c: Support flash blocks of arbitary size. The
+	DataFlash devices for example have block of 528 bytes.
+
+  2004-08-21  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+        * removed the functions cyg_flash_get_limits and
+	cyg_flash_get_block_info. Reimplemented the legacy functions
+	that depended on them and flashiodev.c
+	
+  2004-08-19  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flashiodev.c Ordering problem again. If an invalid name is
+	configured the lookup would fail and it then was impossible to do
+	a cyg_io_config_set. Lookup cannot fail because the name does not
+	exist in FIS.
+
+  2004-08-13  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+        * src/flash.c: Make the flock lock/unlock code compile without
+	warnings.
+	* src/flashiodev.c (flashiodev_lookup): Only initialize the device
+	if we have not already been initialized via cyg_set_config().
+	This stopped redboots mount -f working.
+
+  2004-08-09  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flashiodev.c (flashiodev_lookup): Moved most of the
+	flashiodev_init into this new function. This fixed the ordering
+	issue with redboot startup. When doing a FIS name lookup in
+	flashiodev_init, redboot was not yet nitialised so lookup
+	failed. Moving this into flashiodev_lookup solves this problem.
+	Its now possible for redboot to mount the jffs2 filesystem with 
+	-d /dev/flash1.
+
+  2004-08-06  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flashiodev.c: Fix typo in macro and configuration options
+	
+  2004-08-05  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flash.c: Major rewrite to implement a new API
+	* src/legacy_api.c: Support the legacy API
+	* src/legacy_drv.c: Support the legacy driver API
+	* src/flashiodev.c: Support the new API and multiple devices
+	* include/flash_priv.h: Interface devices should use
+	* cdl/io_flash.cdl: Updates for new interface and multiple devices.
+	
+2004-09-05  Mark Salter  <msalter@redhat.com>
+
+	* doc/flash.sgml: Fix unbalanced <PARA>s.
+
+2004-08-24  Gary Thomas  <gary@mlbassoc.com>
+
+	* cdl/io_flash.cdl:
+	* tests/flash1.c: Add simple test of FLASH driver.
+
+2004-06-20  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flash.c (flash_read): Don't check if the flash is write 
+  	  protected before performing a read.
+        * doc/flash.sgml
+	* cdl/io_flash.cdl: Added documentation of the FLASH API
+
+2004-04-29  Sebastien Couret  <sebastien.couret@elios-informatique.com>
+2004-04-29  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/flashiodev.c: When checking flash upper bound, allow for end
+	of flash at 0xffffffff.
+
+2003-11-27  David Woodhouse  <dwmw2@infradead.org>
+
+	* src/flashiodev.c: Enable set_config() and implement
+	CYG_IO_SET_CONFIG_FLASH_FIS_NAME.
+	
+2003-11-25  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/flash.c: gcc 3.x vs gcc 2.x problems. 
+
+2003-11-24  Jani Monoses  <jani@iv.ro>
+
+	* cdl/io_flash.cdl:
+	* include/flash.h: Remove CYGNUM_FLASH_WORKSPACE_SIZE cdl option. 
+ 
+2003-11-24  Roland Caßebohm <roland.cassebohm@visionsystems.de>
+
+	* src/flashiodev.c (flashiodev_bwrite): Use flash_read rather than
+	directly doing a memcpy. 
+
+2003-11-20  Jani Monoses  <jani@iv.ro>
+
+	* src/flash.c: 
+	* src/flashiodev.c: 
+	* include/flash.h: Remove references to work_space and work_space_size
+	since they are no longer used.
+
+2003-11-20  Jani Monoses  <jani@iv.ro>
+
+	* cdl/io_flash.cdl:
+	* src/flash.c: Remove handling of CYGHWR_IO_FLASH_DEVICE_NOT_IN_RAM
+	now that all flash drivers use ELF sections to specify which parts
+	go in RAM.
+
+2003-10-08  Roland Cassebohm  <roland.cassebohm@visionsystems.de>
+
+	* src/flash.c: Fix parse error if CYGSEM_IO_FLASH_READ_INDIRECT 
+	is not defined.
+
+2003-09-19  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/flash.c: 
+	* include/flash.h: 
+	* cdl/io_flash.cdl: Add support for NAND (indirectly accessed)
+	devices.  This includes a generic "flash_read_buf()" function.
+
+2003-04-14  Jani Monoses  <jani@iv.ro>
+
+	* include/flash_dev.h: Include <cyg/infra/cyg_type.h> 
+
+2003-03-19  Thomas Koeller <thomas.koeller@baslerweb.com>
+
+	* src/flashiodev.c: Fixed trivial error.
+
+2003-03-03  Knud Woehler <knud.woehler@microplex.de>
+
+	* src/flashiodev.c:
+	* cdl/io_flash.cdl: Add CYGNUM_IO_FLASH_BLOCK_CFG_FIS_1 / 
+	CYGNUM_IO_FLASH_BLOCK_CFG_STATIC_1. Initialize the block device 
+	from the FIS table.
+	
+2003-02-24  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/io_flash.cdl: Remove irrelevant doc link - default to top
+	level.
+
+2002-01-31  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* src/flashiodev.c: Fix bounds checking and offsetting.
+
+	* cdl/io_flash.cdl (CYGNUM_IO_FLASH_BLOCK_LENGTH_1): Default to
+	0x100000 for convenience.
+
+2002-01-30  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* cdl/io_flash.cdl: Allow specification of an offset and length
+	of the region of flash.
+	* src/flashiodev.c: Use it.
+
+2002-01-24  Jesper Skov  <jskov@redhat.com>
+
+	* include/flash.h: Add a comment about the obvious: the flash
+	caching macros should be called with interrupts disabled.
+
+2002-01-23  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* cdl/io_flash.cdl: Add CYGPKG_IO_FLASH_BLOCK_DEVICE and
+	CYGDAT_IO_FLASH_BLOCK_DEVICE_NAME_1 to allow exporting flash
+	as block devices accessible from file systems.
+	* src/fileiodev.c: New file implementing this.
+	* include/flash.h: Add typedefs for the various structures used
+	to configure the block devices.
+
+2002-01-18  Paul Fine  <pfine@delcomsys.com>
+
+	* src/flash.c : Modified flash_verify_addr, flash_erase,
+	flash_lock and flash_unlock to to work properly when the location
+	of the flash in the memory map is at the very top of the address
+	space.  We check and handle values that may overflow.
+
+2001-10-28  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash.c (flash_erase): Don't call hardware layer if block
+	appears to be already erased [faster and less wear & tear].
+
+2001-10-25  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* include/flash_dev.h: Fix test of 4x16-bit flash parts.
+	Spotted by Jose Pascual <josepascual@almudi.com>
+
+2001-10-16  Jesper Skov  <jskov@redhat.com>
+
+	* src/flash.c: Include string.h
+
+	* cdl/io_flash.cdl: Package requires ISOINFRA and string
+	functions.
+
+2001-10-15  David Howells  <dhowells@redhat.com>
+
+	* src/flash.c: Include string.h to get mem*() functions.
+
+2001-09-25  Gary Thomas  <gthomas@redhat.com>
+
+	* include/flash.h: Remove warning on printf() prototype.
+
+2001-08-10  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/io_flash.cdl: Changed flavor of
+	CYGHWR_IO_FLASH_BLOCK_LOCKING to booldata.
+	* include/flash.h: Matching changes.
+	* src/flash.c: Matching changes.
+
+2001-07-23  David Howells  <dhowells@redhat.com>
+
+	* cdl/io_flash.cdl: Added software write protect option.
+	* include/flash.h: Ditto.
+	* src/flash.c: Added software write protect option and bank
+	support, and prevented low-level writes from being handed
+	cross-block data chunks.
+
+2001-07-20  Gary Thomas  <gthomas@redhat.com>
+
+	* include/flash.h: 
+	* cdl/io_flash.cdl: Name convention: CYGINT_FLASH_WORKSPACE_SIZE 
+	renamed to be CYGNUM_FLASH_WORKSPACE_SIZE.
+
+2001-07-19  Gary Thomas  <gthomas@redhat.com>
+
+	* include/flash.h: 
+	* cdl/io_flash.cdl: New option CYGINT_FLASH_WORKSPACE_SIZE used
+	to control how much memory is reserved for use by FLASH drivers.
+
+2001-06-19  Hugo Tyson  <hmt@redhat.com>
+
+	* src/flash.c (flash_program): Only verify program with memcmp if
+	the status code suggests the programming went OK so far.
+	Otherwise all errors become verify errors.
+
+	(flash_init): Fix bug in removal of dependency of printf().  The
+	pointer was not initialized until after the call into the driver.
+
+2001-06-11  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash.c: 
+	* include/flash.h: Remove dependency on printf() via user functions.
+
+2001-05-23  Jesper Skov  <jskov@redhat.com>
+
+	* include/flash_dev.h (FLASH_P2V): Use CYG_ADDRWORD instead of int.
+
+	* src/flash.c: Copy functions to RAM iff
+	CYGHWR_IO_FLASH_DEVICE_NOT_IN_RAM defined.
+
+	* cdl/io_flash.cdl: Changed CYGHWR_IO_FLASH_DEVICE_IN_RAM to
+	CYGHWR_IO_FLASH_DEVICE_NOT_IN_RAM.
+
+2001-05-21  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* include/flash_dev.h: Fix cyg_uin16 typo.
+
+2001-03-29  Mark Salter  <msalter@redhat.com>
+
+	* cdl/io_flash.cdl (CYGSEM_IO_FLASH_VERIFY_PROGRAM): New option
+	to control whether or not to perform extra verification of flash
+	programming.
+	* src/flash.c (flash_program): No verification unless
+	CYGSEM_IO_FLASH_VERIFY_PROGRAM defined.
+
+2001-03-21  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash.c (flash_program): Verify data after programming.
+
+2001-03-21  Jesper Skov  <jskov@redhat.com>
+
+	* include/flash.h: Added low voltage error message.
+	* src/flash.c: And its error message.
+
+2001-03-17  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash.c (flash_program): 
+	* include/flash.h: Add support for [StrataFLASH] buffered writes.
+	This requires knowledge of the device write buffer size [saved].
+
+2001-03-01  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash.c: 
+	* include/flash.h: Allow platform to define pre/post routines
+	to enable/disable device access.  These may be required, e.g.
+	to turn on some voltage, etc.
+
+2001-02-23  Jesper Skov  <jskov@redhat.com>
+
+	* include/flash.h: HAL_FLASH_CACHES_WANT_OPTIMAL replaced with
+	(opposite sense) HAL_FLASH_CACHES_OLD_MACROS.
+
+	* src/flash.c (__anonymizer): Use to force the compiler to use
+	jumps instead of branches.
+
+2001-02-22  Jesper Skov  <jskov@redhat.com>
+
+	* include/flash_dev.h: Added. Contains macros and definitions
+	common to all (new style) flash device drivers.
+
+	* include/flash.h: Added two new error codes.
+	* cdl/io_flash.cdl: Added CYGHWR_IO_FLASH_DEVICE_IN_RAM.
+	* src/flash.c: Made functions respect
+	CYGHWR_IO_FLASH_DEVICE_IN_RAM and jump directly to the code
+	instead of copying it around.
+	(__arm_broken): Work around problem with ARM tools.
+
+2001-02-06  Hugo Tyson  <hmt@redhat.com>
+
+	* src/flash.c (flash_erase): Add an additional argument to the
+	call into the driver, being the blocksize (as discovered).  This
+	allows a gross check for actual erase in some drivers.  Those that
+	don't use it, it's harmless - after all, this is an API by trust.
+
+2000-12-06  Jesper Skov  <jskov@redhat.com>
+
+	* src/flash.c (flash_dev_query): Added. Allows reloc/cache magic
+	to be removed from device drivers (eventually). Also fixed some
+	warnings, and made function references use char[] instead of just
+	char to prevent MIPS compiler from messing up.
+
+	* include/flash.h: Added FLASH_ERR_DRV_VERIFY and flash_dev_query.
+
+2000-11-27  Jesper Skov  <jskov@redhat.com>
+
+	* src/flash.c: Do all flash access inside properly
+	cache-controlled region.
+	* include/flash.h: Cache definitions.
+
+2000-11-17  Jesper Skov  <jskov@redhat.com>
+
+	* src/flash.c: Added debug mode, allowing device driver to use printf.
+
+2000-11-16  Jesper Skov  <jskov@redhat.com>
+
+	* src/flash.c: Added suspend error messages.
+	* include/flash.h: Same.
+
+2000-09-01  Hugo Tyson  <hmt@cygnus.co.uk>
+
+	* include/flash.h: 
+	* src/flash.c: CYGHWR_IO_FLASH_BLOCK_LOCKING is an interface, so
+	it's always defined; look for > 0 instead.
+
+2000-08-28  Gary Thomas  <gthomas@redhat.com>
+
+	* src/flash.c: 
+	* include/flash.h: 
+	* cdl/io_flash.cdl: Support block locking (optional by hardware).
+
+2000-08-22  Hugo Tyson  <hmt@cygnus.co.uk>
+
+	* src/flash.c (flash_program): Add HAL_ICACHE_DISABLE/ENABLE pairs
+	around calls to RAM copy of programming/erasing function - this is
+	necessary to get reliable operation on EBSA285 and similar.
+	Otherwise, what is in the instruction cache might be run instead.
+
+2000-08-14  Gary Thomas  <gthomas@redhat.com>
+
+	* include/flash.h: Add block size mask for finding block boundaries.
+
+	* src/flash.c: Use block size properly.
+
+2000-07-29  Gary Thomas  <gthomas@redhat.com>
+
+	* include/flash.h: 
+	* src/flash.c (flash_get_block_info): New function.
+	(flash_program): Program in block_size chunks as much as possible.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2005, 2006, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

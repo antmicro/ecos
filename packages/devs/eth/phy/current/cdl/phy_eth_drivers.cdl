@@ -1,0 +1,216 @@
+#====================================================================
+#
+#      phy_eth_drivers.cdl
+#
+#      API support for ethernet transceivers (PHY)
+#
+#====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2003, 2010 Free Software Foundation, Inc.                        
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      gthomas
+# Original data:  gthomas
+# Contributors:   gthomas
+# Date:           2003-08-01
+#
+#####DESCRIPTIONEND####
+#
+#====================================================================
+
+cdl_package CYGPKG_DEVS_ETH_PHY {
+    display       "Ethernet transciever (PHY) support"
+    doc           ref/io-eth-phy-generic.html
+    description   "API for ethernet PHY devices"
+
+    parent        CYGPKG_IO_ETH_DRIVERS
+    active_if	  CYGPKG_IO_ETH_DRIVERS
+    requires      CYGSEM_HAL_VIRTUAL_VECTOR_SUPPORT
+
+    include_dir   cyg/io
+
+    compile eth_phy.c
+
+    cdl_option CYGDBG_DEVS_ETH_PHY {
+        display       "Enable driver debugging"
+        flavor        bool
+        default_value 0
+        description   "Enables the diagnostic debug messages on the
+                       console device."
+    }
+
+    cdl_option CYGINT_DEVS_ETH_PHY_AUTO_NEGOTIATION_TIME {
+        display       "Time period (seconds) to wait for auto-negotiation"
+        flavor        data
+        default_value 5
+        description "
+           The length of time to wait for auto-negotiation to complete
+           before giving up and declaring the link dead/missing."
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_DP8384X {
+        display       "NSDP8384X"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a DP83847.c
+        description "
+          Include support for National Semiconductor DP8384X DsPHYTER II"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_AM79C874 {
+        display       "AMD 79C874"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a AM79C874.c
+        description "
+          Include support for AMD 79C874 NetPHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_INLXT972 {
+        display       "Intel LXT972"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a INLXT972.c
+        description "
+          Include support for Intel LXT972xxx PHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_ICS1890 {
+        display       "ICS 1890"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a ics189x.c
+        description "
+          Include support for ICS 1890 PHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_ICS1892 {
+        display       "ICS 1892"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a ics189x.c
+        description "
+          Include support for ICS 1892 PHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_ICS1893 {
+        display       "ICS 1893"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a ics189x.c
+        description "
+          Include support for ICS 1893 and 1893AF PHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_DM9161A {
+        display       "Davicom DM9161A"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a DM9161A.c
+        description "
+          Include support for the Davicom DM9161A PHY"
+    }
+    
+    cdl_option CYGHWR_DEVS_ETH_PHY_KS8721 {
+        display       "Micrel KS8721"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a KS8721.c
+        description "
+          Include support for the Micrel KS8721 PHY"
+    }
+    
+    cdl_option CYGHWR_DEVS_ETH_PHY_KSZ8001 {
+        display       "Micrel KSZ8001"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a KSZ8001.c
+        description "
+          Include support for the Micrel KSZ8001 PHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_KSZ8041 {
+        display       "Micrel KSZ8041"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a KSZ8041.c
+        description "
+          Include support for the Micrel KSZ8041 PHY"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_KSZ90x1 {
+        display       "Micrel KSZ90x1"                                
+        flavor        bool                                            
+        default_value 0                                              
+        compile       -library=libextras.a KSZ90x1.c                     
+        description "                                                   
+          Include support for the Micrel KSZ9021/KSZ9031 PHY"                    
+    }         
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_IP101A {
+        display       "IC+ IP101A"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a IP101A.c
+        description "
+          Include support for IC+ IP101A"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_VSC8641 {
+        display       "Vitesse VSC8641"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a VSC8641.c
+        description "
+          Include support for Vitesse VSC8641"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_VSC8244 {
+        display       "Vitesse VSC8244"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a VSC8244.c
+        description "
+          Include support for Vitesse VSC8244"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_PHY_MV88E1518 {
+        display       "Marvell 88E1518"
+        flavor        bool
+        default_value 0
+        compile       -library=libextras.a MV88E1518.c
+        description "
+          Include support for PHY Marvell 88E1518"
+    }	
+
+}

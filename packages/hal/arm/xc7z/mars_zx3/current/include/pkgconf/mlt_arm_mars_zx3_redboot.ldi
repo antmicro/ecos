@@ -1,0 +1,34 @@
+// eCos memory layout - Wed Jun 27 18:44:55 2012
+//
+// =============================================================================
+#include <cyg/infra/cyg_type.inc>
+
+MEMORY
+{
+    sram0 : ORIGIN = 0xFFFC0000, LENGTH = 0x00040000
+    // Original mapping.
+    //sdram : ORIGIN = 0x00000000, LENGTH = 0x40000000
+    sdram : ORIGIN = 0x00100000, LENGTH = 0x3FEFFFFF
+}
+
+SECTIONS
+{
+    SECTIONS_BEGIN
+    // Original mapping
+    //SECTION_rom_vectors (sdram, 0x00000000, LMA_EQ_VMA)
+    SECTION_rom_vectors (sdram, 0x00100000, LMA_EQ_VMA)
+    SECTION_fixed_vectors (sdram, 0x00100040, LMA_EQ_VMA)
+    SECTION_RELOCS (sdram, ALIGN (0x1), LMA_EQ_VMA)
+    SECTION_text (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_fini (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_rodata (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_rodata1 (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_got (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_fixup (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_gcc_except_table (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    SECTION_data (sdram, ALIGN (0x4), FOLLOWING (.gcc_except_table))
+    SECTION_mmu_tables (sdram, ALIGN (0x4000), LMA_EQ_VMA)
+    SECTION_bss (sdram, ALIGN (0x4), LMA_EQ_VMA)
+    CYG_LABEL_DEFN(__heap1) = ALIGN (0x8);
+    SECTIONS_END
+}

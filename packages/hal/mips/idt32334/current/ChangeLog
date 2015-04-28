@@ -1,0 +1,61 @@
+2009-02-12  John Dallaway  <john@dallaway.org.uk>
+
+	* src/mips_idt32334.ld: Process *(.gcc_except_table.*) as for i386
+	architecture.
+
+2004-07-31  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/var_intr.c (hal_extended_isr): Only need to check bits 1 to 14.
+	Fix for bug #1000106.
+
+2004-04-22  Jani Monoses <jani@iv.ro>
+
+	 * cdl/hal_mips_idt32334.cdl :
+	 Invoke tail with stricter syntax that works in latest coreutils. 
+
+2003-04-29  Tim Michals  <t.michals@attbi.com>
+
+	* include/variant.inc (hal_intc_translation_table): Updated.
+	* src/var_intr.c (hal_extended_isr): fix loop bug.
+	(cyg_hal_interrupt_acknowledge):  Handle interrupts for serial
+	ports.
+
+2003-04-10  Nick Garnett  <nickg@balti.calivar.com>
+
+	* src/mips_idt32334.ld: 
+	Added libsupc++.a to GROUP() directive for GCC versions later than
+	3.0.
+
+2003-04-09  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/mips_idt32334.ld:
+        Fix .gnulinkonce.s -> .gnu.linkonce.s typo.
+
+2003-02-13  Tim Michals  <t.michals@attbi.com>
+2003-02-13  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* New package - support for MIPS IDT 79s334a board.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

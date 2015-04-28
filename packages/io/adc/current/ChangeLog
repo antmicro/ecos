@@ -1,0 +1,52 @@
+2010-06-06 ccoutand <ccoutand@stmi.com>
+	* doc/adc.sgml
+	Updated documentation, add new ADC data flush and 
+	correct Copy/Paste in enable_io
+
+2010-05-25 ccoutand <ccoutand@stmi.com>
+	* src/adc.c: 
+	Add new key to ADC driver to flush data buffer:
+	CYG_IO_SET_CONFIG_ADC_DATA_FLUSH
+
+2009-03-02  Simon Kallweit  <simon.kallweit@intefo.ch>
+
+	* cdl/io_adc.cdl:
+	* tests/adc1.c:
+	* tests/adc2.c:
+	Added generic ADC device driver tests.
+
+2008-12-30  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/io_adc.cdl: Reference per-package documentation.
+
+2008-08-08  Nick Garnett  <nickg@ecoscentric.com>
+
+	* cdl/io_adc.cdl:
+	* doc/adc.sgml:
+	* include/adc.h: 
+	* src/adc.c:
+	New package -- ADC generic driver support.
+
+##==========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2008 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+##==========================================================================

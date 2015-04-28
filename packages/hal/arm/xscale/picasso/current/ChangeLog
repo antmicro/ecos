@@ -1,0 +1,82 @@
+2009-10-16  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_arm_xscale_picasso.cdl: Parent under
+	CYGPKG_HAL_ARM_XSCALE_PXA2X0.
+
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_xscale_picasso.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_xscale_picasso.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc.
+
+2009-01-24  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/vga_support.c: fix build problem with latest toolchains.
+
+2003-09-21  Gary Thomas  <gary@mlbassoc.com>
+
+	* misc/redboot_RAM.ecm: 
+	* misc/redboot_ROM.ecm:  Adjust for changes in RedBoot
+	template - DNS now must be enabled manually.
+
+2003-09-20  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/picasso_ide.c: IDE init needs to return number of controllers found.
+
+2003-08-22  Gary Thomas  <gary@mind.be>
+
+	* src/xilinx-load.c: 
+	* src/vga_support.c: 
+	* src/picasso_pci_bitstream.h: 
+	* src/picasso_pci.c: 
+	* src/picasso_misc.c: 
+	* src/picasso_ide.c: 
+	* src/font.h: 
+	* src/banner.xpm: 
+	* misc/redboot_ROM.ecm: 
+	* misc/redboot_RAM.ecm: 
+	* include/pkgconf/mlt_arm_xscale_picasso_rom.mlt: 
+	* include/pkgconf/mlt_arm_xscale_picasso_rom.ldi: 
+	* include/pkgconf/mlt_arm_xscale_picasso_rom.h: 
+	* include/pkgconf/mlt_arm_xscale_picasso_ram.mlt: 
+	* include/pkgconf/mlt_arm_xscale_picasso_ram.ldi: 
+	* include/pkgconf/mlt_arm_xscale_picasso_ram.h: 
+	* include/vga_support.h: 
+	* include/plx.h: 
+	* include/plf_mmap.h: 
+	* include/plf_io.h: 
+	* include/picasso.h: 
+	* include/hal_plf_ints.h: 
+	* include/hal_platform_setup.h: 
+	* cdl/hal_arm_xscale_picasso.cdl: 
+	New package - support for NMI uEngine based "picasso" board
+
+2003-06-04  Gary Thomas  <gary@mind.be>
+
+	* src/xilinx-load.c: Improve feedback during FPGA downloads.
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

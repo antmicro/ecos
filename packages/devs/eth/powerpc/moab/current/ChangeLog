@@ -1,0 +1,57 @@
+2011-07-22  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* cdl/moab_eth_drivers.cdl:
+	Update due renaming CYGHWR_DEVS_ETH_PHY_DP83847 to
+	CYGHWR_DEVS_ETH_PHY_DP8384X. [ Bugzilla 1001235 ]
+
+2005-07-18  David Vrabel  <dvrabel@arcom.com>
+
+	* include/moab_eth_dp83816.inl: Remove unneeded _h2le and _le2h
+	functions.
+
+2003-10-02  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/moab_eth_dp83816.inl: 
+	* include/moab_eth.inl: Default ethernet station addresses are now 
+	computed by system startup, based on CPU serial number.
+
+2003-09-30  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/moab_eth_dp83816.inl: 
+	* include/moab_eth.inl: Change device names used by RedBoot to eth0/eth1
+	* include/moab_eth_dp83816.inl: 
+	* cdl/moab_eth_drivers.cdl: Add support for 2nd LAN device, based
+	on National Semiconductor DP83816.
+
+2003-09-19  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/moab_eth.inl: 
+	* cdl/moab_eth_drivers.cdl: New package - ethernet support for
+	TAMS MOAB (PowerPC 405GPr) board
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+	
+	
+

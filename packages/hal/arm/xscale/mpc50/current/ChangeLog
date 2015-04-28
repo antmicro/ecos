@@ -1,0 +1,52 @@
+2009-10-16  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_arm_xscale_mpc50.cdl: Parent under
+	CYGPKG_HAL_ARM_XSCALE_PXA2X0.
+
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_xscale_mpc50.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_xscale_mpc50.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc.
+
+2003-02-20  Gary Thomas  <gary@mind.be>
+
+	* src/mpc50_misc.c (plf_hardware_init): Platform needs to call
+	hal_if_init().
+
+2003-02-05  Nick Garnett  <nickg@calivar.com>
+
+	* cdl/hal_arm_xscale_mpc50.cdl: Changed compiler prefix to arm-elf
+	and added -mcpu=xscale to global flags.
+
+2003-01-24  Knud Woehler <knud.woehler@microplex.de>
+2003-01-24  Mark Salter <msalter@redhat.com>
+
+	* Initial import from Knud Woehler.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2003, 2009 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

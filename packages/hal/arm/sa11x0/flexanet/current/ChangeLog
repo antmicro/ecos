@@ -1,0 +1,60 @@
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_sa11x0_flexanet.cdl: update compiler flags for
+	recent gcc
+
+2003-02-13  Patrick Doyle  <wpd@delcomsys.com>
+	* src/flexanet_misc.c: Replaced explicit prototype of memset with
+	#include <string.h>.
+
+2002-05-14  Jesper Skov  <jskov@redhat.com>
+
+	* src/flexanet_misc.c: Fixed warning.
+
+2002-05-07  Gary Thomas  <gthomas@redhat.com>
+
+	* cdl/hal_arm_sa11x0_flexanet.cdl: 
+	Standardize CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_DEFAULT usage.
+
+
+2002-01-28  Jesper Skov  <jskov@redhat.com>
+
+	* include/plf_io.h: Added.
+
+2001-10-30  Jordi Colomer <jco@ict.es>
+
+	* include/flexanet.h: minor changes to the GPIO usage.
+	* include/hal_platform_setup.h: solved some problems with the
+	sleep/wakeup procedure.
+
+2001-10-04  Jordi Colomer <jco@ict.es>
+
+	* include/hal_platform_setup.h: Add sleep/resume support.
+
+2001-07-27  Jordi Colomer  <jco@ict.es>
+	
+	* Initial version of support for BSE Flexanet/SA1110 handheld board.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

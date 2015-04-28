@@ -1,0 +1,72 @@
+2003-05-13  Thomas Koeller  <thomas.koeller@baslerweb.com>
+
+        * src/power.cxx: Fixed use of non-existant type 'cyg_uint'.
+
+2003-02-25  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* doc/power.sgml: Declare as <part> not <reference> to get
+	correct TOC numbering.
+	Fix build on some jade versions by using &amp; instead of
+	plain '&'.
+
+2003-02-24  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/power.cdl: Fix doc links for config tool's doc system.
+
+	* doc/power.sgml: Comment out DOCTYPE for now to allow building
+	with standard doc build.
+
+2001-11-21  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* include/power.h: Use a POWER_INLINE macro for "inline" to allow
+	non-inline versions to be defined when the C compiler chooses not to
+	inline.
+	* src/power.cxx: Using POWER_INLINE, define the non-inline versions
+	here.
+
+2001-08-01  Bart Veer  <bartv@redhat.com>
+
+	* doc/power.sgml, doc/*.html:
+	Major update to reflect the changes below and clarify
+	the expected behaviour.
+
+	* include/power.h:
+	* src/power.cxx:
+	Merge from development version. Various issues such as
+	synchronization should now be resolved.
+
+	* cdl/power.cdl:
+	Remove constraints requiring HAL support.
+	Add build-related options.
+
+	* tests/powertest.cxx:
+	Start of a testcase for power management
+	
+
+2001-07-13  Bart Veer  <bartv@redhat.com>
+
+	* Initial check-in
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

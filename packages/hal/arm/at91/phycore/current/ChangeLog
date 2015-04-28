@@ -1,0 +1,49 @@
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_at91_phycore.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_at91_phycore.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc. Remove -mno-short-load-words.
+
+2004-10-13  Sebastian Block  <sebastianblock@gmx.net>
+
+	* cdl/hal_arm_at91_phycore.cdl: 
+	* include/plf_io.h: 
+	* include/hal_platform_setup.h: 
+	* include/hal_platform_ints.h: 
+	* include/pkgconf/mlt_arm_at91_phycore_ram.ldi: 
+	* include/pkgconf/mlt_arm_at91_phycore_ram.h: 
+	* include/pkgconf/mlt_arm_at91_phycore_rom.ldi: 
+	* include/pkgconf/mlt_arm_at91_phycore_rom.h: 
+	* include/pkgconf/mlt_arm_at91_phycore_romram.ldi: 
+	* include/pkgconf/mlt_arm_at91_phycore_romram.h: 
+	* src/phycore_misc.c: 
+	New HAL added to support the Phytec phyCore AT91M55800A
+	board. Adapted from the EB55 HAL by Nick Garnett.
+
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

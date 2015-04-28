@@ -1,0 +1,52 @@
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_h8300_h8300h_h8max.cdl: update compiler flags for gcc 4.x
+
+2004-03-17  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* src/hal_diag.c
+	fix warning.
+
+2004-03-02  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* include/platform.inc
+	add h8300_save_vectors macro.
+
+2004-02-24  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* cdl/hal_h8300_h8300h_h8max.cdl
+	add Linker flags "-relax"
+	move CYGSEM_HAL_H8300_VECTOR_HOOK to hal_h8300.cdl
+
+2003-12-26  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* include/plf_io.h
+	use endian macros.
+
+2003-03-09  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* New package.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

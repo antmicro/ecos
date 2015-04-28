@@ -1,0 +1,44 @@
+2004-11-22  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/arm_e7t_flash.c: use updated CYG_FLASH_DRIVER() macro for
+	completely static initialization.
+
+2004-08-03  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/flash_e7t.cdl:
+	* src/arm_e7t_flash.c: Make use of the new sst driver which uses 
+	the new flash driver API.
+
+2003-11-04  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/flash_e7t.cdl: 
+	* src/arm_e7t_flash.c: Updates to use the new 39VFXXX generic driver.
+
+2003-07-03  Chris Garry <cgarry@sweeneydesign.co.uk>
+
+	* src/arm_e7t_flash.h: 
+	* cdl/flash_e7t.cdl: New package/file(s).
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

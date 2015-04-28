@@ -1,0 +1,241 @@
+#==========================================================================
+#
+#      stm32_eth.cdl
+#
+#      Ethernet drivers for ST STM32 Cores
+#
+#==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2010, 2011, 2012, 2013 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+#==========================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):    Jerzy Dyrda (jerzdy@gmail.com)
+# Contributors:
+# Date:         2010-11-04
+# Purpose:
+# Description:
+#
+#####DESCRIPTIONEND####
+#
+#========================================================================*/
+
+cdl_package CYGPKG_DEVS_ETH_CORTEXM_STM32 {
+    display       "ST STM32 ethernet driver"
+    parent        CYGPKG_IO_ETH_DRIVERS
+    active_if     CYGPKG_IO_ETH_DRIVERS
+    active_if     CYGPKG_HAL_CORTEXM_STM32
+
+    implements    CYGHWR_NET_DRIVERS
+    implements    CYGHWR_NET_DRIVER_ETH0
+
+    include_dir   net
+    description   "
+       Ethernet driver for ST STM32 controler."
+
+    compile       -library=libextras.a if_stm32.c
+
+    cdl_option CYGPKG_DEVS_ETH_CORTEXM_STM32_DEBUG_LEVEL {
+         display "Driver debug output level"
+         flavor  data
+         legal_values {0 1 2 3}
+         default_value 0
+         description   "
+             This option specifies the level of debug data output by
+             the STM32 ethernet device driver. A value of 0 signifies
+             no debug data output; 1 signifies normal debug data
+             output; 2 signifies extended debug data output;
+             and 3 signifies maximum debug data output (not
+             suitable when GDB and application are sharing an ethernet
+             port)."
+    }
+
+    cdl_option CYGSEM_DEVS_ETH_CORTEXM_STM32_INTF {
+        display       "Type of interface to PHY"
+        flavor        data
+        default_value {"RMII"}
+        legal_values  {"MII" "RMII"}
+        description   "
+            Type of interface used to connect with PHY : MII or RMII"
+    }
+
+    cdl_option CYGSEM_DEVS_ETH_CORTEXM_STM32_REMAP_PINS {
+        display       "MII/RMII pins remapped"
+        flavor        bool
+        default_value 0
+        description     "
+            MII/RMII interface signals are remapped"
+    }
+
+    cdl_option CYGHWR_DEVS_ETH_CORTEXM_STM32_PHY_CLK_MCO {
+            display         "Configure MCO as PHY clock"
+            default_value   0
+            description     "
+                Enable the MCO clock signals as clock for PHY."
+        }
+
+    cdl_option CYGNUM_DEVS_ETH_CORTEXM_STM32_RX_BUFS {
+        display       "Number of RX buffers"
+        flavor        data
+        default_value 6
+        legal_values  2 to 16
+        description   "
+            Number of receive buffers. Each buffer is 1520 bytes in size"
+    }
+
+    cdl_component CYGSEM_DEVS_ETH_CORTEXM_STM32_CHECKSUM {
+        display "TCP/IP checksums"
+        flavor none
+        no_define
+        active_if { is_active (CYGPKG_LWIP_CHECKSUMS) }
+        description "
+            STM32 Ethernet controller  provides for hardware TCP/IP
+            header checksum generation and check."
+
+        active_if CYGPKG_NET_LWIP
+        requires CYGPKG_LWIP_CHECKSUMS
+
+
+        cdl_option CYGSEM_DEVS_ETH_CORTEXM_STM32_TX_CHECKSUM_GEN {
+            display       "Generating the checksum for transmitting packets"
+            flavor        bool
+            default_value 1
+            requires      { is_active(CYGPKG_LWIP_CHECKSUMS) implies
+                              0 == CYGIMP_LWIP_CHECKSUM_GEN_IP }
+            requires      { is_active(CYGPKG_LWIP_CHECKSUMS) implies
+                              0 == CYGIMP_LWIP_CHECKSUM_GEN_UDP }
+            requires      { is_active(CYGPKG_LWIP_CHECKSUMS) implies
+                              0 == CYGIMP_LWIP_CHECKSUM_GEN_TCP }
+            description     "
+                Generating and inserting the checksum of the IP, UDP, TCP
+                and ICMP protocols by hardware for transmitting packets."
+        }
+
+        cdl_option CYGSEM_DEVS_ETH_CORTEXM_STM32_RX_CHECKSUM_VER {
+            display       "Verifying the checksum for receiving packets"
+            flavor        bool
+            default_value 1
+            requires      { is_active(CYGPKG_LWIP_CHECKSUMS) implies
+                              0 == CYGIMP_LWIP_CHECKSUM_CHECK_IP }
+            requires      { is_active(CYGPKG_LWIP_CHECKSUMS) implies
+                              0 == CYGIMP_LWIP_CHECKSUM_CHECK_UDP }
+            requires      { is_active(CYGPKG_LWIP_CHECKSUMS) implies
+                              0 == CYGIMP_LWIP_CHECKSUM_CHECK_TCP }
+            description   "
+                Verifying the checksum of the IP, UDP, TCP and ICMP
+                protocols by hardware for receiving packets."
+        }
+
+        cdl_option CYGSEM_ETH_LWIP_CHECKSUMS {
+            display "lwIP Checksum calculation"
+            flavor none
+            no_define
+            description "
+                Re-enable lwIP software checksum generation/check if
+                hardware generation/check is disabled."
+
+            requires { !CYGSEM_DEVS_ETH_CORTEXM_STM32_TX_CHECKSUM_GEN implies
+                CYGIMP_LWIP_CHECKSUM_GEN_IP == 1 }
+            requires { !CYGSEM_DEVS_ETH_CORTEXM_STM32_TX_CHECKSUM_GEN implies
+                CYGIMP_LWIP_CHECKSUM_GEN_TCP == 1 }
+            requires { !CYGSEM_DEVS_ETH_CORTEXM_STM32_TX_CHECKSUM_GEN implies
+                CYGIMP_LWIP_CHECKSUM_GEN_UDP == 1 }
+
+            requires { !CYGSEM_DEVS_ETH_CORTEXM_STM32_RX_CHECKSUM_VER implies
+                CYGIMP_LWIP_CHECKSUM_CHECK_IP == 1 }
+            requires { !CYGSEM_DEVS_ETH_CORTEXM_STM32_RX_CHECKSUM_VER implies
+                CYGIMP_LWIP_CHECKSUM_CHECK_TCP == 1 }
+            requires { !CYGSEM_DEVS_ETH_CORTEXM_STM32_RX_CHECKSUM_VER implies
+                CYGIMP_LWIP_CHECKSUM_CHECK_UDP == 1 }
+        }
+    }
+
+    cdl_component CYGPKG_DEVS_ETH_CORTEXM_STM32_REDBOOT_HOLDS_ESA {
+        display         "RedBoot manages ESA initialization data"
+        flavor          bool
+        default_value   0
+
+        active_if     CYGSEM_HAL_VIRTUAL_VECTOR_SUPPORT
+        active_if     (CYGPKG_REDBOOT || CYGSEM_HAL_USE_ROM_MONITOR)
+
+        description   "
+            Enabling this option will allow the ethernet station
+            address to be acquired from RedBoot's configuration data,
+            stored in flash memory.  It can be overridden individually
+            by the 'Set the ethernet station address' option for each
+            interface."
+
+
+        cdl_component CYGPKG_DEVS_ETH_CORTEXM_STM32_REDBOOT_HOLDS_ESA_VARS {
+            display        "Export RedBoot command to set ESA in FLASH config"
+            flavor         none
+            no_define
+            description "
+                This component contains options which, when enabled, allow
+                RedBoot to support the setting of the ESA in the FLASH
+                configuration. This can then subsequently be accessed by
+                applications using virtual vector calls if those applications
+                are also built with
+                CYGPKG_DEVS_ETH_CORTEXM_STM32_REDBOOT_HOLDS_ESA enabled."
+
+            cdl_option CYGSEM_DEVS_ETH_CORTEXM_STM32_REDBOOT_HOLDS_ESA_ETH0 {
+                display         "RedBoot manages ESA for eth0"
+                flavor          bool
+                default_value   1
+                active_if       CYGSEM_REDBOOT_FLASH_CONFIG
+                active_if       CYGPKG_REDBOOT_NETWORKING
+            }
+        }
+    }
+
+    cdl_option CYGPKG_DEVS_ETH_CORTEXM_STM32_MACADDR {
+        display "Ethernet station (MAC) address for eth0"
+        flavor  data
+        default_value {"0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC"}
+        description   "The default ethernet station address. This is the
+                       MAC address used when no value is found in the
+                       RedBoot FLASH configuration field."
+    }
+
+    cdl_option  CYGPKG_DEVS_ETH_CORTEXM_STM32_CFLAGS_ADD {
+        display "Additional compiler flags"
+        flavor  data
+        no_define
+        default_value { "-D_KERNEL -D__ECOS" }
+        description   "
+            This option modifies the set of compiler flags for
+            building the ST STM32 ethernet driver package.
+            These flags are used in addition to the set of global flags."
+    }
+}
+
+# EOF stm32_eth.cdl

@@ -1,0 +1,72 @@
+2008-11-17  Jonathan Larmour  <jifl@eCosCentric.com>
+
+        * cdl/flash_viper.cdl:
+        Don't implement CYGHWR_IO_FLASH_DEVICE here. Leave it for
+        the chip driver.
+
+2003-09-05  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/viper_flash.c: Need <pkgconf.h> to make platform decisions!
+
+2003-08-19  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/viper_flash.c: Support new board layout which has 16bit
+	wide FLASH devices.
+	
+	* cdl/flash_viper.cdl: Add new 8MB device AM29LV640.
+
+2002-06-24  Gary Thomas  <gary@chez-thomas.org>
+
+	* cdl/flash_viper.cdl: Old devices use AM29LV800 chip.
+
+2002-06-20  Gary Thomas  <gary@chez-thomas.org>
+
+	* src/flash_query.c: 
+	* src/flash_program_buf.c: 
+	* src/flash_erase_block.c: 
+	* src/flash.h: Removed file(s).
+
+	* src/viper_flash.c: 
+	* cdl/flash_viper.cdl: Update to use generic AMD FLASH drivers.
+
+2001-06-11  Gary Thomas  <gthomas@redhat.com>
+
+	* src/viper_flash.c: Remove dependency on printf() via user functions.
+
+2001-05-23  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/flash_viper.cdl: Needs IO controller to copy functions to
+	RAM.
+
+2001-01-22  Gary Thomas  <gthomas@redhat.com>
+
+	* src/viper_flash.c: 
+	* src/flash_query.c: 
+	* src/flash_program_buf.c: 
+	* src/flash_erase_block.c: 
+	* src/flash.h: 
+	* cdl/flash_viper.cdl: New package/file(s).
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

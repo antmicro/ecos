@@ -1,0 +1,62 @@
+2001-07-13  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c (cf_hwr_change_state): Check for VERS_1
+	field instead of MANID since some cards don't seem to have that one.
+	Suggested by I-Jui Sung <ijsung@csie.nctu.edu.tw>.
+
+2000-09-17  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c: Change interrupt functions to have same
+	calling convention as DSR.
+
+2000-09-12  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c: Fix build problem when built for eCos.
+
+2000-08-28  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c (cf_irq_dsr): Support [shared] network
+	debug situation where "IF" functions need to see device interrupts.
+	This is used to detect ^C over the connection.  This also requires
+	additional care when setting up the bus initially.
+
+2000-08-24  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c: Add hardware function to clear interrupts.
+
+2000-07-16  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c: Remove dependency in generic I/O package.
+
+2000-07-15  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c: Support new slot-oriented interrupts.
+
+2000-07-14  Gary Thomas  <gthomas@redhat.com>
+
+	* src/assabet_pcmcia.c: Support running in non-kernel (stand-alone)
+	environments.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

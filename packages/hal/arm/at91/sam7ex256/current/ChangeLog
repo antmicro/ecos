@@ -1,0 +1,42 @@
+2007-04-10  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/hal_arm_sam7ex256.cdl Removed "implements 
+	  CYGINT_DEVS_CAN_AT91SAM7_CAN0" because this interface is already
+	  implemented by package CYGPKG_HAL_ARM_AT91SAM7
+	  
+2007-04-06  Uwe Kindler  <uwe_kindler@web.de>
+
+	* src/sam7ex256_misc.c Added hal_plf_eth_init() in order to initialise 
+	  the Micrel KS8721 PHY properly on the Olimex board
+
+2007-08-01  Uwe Kindler  <uwe_kindler@web.de>
+
+	* src/sam7ex256_misc.c Use the backlight of the lcd as a simple 1-bit LED
+
+2006-12-30  Uwe Kindler  <uwe_kindler@web.de>
+
+	* SAM7-EX256 development board package
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2006 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,81 @@
+# Redboot minimal configuration
+# Target: TWR-K70F120M
+# Startup: ROM with external RAM
+
+
+cdl_savefile_version 1;
+cdl_savefile_command cdl_savefile_version {};
+cdl_savefile_command cdl_savefile_command {};
+cdl_savefile_command cdl_configuration { description hardware template package };
+cdl_savefile_command cdl_package { value_source user_value wizard_value inferred_value };
+cdl_savefile_command cdl_component { value_source user_value wizard_value inferred_value };
+cdl_savefile_command cdl_option { value_source user_value wizard_value inferred_value };
+cdl_savefile_command cdl_interface { value_source user_value wizard_value inferred_value };
+
+cdl_configuration eCos {
+    description "RedBoot Kinetis TWR-K60N512-FXM" ;
+    package CYGPKG_IO_FLASH current ;
+    package CYGPKG_IO_ETH_DRIVERS current ;
+};
+
+cdl_component CYGHWR_DEVS_FLASH_SPI_SST25XX_DEV0 {
+    user_value 1
+};
+
+cdl_option CYGNUM_HAL_CORTEXM_KINETIS_MCGOUT_FREQ_SP {
+    user_value 100000000
+};
+
+cdl_option CYGNUM_REDBOOT_FLASH_CONFIG_SIZE {
+    user_value 16384
+};
+
+cdl_option CYGSEM_REDBOOT_FLASH_COMBINED_FIS_AND_CONFIG {
+    user_value 0
+};
+
+#cdl_option CYGBLD_REDBOOT_LOAD_INTO_FLASH {
+#    user_value 1
+#};
+
+cdl_option CYGNUM_REDBOOT_FIS_DIRECTORY_BLOCK {
+    user_value -4
+};
+
+cdl_option CYGNUM_REDBOOT_FLASH_CONFIG_BLOCK {
+    user_value -8
+};
+
+#cdl_option CYGNUM_REDBOOT_FIS_DIRECTORY_ENTRY_COUNT {
+#    user_value 16
+#};
+
+#cdl_option CYGNUM_REDBOOT_FLASH_RESERVED_BASE {
+#    user_value 0x20000
+#};
+
+cdl_option CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK {
+    user_value 0
+};
+
+cdl_option CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE {
+    user_value 4096
+};
+
+cdl_option CYGDBG_HAL_COMMON_INTERRUPTS_SAVE_MINIMUM_CONTEXT {
+    user_value 0
+};
+
+cdl_option CYGDBG_HAL_CRCTABLE_LOCATION {
+    user_value ROM
+};
+
+cdl_option CYGSEM_HAL_ROM_MONITOR {
+    user_value 1
+};
+
+cdl_component CYGPKG_DEVS_ETH_FREESCALE_ENET_REDBOOT_HOLDS_ESA {
+    user_value 1
+};
+
+

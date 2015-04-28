@@ -1,0 +1,170 @@
+2012-04-20  Ilija Stanislevik  <ilijas@siva.mk>
+
+	* src/stm3210e_eval_eth_enc424j600.c: New file, initialization
+	of optional enc424j600 ethernet over SPI.
+
+	* include/plf_io.h: Add macro for initialization of optional
+	enc424j600 ethernet over SPI.
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: Add component
+	enc424j600 ethernet over SPI.
+
+2012-03-23  James Smith  <jsmith@ecoscentric.com>
+
+	* include/plf_io.h: Update GPIO pin definitions to use new PIN
+	wrapper macros. Update to use common SPEED_SPI name for SPI pin
+	speed selection.
+
+2012-02-29  James Smith  <jsmith@ecoscentric.com>
+
+	* src/stm3210e_eval_flash.c: Flash structure needs to be "const"
+	to match header.
+
+2012-01-12  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/plf_io.h: Add SPI and I2C pin and DMA definitions.
+
+2011-12-20  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: Just set a requires on
+	RedBoot's number of memory segments to be 2 rather than using a
+	non-configurable option.
+
+2011-12-08  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: Indicate to new STM32 variant
+	HAL CDL that this is an F103ZE processor.
+
+2011-01-27  Nick Garnett  <nickg@ecoscentric.com>
+
+	* misc/redboot_JTAG.ecm:
+	* misc/redboot_ROM.ecm: Define CYGNUM_REDBOOT_FLASH_RESERVED_DEVICES
+	to take on-chip flash out of FIS control.
+
+2011-01-01  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl
+	(CYGHWR_HAL_CORTEXM_STM32_FLASH): Should be on by default if generic flash
+	active in configuration.
+
+2010-08-29  John Dallaway  <john@dallaway.org.uk>
+
+	* misc/redboot_JTAG.ecm, misc/redbooot_ROM.ecm:
+	Inhibit the FIS directory entry for RedBoot and management of the
+	internal flash. Issues reported by Carlo Caione.
+
+2009-11-09  Ross Younger  <wry@ecoscentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: Add 
+	  CYGPKG_HAL_CORTEXM_STM32_STM3210E_EVAL_CFLAGS_{ADD,REMOVE},
+	  default to -Werror.
+
+2009-07-02  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/stm3210e_eval_misc.c (hal_system_init): Adjust clock enables
+	in line with changes to bit definitions.
+
+2009-02-04  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.ldi:
+	Add .sram section to linker scripts.
+
+2009-02-07  Chris Holgate  <chris@zynaptic.com>
+
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.ldi:
+	Modified SRAM section so that initialisation data is placed in ROM.
+
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: update compiler flags for gcc 4.x
+
+2008-12-10  Nick Garnett  <nickg@ecoscentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: Switch value for
+	CYGHWR_MEMORY_LAYOUT to calculated, so that changes to startup
+	type are correctly propagated.
+
+2008-11-20  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl: Remove doc link
+	to doc that doesn't exist.
+
+2008-11-19  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.ldi (hal_startup_stack):
+	Adjust initial stack to top of external SRAM.
+
+2008-10-28  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.h:	
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.h: Adjust top of
+	RAM to 1MB.
+	
+2008-10-10  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.h:	
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.h:
+	Update RAM/SRAM upper limits to account for interrupt/init
+	stack.
+
+	* src/stm3210e_eval_flash.c: Use generic null functions for
+	external flash lock operations.
+
+2008-10-06  Nick Garnett  <nickg@ecoscentric.com>
+
+	* cdl/hal_cortexm_stm32_stm3210e_eval.cdl:
+	* include/plf_arch.h:
+	* include/plf_intr.h:
+	* include/plf_io.h:
+	* src/stm3210e_eval_misc.c:
+	* src/stm3210e_eval_flash.c:
+	* misc/redboot_ROM.ecm:
+	* misc/redboot_JTAG.ecm:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_rom.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_ram.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_jtag.h:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.ldi:
+	* include/pkgconf/mlt_cortexm_stm3210e_eval_sram.h:
+	New package -- ST STM3210E EVAL board HAL.
+	
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2008, 2009, 2010 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

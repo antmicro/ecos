@@ -1,0 +1,232 @@
+2008-06-18  Oyvind Harboe  <oyvind.harboe@zylin.com>
+
+	* src/jim-aio.c (JimAioHandlerCommand): GCC 4.3.1 pointed out a
+	buffer overrun.
+
+2008-06-17 Anthony Tonizzo <atonizzo@gmail.com>
+
+	Jumbo patch containing many individual patches from a number of
+	different contributors on different days. The ChangeLog entries
+	for all these individual patches are:
+	
+        2007-12-02  Anthony Tonizzo <atonizzo@gmail.com>
+
+	* src/socket.c src/httpd.c: Corrected a bug in
+	cyg_httpd_write_chunked(): Now the CRLF that terminates a chunk is
+	added by the function and not expected to be there already in the
+	data supplied by the user. Modified the function
+	cyg_httpd_end_chunked() so that the flag
+	CYG_HTTPD_MODE_TRANSFER_CHUNKED is always cleared after it
+	terminates. The cyg_httpd_process_request() now loops as many
+	times as the number of full requests received.  Renamed header_end
+	to request_end to better reflect its real use, and the fact that
+	the former name was misleading for POST requests (Danny
+	Sade). Changed the function that collects a request: Now the
+	remaining part of an incomplete request is copied back to the
+	beginning of the buffer. This avoids that multiple split headers
+	might creep towards the end of the buffer.
+
+        2007-11-28  Rene' Nielsen <rbn@vitesse.com> and 
+	            Anthony Tonizzo <atonizzo@gmail.com>
+
+	* doc/athttpd.sgml: Included Digest (MD5) authentication as fully
+	supported.
+	* cdl/httpd.cdl: Updated the cdl to reflect the fact that MD5
+	authentication is now a fully tested feature, at least on some
+	clients (Thanks to Tad for testing this!)
+	* src/httpd.c: Added the initialization of the global variable
+	cyg_httpd_md5_response. This corrects a security hole that could
+	allow unauthenticated browsers to access pages that require
+	authentication. This required a minor change (switch of variables
+	used) in the authentication code. Added code to avoid a buffer
+	overflow during the parsing of headers for authenticated
+	pages. Clear the CYG_HTTPD_MODE_SEND_HEADER_ONLY at the beginning
+	of any request.
+	* src/auth.c: Removed dead code and made static a bunch of
+	functions and variables.
+	* src/auth.h: The AUTH_STORAGE_BUFFER_LENGTH value is now split
+	into two numbers, one that gives the maximum length of the login
+	phrase and one for the password.
+	* src/socket.c: Added a NULL terminator after each header packet
+	that is received. Now the strstr() is guaranteed to find
+	terminated string.
+
+        2007-11-27  Tad Artis <ecos@ds3switch.com>
+
+	* src/auth.c: Modified the cyg_httpd_digest_data() and
+	cyg_httpd_digest_skip() functions to support IE7. A careful read
+	of the augmented BNF in RFC2616 indicates that spaces within the
+	elements of the authentication header are optional. The original
+	atHTTPD code incorrectly relied on a space after the comma. Moved
+	the authentication check inside cyg_httpd_process_method() so that
+	each request, regardless of the type, will have to go through
+	authentication.
+
+        2007-11-26  Tad Artis <ecos@ds3switch.com> and 
+	            Anthony Tonizzo <atonizzo@gmail.com>
+
+	* src/forms.c: Checked for a null terminator inside
+	cyg_httpd_store_form_variable, so that we do not scan past the end
+	of the packet. Check the form variables for both length and
+	content, to avoid false positives. Modified cyg_httpd_from_hex()
+	to return -1 in case of error.
+	* src/httpd.c: Corrected the strings sent back by the server to
+	challenge the client to an MD5 authentication. Adds a couple of
+	commas to separate the items in the string.
+	* src/http.h:
+	* src/socket.h: Corrected a number of indexes where
+	CYGNUM_FILEIO_NFILE was used instead of the correct
+	CYGPKG_NET_MAXSOCKETS.
+
+2008-03-04  Danny Sade  <danny@channelot.com>
+
+	* src/socket.c: put NULL at the end of inbuff on each iteration,
+	preventing strstr from looking at old data beyond inbuffer_len
+
+2007-11-12  Oyvind Harboe  <oyvind.harboe@zylin.com>
+2007-11-12  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* doc/athttpd.sgml: added an example of a tcl script.
+	* src/http.c, forms.c: serve cgi requests before file system requests,
+	that way it isn't possible to download the actual cgi/.o script and
+	cgi works even if the http root directory is above the cgi directory.
+	* src/http.c: if only tcl cgi is enabled, cgi requests are now
+	forwarded to tcl
+	* include/jim.h: include file order fix; now compiles again.
+	* doc/athttpd.sgml: Fixed typos in doc. Return value from handler is
+	not used, recommend returning 0 in doc.
+
+2006-12-03  Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* cdl/httpd.cdl: Corrected a CDL error in the requirements of
+	CYGOPT_NET_ATHTTPD_USE_FS
+
+2006-11-27  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/httpd.cdl: Improve CDL dependencies.
+
+2006-11-08  Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* doc/athttpd.sgml: Updated to describe lasted changes and corrected
+	minor typos.
+	* src/http.c: Check for "Content-Type" header. This is needed if we
+	want to support parsing form variables in POST requests.
+	* src/jim.c: Updated with latest release from Jim CVS.
+	* src/cgi.c: streamlined cyg_httpd_exec_cgi_tcl(), now uses the 'source'
+	command of tcl to execute a tcl script.
+	* src/forms.c: Modified cyg_handle_method_POST so that the variables in the
+	payload are scanned only if the request has a Content-Type 
+	of 'application/x-www-form-urlencoded'
+	* src/jim-aio.c: Added to package. Now tcl has IO functions to access a
+	file system.
+	* include/httpd.h: Added a new mode, CYG_HTTPD_MODE_FORM_DATA which is set
+	when a POST request has a Content-Type of 
+	'application/x-www-form-urlencoded'
+	    
+2006-10-16  Lars Povlsen  <lpovlsen@vitesse.com> and Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* cdl/httpd.cdl: add CYGOPT_NET_ATHTTPD_CLOSE_CHUNKED_CONNECTIONS. Default
+	is set to CLOSE, so it is backward compatible with 
+	previous versions of the browser.
+	* src/socket.c: cyg_httpd_process_request() uses a loop to collect at least
+	one full frame (til a header terminator is found), 
+	cyg_httpd_start_chunked() only close if configured to do so.
+	* src/httpd.c: Overhaul of cyg_httpd_send_error to avoid the use of
+	inbuffer as temporary storage (conflicts with pipelined frames),
+	removed the option to send a page after calling a C language
+	handler
+	* include/httpd.h: Added a new mode, CYG_HTTPD_MODE_NO_CACHE
+	    
+2006-10-12  Lars Povlsen  <lpovlsen@vitesse.com> and Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* cdl/httpd.cdl: add CYGNUM_ATHTTPD_SERVER_MAX_POST to limit POST'ed data
+	* include/http.h: Added header_end, post_data fields to httpstate,
+	Added "302 Found" for POST handler redirect (CYG_HTTPD_STATUS_MOVED_TEMPORARILY)
+	* src/forms.c: Fixed variable decoding, fixed large POST processing
+	* src/http.c: Fixed some debug ouptuts, cleanup after POST processing, 
+	overhaul of the pipelined requests code which can now
+	handle multiple requests per frame.
+	* src/socket.c: Removed assert for socket write failure, Accumulating receiving
+	of requests (Browsers (Firefox) may pass partial headers in separate 
+	fragments). Fixed some diagnostics output.
+
+2006-07-19  Anthony Tonizzo  <atonizzo@gmail.com> and Sergei Gavrikov  <w3sg@softhome.net>
+
+	* cdl/httpd.cdl: 
+	* doc/athttpd.sgml: Corrected some typos and rectified some omissions.
+	* include/jim.h:    Added an inline to Jim_InitExtension()
+	* src/cgi.c:        used malloc() instead of cyg_ldr_malloc();
+	* src/forms.c:      Added a #define to be able tio use the TCL scripting
+	without OBJLOADER
+	* src/http.c:       
+	* src/socket.c:     Lots of typos stamped out, and some better comments too.
+	                     
+2006-07-19  Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* src/socket.c: Corrected a typo that generated an assertion.
+	Modified slightly the source of cyg_httpd_write and cyg_httpd_writev
+	to make the code more consistent as to when assertions are thrown.
+
+2006-07-19  Sergei Gavrikov  <w3sg@softhome.net>
+
+	* doc/athttpd.sgml: jade doesn't allow underscores in
+	id attributes, so fix.
+
+2006-07-18  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/httpd.cdl: Add -D __ECOS in compiler flags.
+	Change include_dir to cyg/athttpd.
+	Rename all CDL options from *_HTTPD_* to *_ATHTTPD_*.
+	* All files: Rename cyg/httpd include directory to cyg/athttpd.
+	Rename all CDL options from *_HTTPD_* to *_ATHTTPD_*.
+	* doc/athttpd.sgml: Document MD5 algorithm licensing.
+	* src/socket.c: Remove unused SNTP include.
+
+2006-06-13  Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* cdl/httpd.cdl: 
+	* doc/athttpd.sgml: 
+	* doc/mime_types.txt: 
+	* include/auth.h: 
+	* include/cgi.h: 
+	* include/digcalc.h: 
+	* include/forms.h: 
+	* include/global.h: 
+	* include/handler.h: 
+	* include/http.h: 
+	* include/jim.h: 
+	* include/md5.h: 
+	* include/socket.h: 
+	* src/auth.c: 
+	* src/cgi.c: 
+	* src/forms.c: 
+	* src/handler.c: 
+	* src/http.c: 
+	* src/jim.c: 
+	* src/md5c.c: 
+	* src/socket.c: 
+	Created ATHTTPD package.
+	
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2005, 2006 Free Software Foundation, Inc.                  
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

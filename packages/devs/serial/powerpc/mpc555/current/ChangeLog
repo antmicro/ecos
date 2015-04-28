@@ -1,0 +1,59 @@
+2008-12-23  Steven Clugston <steven.clugston@ncl.ac.uk>
+
+	* cdl/ser_powerpc_mpc555.cdl: Add HW queue option
+        * src/mpc555_serial_with_ints.c:
+        To help resolve an issue of characters being lost a software buffer
+        has been added between the Rx ISR and DSR when no hardware queue is 
+        being used.
+        A cdl option to enable support the hardware queue on the first serial 
+        port has been added. This enables 16 character hardware Tx and Rx 
+        buffers to be used which allows continuous transmission and reception
+        of serial data and significantly improves performance.
+
+2008-05-13  Steven Clugston  <steven.clugston@ncl.ac.uk>
+
+	* cdl/ser_powerpc_mpc555.cdl: Add line status
+	* src/mpc555_serial_with_ints.c: 
+	  Fixed exception caused by attempt to clear scsr bits.
+	  Add line status callbacks
+
+2008-04-06  Steven Clugston <steven.clugston@ncl.ac.uk>
+
+	* Refactored package to more generic mpc555
+
+2003-02-24  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/ser_powerpc_cme555.cdl: Remove irrelevant doc link.
+
+2002-11-11  Bob Koninckx  <bob.koninckx@mech.kuleuven.ac.be>
+
+	* src/cme555_serial_with_ints.c: 
+	interrupt arbiter slightly modified to make GDB CTRL-C work
+
+2002-04-24  Bob Koninckx  <bob.koninckx@mech.kuleuven.ac.be>
+
+	* New package.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

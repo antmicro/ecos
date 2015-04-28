@@ -1,0 +1,38 @@
+2009-04-28  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/watchdog_at91wdtc.cdl: Give CYGIMP_WATCHDOG_HARDWARE a default
+	value rather than a calculated value to accommodate other
+	implementations of CYGINT_WATCHDOG_IMPLEMENTATIONS.
+
+2009-02-04  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/watchdog_at91wdtc.cxx: switch init priority to
+	CYG_INIT_INTERRUPTS.
+
+2006-02-18  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* Added watchdog driver for ARM AT91 devices which have the
+	Watchdog Timer Controller as opposed to the older devices which
+	have the Watchdog Timer Interface. 
+
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  

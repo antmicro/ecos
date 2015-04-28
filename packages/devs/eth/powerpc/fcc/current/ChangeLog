@@ -1,0 +1,73 @@
+2004-02-04  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/if_fcc.c: 
+	* src/fcc.h: Only process error-free packets.  Inspired by
+	Christoph Csebits.
+
+2004-02-03  Christoph Csebits <christoph.csebits@frequentis.com>
+
+        * src/if_fcc.c (fcc_eth_can_send): Fix: check also if
+        buffer was freed by the upper layer (txdone was called).
+
+2004-01-15  Tiphaine Billoir  <tbilloir@elios-informatique.fr>
+	
+	* src/if_fcc.c:
+	* src/fcc.h: Add support for FFC3.  Only treat "link not found"
+	as an error when building for RedBoot.
+	
+2003-11-07  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/if_fcc.c (fcc_eth_init): Improve messages, add device name.
+
+2003-10-02  Gary Thomas  <gary@mlbassoc.com>
+
+	* cdl/fcc_eth_drivers.cdl: Buffers need to be a multiple of cache
+	line size (typically 16 or 32).
+
+2003-09-08  Gary Thomas  <gary@mlbassoc.com>
+
+	* cdl/fcc_eth_drivers.cdl: Force serial console during init (only
+	safe way to print during system initialization)
+
+2003-08-30  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/if_fcc.c: Fix compile error.
+
+2003-08-26  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/if_fcc.c: Use new PHY support.
+
+2003-08-19  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/if_fcc.c: 
+	* src/fcc.h: 
+	* cdl/fcc_eth_drivers.cdl: New file(s) - generic ethernet driver
+	for Motorola QUICC-2 FCC controller.  Roughly based on previously
+	contributed devs/eth/powerpc/quicc2 package.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+	
+	
+

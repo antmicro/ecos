@@ -1,0 +1,68 @@
+2004-10-04  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/io_pcmcia.cdl: Require that the hardware implements PCMCIA
+
+2004-08-11  Mark Salter  <msalter@redhat.com>
+
+	* include/pcmcia.h: Add some useful defines.
+
+2003-02-24  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/io_pcmcia.cdl: Fix doc link.
+
+2002-04-12  Gary Thomas  <gthomas@redhat.com>
+
+	* include/pcmcia.h: Add prototype(s) to remove warnings.
+
+2000-09-17  Gary Thomas  <gthomas@redhat.com>
+
+	* include/pcmcia.h: 
+	* src/pcmcia.c (cf_register_handler): Interrupt handler must look 
+	just like a DSR and will be called using the same calling conventions.
+
+2000-08-23  Gary Thomas  <gthomas@redhat.com>
+
+	* src/pcmcia.c: 
+	* include/pcmcia.h: Export new function to forceably clear interrupts
+	on a card [slot].  Use in non-kernel environments.
+
+2000-07-16  Gary Thomas  <gthomas@redhat.com>
+
+	* cdl/io_pcmcia.cdl: 
+	* include/pcmcia.h: 
+	* src/pcmcia.c: Remove dependency on generic I/O package.
+
+2000-07-15  Gary Thomas  <gthomas@redhat.com>
+
+	* include/pcmcia.h: 
+	* src/pcmcia.c: Change notion of interrupts to be slot oriented.
+	This fits with more hardware.  Now need to "register" an IRQ
+	handler when initializing a card device.
+
+2000-07-11  Gary Thomas  <gthomas@redhat.com>
+
+	* src/pcmcia.c: Remove noisy messages.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

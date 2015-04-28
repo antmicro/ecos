@@ -1,0 +1,41 @@
+2011-01-15  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/lpc2xxx_wallclock.cdl:
+	* src/lpc2xxx_wallclock.cxx: Added support for LPC17XX CPUs.
+
+2008-11-01  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/lpc2xxx_wallclock.cdl: Moved CYGNUM_HAL_ARM_LPC2XXX_RTCDEV_PREINT
+	  and CYGNUM_HAL_ARM_LPC2XXX_RTCDEV_PREFRAC to lpc2xxx_wallclock.cxx
+	* src/lpc2xxx_wallclock.cxx: Some small changes to support LPC24xx
+          devices
+    
+2007-07-12  Hans Rosenfeld  <rosenfeld@grumpf.hope-2000.org>
+
+	* lpc2xxx: driver for on-chip RTC unit
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+
+

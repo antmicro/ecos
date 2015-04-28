@@ -1,0 +1,41 @@
+2002-03-06  Nick Garnett  <nickg@redhat.com>
+
+	* cdl/integrator_eth_drivers.cdl: Switched over to use generic
+	i82559 driver.
+
+	* include/devs_eth_arm_integrator_i82559.inl: File added to
+	configure generic i82559 driver.
+
+	* include/integrator_info.h:
+	* src/if_integrator.c:
+	Files removed. These were the old integrator-specific driver.
+	
+2000-08-21  Philippe Robin
+	* adapted from ebsa285
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+	
+	
+

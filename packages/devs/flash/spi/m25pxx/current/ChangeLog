@@ -1,0 +1,49 @@
+2011-05-25  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* cdl/flash_m25pxx.cdl: fix active_if goal expression.
+
+2009-02-20  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* test/m25pxx_test.c (cyg_user_start): Call cyg_flash_init() with
+	NULL argument.
+
+2009-02-18  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* test/m25pxx_test.c (cyg_user_start): Update for minor flash API
+	mod to call cyg_flash_set_global_printf() to set printf
+	function.
+
+2009-02-05  Chris Holgate  <chris@zynaptic.com>
+
+	* cdl/m25pxx.cdl: 
+	* include/m25pxx.h: 
+	* src/m25pxx.c: 
+	* test/m25pxx_test.c:
+	New package - SPI flash driver for M25Pxx devices and compatibles. 
+	Driver contributed by Chris Holgate.  Includes a soak test which is
+	not part of the default tests as it requires a specific configuration
+	to be used - see test/m25pxx_test.c for details.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2008, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

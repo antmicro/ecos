@@ -1,0 +1,53 @@
+2004-11-20  Bart Veer  <bartv@ecoscentric.com>
+
+	* cdl/flash_toshiba_tc58xxx.cdl: NAND flash requires indirect read
+	support in the main flash code
+
+2004-08-03  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/flash_toshiba_tc58xxx.cdl: Indicate we need the legacy device API
+
+2004-08-24  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/flash_tc58xxx.inl: Initial implementation of NAND ECC 
+	support (used by JFFS2).
+
+2004-03-07  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/flash_tc58xxx.inl: Page addressing was wrong for large (> 32MB) devices.
+
+2004-02-25  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/flash_tc58xxx_parts.inl: 
+	* include/flash_tc58xxx.inl: Add support for TC58DVG02 (128MB) part.
+
+2003-09-19  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/flash_tc58xxx_parts.inl: 
+	* include/flash_tc58xxx.inl:
+	* cdl/flash_toshiba_tc58xxx.cdl: New package - support for NAND FLASH
+	devices from Toshiba
+	
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,56 @@
+2009-10-16  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_arm_xscale_prmpc1100.cdl: Parent under
+	CYGPKG_HAL_ARM_XSCALE_IXP425.
+
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_xscale_prpmc1100.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_xscale_prpmc1100.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc.
+
+2006-03-01  Mark Salter  <msalter@sadr.localdomain>
+
+	* include/hal_platform_setup.h: Fix DELAY macro.
+
+2004-09-02  Mark Salter  <msalter@redhat.com>
+
+	* misc/redboot_RAM.ecm: Remove CYGOPT_DEVS_FLASH_STRATA_NOT_IN_RAM.
+
+2003-06-30  Mark Salter  <msalter@redhat.com>
+
+	* include/hal_platform_setup.h: Fix CYGINT_HAL_ARM_BIGENDIAN test.
+	Remove unused ROMRAM cruft.
+
+2003-04-06  Mark Salter  <msalter@redhat.com>
+
+	* src/prpmc1100_misc.c: Support serial EEPROM. Init GPIO.
+	* src/prpmc1100_pci.c: Support both monarch and non-monarch modes.
+	* include/prpmc1100.h: Add GPIO defines. Add CTL/STS register defines.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

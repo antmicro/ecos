@@ -1,0 +1,63 @@
+2009-05-25  John Dallaway  <john@dallaway.org.uk>
+
+	* src/if_lancepci.c: Fix casting in the use of HAL_PCI_CPU_TO_BUS().
+
+2004-08-12  Jani Monoses <jani@iv.ro>
+
+	* src/if_lancepci.c: Fix builing with lwip.
+
+2004-03-02  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+        * src/if_lancepci.c: Added casts to fix various compiler warnings.
+
+2004-02-27  Iztok Zupet  <iz@elsis.si>
+
+        * if_lancepci.c: fetch ESA from chips registers instead
+          EEPROM. There seems to be no usable data in the VMware EEPROM
+          emulation. But the data which comes in CSR_PAR registers seems
+          OK.
+
+2003-01-26  Iztok Zupet  <iz@vsr.si>
+
+        * if_lancepci.c: added aditional delay (printf) to init
+          function, to fix it under Vmware 4.
+
+2003-01-26  Iztok Zupet  <iz@vsr.si>
+
+        * if_lancepci.c: fixed buffer reset after start,
+          added additional delays (50ms)after start and control
+          function, to let Vmware get a tick so that it can
+          service the virtual chip. Added an interrupt controled
+          transmit busy flag (cpd->txbusyh), so that the stop/start
+          function can wait for it, thus not stopping the chip 
+          aburptly.
+
+        * amd_lance.h: additional items in cpd data structure. 
+
+2002-07-17  Iztok Zupet  <iz@vsr.si>
+
+        * all: Cloned from PCnet original 
+        
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

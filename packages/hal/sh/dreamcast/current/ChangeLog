@@ -1,0 +1,65 @@
+2009-02-04  John Dallaway  <john@dallaway.org.uk>
+
+	* include/pkgconf/*.ldi: Add SECTION_eh_frame().
+
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_sh_sh7750_dreamcast.cdl: update compiler flags for gcc 4.x
+
+2005-12-02  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_sh_sh7750_dreamcast.cdl: Fix the require statements so
+	we can build things other than RedBoot.
+
+2004-04-30  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* cdl/hal_sh_sh7750_dreamcast.cdl: Build boot.S.
+	* src/boot.S: New file. Add Dreamcast startup entry. Fixes failed
+        bootup.
+        * include/pkgconf/mlt_sh_sh7750_dreamcast_ram.mlt: Add entry section.
+        * include/pkgconf/mlt_sh_sh7750_dreamcast_ram.ldi: Add entry section.
+
+2004-04-22  Yoshinori Sato  <ysato@users.sourceforge.jp>
+
+	* cdl/hal_sh_sh7750_dreamcast.cdl: typo fix.
+	
+2004-04-21  Yoshinori Sato <ysato@users.sourceforge.jp>
+
+	* include/plf_io.h: add macro "CYGARC_PCI_DMA_ADDRESS"
+
+2001-11-21  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/hal_sh_sh7750_dreamcast.cdl: Added
+	CYGHWR_HAL_SH_OOC_DIVIDER_1 option.
+
+2001-08-06  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/hal_sh_sh7750_dreamcast.cdl: Set linux boot parameters.
+
+2001-07-30  Jesper Skov  <jskov@redhat.com>
+
+	* New platform HAL, contributed by Takeshi Yaegashi (t@keshi.org)
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

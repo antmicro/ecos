@@ -1,0 +1,272 @@
+##=============================================================================
+##
+##      spi_stm32.cdl
+##
+##      STM32 SPI driver configuration options.
+##
+##=============================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##=============================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):   Chris Holgate
+## Contributor: jld
+## Date:        2008-11-27
+## Purpose:     Configure STM32 SPI driver.
+##
+######DESCRIPTIONEND####
+##
+##=============================================================================
+
+cdl_package CYGPKG_DEVS_SPI_CORTEXM_STM32 {
+    display       "ST STM32 SPI driver"
+    description   "
+        This package provides SPI driver support for the ST STM32 series
+        of microcontrollers.
+    "
+    parent        CYGPKG_IO_SPI
+    active_if     CYGPKG_IO_SPI
+    requires      CYGPKG_HAL_CORTEXM_STM32 
+    hardware
+    include_dir   cyg/io
+    compile       spi_stm32.c
+
+cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_PIN_TOGGLE_RATE {
+    display       "Pin toggle rate"
+    description   "
+        Selects the pin toggle rate in MHz to be used for the SPI interfaces.  Higher toggle
+        rates allow increased baud rates at the expense of power and EMI. Only certain rates
+        are valid on different STM32 families, check part documentation for which may be used."
+    flavor        data
+    default_value { (CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F1") ? 10 : 25 }
+    legal_values  { 2 10 25 50 80 100 }
+}
+
+cdl_component CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS1 {
+    display       "ST STM32 SPI bus 1"
+    description   "
+        Enable SPI bus 1 on the STM32 device.
+    "
+    flavor        bool
+    default_value 0
+
+    cdl_option CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS1_CS_GPIOS {
+        display       "SPI chip selects"
+        description   "
+            This is a comma separated list of GPIOs which are to be used as chip
+            select lines for the SPI bus. Each GPIO is defined by the SPI_CS()
+            macro which gives the port and pin number.
+        "
+        flavor        data
+        default_value { "SPI_CS(A, 4)" }
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS1_BBUF_SIZE {
+        display       "Bounce buffer size"
+        description   "
+            DMA bounce buffers are required when running out of external
+            memory.  Set this to the maximum SPI packet size which will be
+            used to enable the DMA bounce buffers.  Set to 0 to disable
+            bounce buffers when running from on-chip memory.
+        "
+        flavor        data 
+        default_value 0
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS1_TXINTR_PRI {
+        display       "Transmit DMA interrupt priority"
+        flavor        data
+        default_value 64+5
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS1_RXINTR_PRI {
+        display       "Receive DMA interrupt priority"
+        flavor        data
+        default_value 128+6
+    }
+}
+
+cdl_component CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS2 {
+    display       "ST STM32 SPI bus 2"
+    description   "
+        Enable SPI bus 2 on the STM32 device.
+    "
+    flavor        bool
+    default_value 0
+
+    cdl_option CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS2_CS_GPIOS {
+        display       "SPI chip selects"
+        description   "
+            This is a comma separated list of GPIOs which are to be used as chip
+            select lines for the SPI bus. Each GPIO is defined by the SPI_CS()
+            macro which gives the port and pin number.
+        "
+        flavor        data
+        default_value { "SPI_CS(B, 12)" }
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS2_BBUF_SIZE {
+        display       "Bounce buffer size"
+        description   "
+            DMA bounce buffers are required when running out of external
+            memory.  Set this to the maximum SPI packet size which will be
+            used to enable the DMA bounce buffers.  Set to 0 to disable
+            bounce buffers when running from on-chip memory.
+        "
+        flavor        data 
+        default_value 0
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS2_TXINTR_PRI {
+        display       "Transmit DMA interrupt priority"
+        flavor        data
+        default_value 64+7
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS2_RXINTR_PRI {
+        display       "Receive DMA interrupt priority"
+        flavor        data
+        default_value 128+8
+    }
+}
+
+cdl_component CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS3 {
+    display       "ST STM32 SPI bus 3"
+    description   "
+        Enable SPI bus 3 on the STM32 device.  Note that SPI bus 3 shares pins
+        with the JTAG port which means that debug should ideally be disabled 
+        on startup.  However, there is also the option of disabling it during 
+        SPI bus initialisation instead.
+    "
+    flavor        bool
+    default_value 0
+
+    cdl_option CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS3_DISABLE_DEBUG_PORT {
+        display       "Disable debug port"
+        description   "
+            When set the debug port will automatically be disabled on 
+            initialising SPI bus 3, freeing up the SPI interface pins.
+        "
+        flavor        bool
+        default_value 0
+    }
+
+    cdl_option CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS3_CS_GPIOS {
+        display       "SPI chip selects"
+        description   "
+            This is a comma separated list of GPIOs which are to be used as chip
+            select lines for the SPI bus. Each GPIO is defined by the SPI_CS()
+            macro which gives the port and pin number.
+        "
+        flavor        data
+        default_value { "SPI_CS(A, 15)" }
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS3_BBUF_SIZE {
+        display       "Bounce buffer size"
+        description   "
+            DMA bounce buffers are required when running out of external
+            memory.  Set this to the maximum SPI packet size which will be
+            used to enable the DMA bounce buffers.  Set to 0 to disable
+            bounce buffers when running from on-chip memory.
+        "
+        flavor        data 
+        default_value 0
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS3_TXINTR_PRI {
+        display       "Transmit DMA interrupt priority"
+        flavor        data
+        default_value 64+9
+    }
+
+    cdl_option CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS3_RXINTR_PRI {
+        display       "Receive DMA interrupt priority"
+        flavor        data
+        default_value 128+10
+    }
+}
+
+cdl_component CYGPKG_DEVS_SPI_CORTEXM_STM32_OPTIONS {
+    display "ST STM32 SPI driver build options"
+    flavor  none
+    description   "
+	Package specific build options including control over
+	compiler flags used only in building this package,
+	and details of which tests are built."
+
+    cdl_option CYGPKG_DEVS_SPI_CORTEXM_STM32_CFLAGS_ADD {
+        display "Additional compiler flags"
+        flavor  data
+        no_define
+        default_value { "" }
+        description   "
+            This option modifies the set of compiler flags for
+            building the STM32 SPI driver. These flags are used in addition
+            to the set of global flags."
+    }
+
+    cdl_option CYGPKG_DEVS_SPI_CORTEXM_STM32_CFLAGS_REMOVE {
+        display "Suppressed compiler flags"
+        flavor  data
+        no_define
+        default_value { "" }
+        description   "
+            This option modifies the set of compiler flags for
+            building the STM32 SPI driver. These flags are removed from
+            the set of global flags if present."
+    }
+
+    cdl_option CYGBLD_DEVS_SPI_CORTEXM_STM32_LOOPBACK_TEST {
+        display       "Build STM32 SPI loopback test"
+        flavor        bool
+        no_define
+        default_value 0
+        requires      CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS1
+        description   "
+            This option enables the building of the STM32 SPI loopback test.
+            Refer to the comments in tests/loopback.c for details of how to
+            use this test."
+    }
+
+    cdl_option CYGPKG_DEVS_SPI_CORTEXM_STM32_TESTS {
+        display         "SPI tests"
+        active_if       CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS1
+        flavor          data
+        no_define
+        calculated      { CYGBLD_DEVS_SPI_CORTEXM_STM32_LOOPBACK_TEST ? "tests/loopback" : "" } 
+    }
+}
+
+}
+# EOF spi_stm32.cdl

@@ -1,0 +1,192 @@
+#==========================================================================
+# 
+#       xc7z.cdl
+# 
+#       eCos configuration data for the Xilinx Zynq Ethernet controller
+# 
+#==========================================================================
+#####ECOSGPLCOPYRIGHTBEGIN####
+## -------------------------------------------
+## This file is part of eCos, the Embedded Configurable Operating System.
+## Copyright (C) 1998, 1999, 2000, 2001, 2002 Red Hat, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under
+## the terms of the GNU General Public License as published by the Free
+## Software Foundation; either version 2 or (at your option) any later version.
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT ANY
+## WARRANTY; without even the implied warranty of MERCHANTABILITY or
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+## for more details.
+##
+## You should have received a copy of the GNU General Public License along
+## with eCos; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+##
+## As a special exception, if other files instantiate templates or use macros
+## or inline functions from this file, or you compile this file and link it
+## with other works to produce a work based on this file, this file does not
+## by itself cause the resulting work to be covered by the GNU General Public
+## License. However the source code for this file must still be made available
+## in accordance with section (3) of the GNU General Public License.
+##
+## This exception does not invalidate any other reasons why a work based on
+## this file might be covered by the GNU General Public License.
+##
+## Alternative licenses for eCos may be arranged by contacting Red Hat, Inc.
+## at http://sources.redhat.com/ecos/ecos-license/
+## -------------------------------------------
+#####ECOSGPLCOPYRIGHTEND####
+#==========================================================================
+######DESCRIPTIONBEGIN####
+# 
+# Author(s):    Ant Micro
+# Date:         2012-07-26
+# Purpose:      
+# Description:  Ethernet drivers for Xilinx Zynq
+# 
+#####DESCRIPTIONEND####
+# 
+#==========================================================================
+
+cdl_package CYGPKG_DEVS_ETH_ARM_XC7Z {
+
+    display       "Zynq Gigabit Ethernet Controller driver"
+    description   "Ethernet driver Zynq Gigabit Ethernet Controller."
+
+    parent        CYGPKG_IO_ETH_DRIVERS
+    active_if     CYGPKG_IO_ETH_DRIVERS
+
+    #implements    CYGHWR_NET_DRIVERS
+    #implements    CYGHWR_NET_DRIVER_ETH0
+
+    compile       -library=libextras.a if_xc7z.c
+
+    include_dir   net
+
+    cdl_component CYGPKG_DEVS_ETH_ARM_XC7Z_ETH0 {
+        display       "Zynq Gigabit Ethernet Controller port 0 driver"
+        flavor        bool
+        default_value 1
+        description   "
+            This option includes the ethernet device driver for the
+            Zynq Gigabit Ethernet Controller port 0."
+
+        implements CYGHWR_NET_DRIVERS
+        implements CYGHWR_NET_DRIVER_ETH0
+
+        cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_SOURCE_ETH0 {
+	    display "MAC address source"
+            flavor  data
+            default_value { 1 }
+            legal_values { 1 2 }
+            description   "
+                Defines source of mac address for ethernet device:
+	        1: get MAC from EEPROM
+	        2: set MAC from CDL (defined in: CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_ADDR_ETH0"
+        }
+
+        cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_ADDR_ETH0 {
+	    display "MAC address value"
+            flavor  data
+            default_value { 0x0000000000 }
+            legal_values 0x0 to 0xFFFFFFFFFFFF
+            description   "
+                Defines mac address value for eth controller 
+	        valid if CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_SOURCE_ETH0 set to 2"
+        }
+
+        cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_MAX_LINK_SPEED_ETH0 {
+	    display "Maximum connection speed"
+	        flavor  data
+            default_value { 100 }
+            legal_values { 0 10 100 1000 }
+            description   "
+                Defines maximum connetion speed (Mb), 0 means no limit"
+        }
+    }
+    
+    cdl_component CYGPKG_DEVS_ETH_ARM_XC7Z_ETH1 {
+        display       "Zynq Gigabit Ethernet Controller port 1 driver"
+        flavor        bool
+        default_value 1
+        description   "
+            This option includes the ethernet device driver for the
+            Zynq Gigabit Ethernet Controller port 1."
+
+        implements CYGHWR_NET_DRIVERS
+        implements CYGHWR_NET_DRIVER_ETH1
+
+        cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_SOURCE_ETH1 {
+	    display "MAC address source"
+            flavor  data
+            default_value { 1 }
+            legal_values {1 2}
+            description   "
+                Defines source of mac address for ethernet device:
+	        1: get MAC from EEPROM
+	        2: set MAC from CDL (defined in: CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_ADDR_ETH1"
+        }
+
+        cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_ADDR_ETH1 {
+	    display "MAC address value"
+            flavor  data
+            default_value { 0x0000000000 }
+            legal_values 0x0 to 0xFFFFFFFFFFFF
+            description   "
+                Defines mac address value for eth controller 
+	        valid if CYGPKG_DEVS_ETH_ARM_XC7Z_MAC_SOURCE_ETH1 set to 2"
+        }
+
+        cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_MAX_LINK_SPEED_ETH1 {
+	    display "Maximum connection speed"
+            flavor  data
+            default_value { 100 }
+            legal_values { 0 10 100 1000 }
+            description   "
+                Defines maximum connetion speed (Mb), 0 means no limit"
+        }
+    }
+
+    cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT {
+        display "Number of transmit buffers"
+        flavor  data
+        default_value { 8 }
+        legal_values 2 to 64
+        description   "
+            The number of transmit buffers. More buffers help
+            increse the throughput, but require maintenance time
+            and  memory."
+    }
+
+    cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT {
+        display "Number of receive buffers"
+        flavor  data
+        default_value { 8 }
+        legal_values 2 to 64
+        description   "
+            The number of receive buffers. More buffers prevent
+            missing packets, but require more maintenance time
+            and memory."
+    }
+
+    cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_PACKETLEN {
+        display "Maximum frame length"
+        flavor  data
+        default_value { 1536 }
+        description   "
+            Specify maximum packet length. This value will be
+            programmed into the MAC. It is also a size of receive
+            buffers."
+    }
+
+
+    cdl_option CYGPKG_DEVS_ETH_ARM_XC7Z_DEBUG {
+	display "Debug messages enable"
+        flavor  bool
+        default_value 0
+        description   "
+            Enables debug messages from eth controller."
+    }
+
+}

@@ -1,0 +1,78 @@
+2009-02-09  Bart Veer  <bartv@ecoscentric.com>
+
+	* doc/framebuf.sgml: clarify the meaning of the true colour
+	formats.
+
+2009-02-07  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/framebuf.cdl: Pass gen_framebufs.tcl to tclsh directly.
+
+2009-01-08  John Dallaway  <john@dallaway.org.uk>
+
+	* src/gen_framebufs.tcl: Specify script interpreter via /usr/bin/env.
+
+2008-11-09  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/linear.c: fix the block move operations (new_y > y) overlap
+	handling.
+
+2008-10-06 Bart Veer  <bartv@ecoscentric.com>
+
+	* src/gen_framebufs.tcl, cdl/framebuf.cdl, tests/*: add some
+	examples/testcases.
+
+2007-10-11  Bart Veer  <bartv@ecoscentric.com>
+
+	* include/framebuf.h: fix 555 true colour manipulation macros.
+
+2006-04-05  John Dallaway  <jld@ecoscentric.com>
+
+	* cdl/framebuf.cdl: Add reference to package documentation.
+
+2005-11-21  Bart Veer  <bartv@ecoscentric.com>
+
+	* include/framebuf.h, src/framebuf.c: fix aliasing of the
+	make/break colour functions, needed with more recent compilers.
+
+	* doc/framebuf.sgml: fix blanking support typo
+
+	* cdl/framebuf.cdl: run gen_framebufs.tcl slightly later
+	in the build process in case other packages create framebuf header
+	files at build-time.
+
+	* src/gen_framebufs.tcl: fix typo in diagnostic.
+
+	* src/framebuf.c (cyg_fb_synch), include/framebuf.h
+	(CYG_FB_FRAMEBUFFER): fix double buffer support.
+
+2005-06-20  John Dallaway  <jld@ecoscentric.com>
+
+	* doc/framebuf.sgml: Fix typographical errors.
+
+2005-03-29  Bart Veer  <bartv@ecoscentric.com>
+
+	* Generic framebuffer package created
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2008, 2009 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

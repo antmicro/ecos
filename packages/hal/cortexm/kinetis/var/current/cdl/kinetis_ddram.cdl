@@ -1,0 +1,259 @@
+##==========================================================================
+##
+##      kinetis_ddram.cdl
+##
+##      Cortex-M Freescale Kinetis DDRAM configuration
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2010, 2011, 2012, 2013 Free Software Foundation, Inc.                  
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):    Ilija Kocho <ilijak@siva.com.mk>
+## Date:         2013-04-28
+##
+######DESCRIPTIONEND####
+##
+##==========================================================================
+
+
+#    cdl_component CYGPKG_HAL_CORTEXM_KINETIS_DDRMC {
+#        display       "DDRAM"
+#        flavor bool
+#        active_if     CYGINT_HAL_CORTEXM_KINETIS_DDRAM
+#        default_value CYGINT_HAL_CORTEXM_KINETIS_DDRAM
+#        description   "DDRAM on Kinetis is mirrored at several address ranges.
+#                Each mirror has its own caching options that may include:
+#                non-cached, write-through and write-back.
+#                By eCos configuration, DDRAM is split in 3 partitions:
+#                Cached, Non-cached and Code.
+#                Cached partition is intended for general purpose main memory.
+#                Non-cached partition is convenient for sharing
+#                buffers with other bus masters such as Ethernet controller,
+#                DMA, etc. Code partition is for executable code."
+#
+#        requires       CYGOPT_HAL_CORTEXM_KINETIS_MCGOUT_PLL1
+#        compile        kinetis_ddram.c
+
+        cdl_component CYGHWR_HAL_KINETIS_DDR_SIZE_MIB {
+            display       "DDRAM size \[MiB\]"
+            flavor        data
+            default_value 128
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_SIZE {
+                display    "DDRAM size \[Bytes\]"
+                flavor     data
+                calculated { CYGHWR_HAL_KINETIS_DDR_SIZE_MIB * (1024 * 1024) * 0x1 }
+            }
+        }
+
+        cdl_component CYGHWR_HAL_KINETIS_DDR_NON_CACHED_SIZE_MIB {
+            display      "Non-cached DDRAM data partition \[MiB\]"
+            requires     { CYGHWR_HAL_KINETIS_DDR_NON_CACHED_SIZE_MIB <=
+                           CYGHWR_HAL_KINETIS_DDR_SIZE_MIB }
+            flavor       data
+
+            implements   CYGINT_HAL_HAS_NONCACHED
+
+            legal_values { 1 to (CYGHWR_HAL_KINETIS_DDR_SIZE_MIB - 8) }
+
+            default_value CYGHWR_HAL_KINETIS_DDR_SIZE_MIB / 4
+
+            description "
+                Non-cached DDRAM partition, intended for sharing
+                buffers with other bus masters such as Ethernet controller,
+                DMA, etc."
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_NON_CACHED_SIZE {
+                display    "Non-cached DDRAM size \[Bytes\]"
+                flavor     data
+                calculated { CYGHWR_HAL_KINETIS_DDR_NON_CACHED_SIZE_MIB
+                             * (1024 * 1024) * 0x1 }
+            }
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_NON_CACHED_BASE {
+                display    "Non-cached DDRAM base address"
+                flavor     data
+
+                calculated { CYGHWR_HAL_KINETIS_DDR_NON_CACHED_MIRROR +
+                             CYGHWR_HAL_KINETIS_DDR_CACHED_SIZE +
+                             CYGHWR_HAL_KINETIS_DDR_CODE_SIZE }
+            }
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_NON_CACHED_MIRROR {
+                display       "Non-cached DDRAM mirror base"
+                flavor        data
+                no_define
+                calculated    { CYGHWR_HAL_KINETIS_DDR_CACHED_MIRROR == 0x70000000 ?
+                    0x80000000 : 0x70000000 }
+            }
+        }
+
+        cdl_component CYGHWR_HAL_KINETIS_DDR_CODE_SIZE_MIB {
+            display       "DDRAM code partition \[MiB\]"
+            requires      { CYGHWR_HAL_KINETIS_DDR_CODE_SIZE_MIB <=
+                            CYGHWR_HAL_KINETIS_DDR_SIZE_MIB }
+            flavor        data
+
+            legal_values  { 1 to (CYGHWR_HAL_KINETIS_DDR_SIZE_MIB - 8) }
+
+            default_value CYGHWR_HAL_KINETIS_DDR_SIZE_MIB / 4
+
+            description "
+                DDRAM code partition - for use as program memory.
+                On systems with cache this partition is cached in PC cache.
+                Caching is always write-through"
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_CODE_SIZE {
+                display    "DDRAM code partition size \[Bytes\]"
+                flavor     data
+                calculated { CYGHWR_HAL_KINETIS_DDR_CODE_SIZE_MIB
+                             * (1024 * 1024) * 0x1 }
+            }
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_CODE_BASE {
+                display    "DDRAM code partition base address"
+                flavor     data
+
+                calculated { 0x08000000 }
+            }
+        }
+
+        cdl_component CYGHWR_HAL_KINETIS_DDR_CACHED_SIZE_MIB {
+            display    "Cached DDRAM data partition \[MiB\]"
+            flavor     data
+            requires   { CYGHWR_HAL_KINETIS_DDR_CACHED_SIZE_MIB >= 8 }
+            calculated { CYGHWR_HAL_KINETIS_DDR_SIZE_MIB -
+                         CYGHWR_HAL_KINETIS_DDR_NON_CACHED_SIZE_MIB -
+                         CYGHWR_HAL_KINETIS_DDR_CODE_SIZE_MIB }
+
+            description "
+                Cached DDRAM data partition - for general use as main data memory.
+                On systems with cache this partition is cached in PS cache.
+                Caching can be either copy-back or write-through and is determined by
+                general cache mode setting."
+
+            cdl_option CYGHWR_HAL_KINETIS_DDR_CACHED_SIZE {
+                display    "Cached DDRAM size \[Bytes\]"
+                flavor      data
+                calculated  { (CYGHWR_HAL_KINETIS_DDR_SIZE -
+                              CYGHWR_HAL_KINETIS_DDR_NON_CACHED_SIZE -
+                              CYGHWR_HAL_KINETIS_DDR_CODE_SIZE) * 0x1 }
+                }
+
+                cdl_option CYGHWR_HAL_KINETIS_DDR_CACHED_BASE {
+                    display       "Cached DDRAM base address"
+                    flavor        data
+                    calculated    { CYGHWR_HAL_KINETIS_DDR_CACHED_MIRROR +
+                                    CYGHWR_HAL_KINETIS_DDR_CODE_SIZE }
+                }
+
+                cdl_option CYGHWR_HAL_KINETIS_DDR_CACHE_TYPE {
+                    display     "DDRAM cache type"
+                    flavor       data
+                    calculated  CYGSEM_HAL_DCACHE_STARTUP_MODE
+                    description "DDRAM cache type is determined by general cache setting"
+                }
+
+                cdl_component CYGHWR_HAL_KINETIS_DDR_CACHED_MIRROR {
+                    display         "Cached DDRAM mirror base"
+                    flavor data
+                    no_define
+                    legal_values     { 0x70000000 0x80000000 }
+                    default_value    { 0x70000000 }
+                    description   "
+                        According to Kinetis Reference Manual rev. 2, the DDRAM mirror
+                        mapped at 0x80000000 (supporting write-thru caching only)
+                        is not accesible by ENET, SDH and some other bus masters,
+                        and that the mirror at 0x70000000 (supporting copy-back caching)
+                        is accessible by them.
+                        The practical tests prove that it is the opposite, actually as
+                        it should be.
+                        Until this discrepancy is resolved, this option selects the
+                        default (non)cached mirror and provides the user with possibilty for
+                        manual override.
+                        Note: The behavior may change in future."
+                }
+        }
+
+        cdl_option CYGHWR_HAL_DDR_SYNC_MODE {
+            display       "Use synchronous mode"
+            flavor        bool
+            requires      { CYGOPT_HAL_CORTEXM_KINETIS_MCG_MCGOUTCLK == "PLL1" }
+            default_value { 1 }
+        }
+
+        cdl_option CYGHWR_HAL_KINETIS_SIM_MCR_DDRBUS {
+            display      "DDRAM bus configuration"
+            flavor        data
+            legal_values  0 1 2 3 6
+            default_value 6
+            description "
+                DDRAM configuration: 0 - LPDDR Half Strength,
+                1 - LPDDR Full Strength, 2 - DDR2 Half Strength,
+                3 - DDR1, 6 - DDR2 Full Strength"
+        }
+
+        cdl_component CYGHWR_HAL_KINETIS_DDRMC_PAD_CTRL {
+            display    "Pad control"
+            flavor     data
+
+            calculated {
+                (CYGHWR_HAL_KINETIS_DDRMC_PAD_CTRL_ODT << 24) |
+                CYGHWR_HAL_KINETIS_DDRMC_PAD_CTRL_SPARE_DLY_CTRL |
+                0x00000200
+            }
+
+            cdl_option CYGHWR_HAL_KINETIS_DDRMC_PAD_CTRL_ODT {
+                display       "On Die Termination"
+                flavor        data
+                legal_values  { 0 1 2 3 }
+                default_value 1
+
+                description   "On Die Termination \[Ohm\]: 0 - Off, 1 - 75,
+                    2 - 150, 3 - 50"
+            }
+
+            cdl_option CYGHWR_HAL_KINETIS_DDRMC_PAD_CTRL_SPARE_DLY_CTRL {
+                display       "Delay chains in spare logic"
+                flavor        data
+                legal_values  { 0 1 2 3 }
+                default_value 3
+
+                description "Delay chains in spare logic: 0 - No buffer, 1 - 4 buffers,
+                    2 - 7 buffers, 11 - 10 buffers"
+            }
+        }
+#    }
+
+# EOF kinetis_ddram.cdl

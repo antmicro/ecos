@@ -1,0 +1,38 @@
+2003-01-20  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/devs_eth_csb281.inl: Add RedBoot management of ESA.
+
+2003-01-03  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/devs_eth_csb281.inl: PCI window is now in specially
+	mapped, uncacheable space.
+
+2002-12-24  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/devs_eth_csb281.inl: 
+	* cdl/csb281_eth_drivers.cdl: New package - ethernet support
+	via i82559 on PCI for Cogent CSB281 board.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

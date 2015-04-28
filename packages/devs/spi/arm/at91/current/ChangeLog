@@ -1,0 +1,113 @@
+2009-04-02  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/spi_at91.cdl: Fix typographical error for
+	CYGINT_DEVS_SPI_ARM_AT91_HAS_BUS1. [ Bugzilla 1000737 ]
+
+2009-02-16  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/spi_at91.c (cyg_spi_at91_bus_init): Partially revert change of
+	2009-02-11. Define an empty CYGBLD_ATTRIB_C_INIT_PRI and rely on
+	spi_at91_init.cxx to call, in case the compiler does not supply
+	that macro (e.g. if too old).
+	* cdl/spi_at91.cdl: Revert change of 2009-02-11.
+	* src/spi_at91_init.cxx: Revive. Set priority to CYG_INIT_BUS_SPI.
+	Conditionalise on CYGBLD_ATTRIB_C_INIT_PRI.
+
+2009-02-12  Nick Garnett  <nickg@ecoscentric.com>
+
+	* cdl/spi_at91.cdl: Add a requires for CYGPKG_ERROR.
+
+2009-02-11  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/spi_at91.c (cyg_spi_at91_bus_init): turn into a prioritized
+	constructor, make it a static and rename.
+
+	* cdl/spi_at91.cdl: remove src/spi_at91_init.cxx
+	
+	* src/spi_at91_init.cxx: removed, no longer needed.
+
+2008-10-19  Igor B. Poretsky <poretsky@mlbox.ru>
+	
+	* src/spi_at91.c: Typo fixes from var_io.h.  Correctly calculate
+	  the board rate. Before it was two times too fast.
+
+2006-09-27  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/spi_at91.c (spi_at91_transaction_begin): Don't use #ifdef
+	inside a macro invocation. The compiler throws a wobbly.
+
+2006-09-07  John Eigelaar <jeigelaar@mweb.co.za>
+
+	* src/spi_at91.c: Fixed the chip select functions.
+	Changed the Mode Register setup as to disable the Mode Failure
+	Detaction for variants that support it. The Mode Failure Detection
+	breaks because NPCS0 is not connected, we are using GPIO, and is 
+	thus floating. 
+
+2006-06-01  John Eigelaar <jeigelaar@mweb.co.za>
+
+	* src/spi_at91.c:
+	* cdl/spi_at91.cdl:
+	* include/spi_at91.h: Generalize so that multiple SPI
+	busses can be driven.
+	
+2006-05-19  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/spi_at91.c: Use the AT91 GPIO/PIO macros to aid
+	portability between different AT91 device.
+
+2004-11-11  Sebastian Block <sebastianblock@gmx.net>
+
+        * src/spi_at91.c: Fixed negation of the chip select signal when
+	not using a 4 to 16 decoder
+
+2004-10-13  Savin Zlobec  <savin@elatec.si> 
+
+        * src/spi_at91.c: Fixed a typo in spi_at91_transfer reported by
+        Nicolas Brouard.
+
+2004-08-31  Savin Zlobec  <savin@elatec.si> 
+
+        * include/spi_at91.h:
+        * src/spi_at91.c:
+        Moved SPI registers and bits defines to HAL headers, added support 
+        for 4 to 16 decoder of chip select signals, support for transfers 
+        larger than 2^16 and per device configurable delay between two 
+        transfers.  
+        * cdl/spi_at91.cdl: 
+        Added option to enable support for 4 to 16 decoder of chip select 
+        signals.  
+
+2004-08-27  Savin Zlobec  <savin@elatec.si> 
+
+        * cdl/spi_at91.cdl:
+        * include/spi_at91.h:
+        * src/spi_at91.c:
+        * src/spi_at91_init.cxx:
+        Atmel AT91 SPI bus driver implementation.   	 
+
+
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

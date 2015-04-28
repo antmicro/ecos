@@ -1,0 +1,122 @@
+2011-06-14  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* src/objelf.c:cyg_ldr_relocate_section(): Conditional block did
+	shadow the return of error code. Fixed.
+
+2010-03-03  Stanislav Karpenko  <s.o.karpenko@gmail.com>
+
+	* include/objelf.h: Add missed entry to CYG_LDR_TABLE_KAPI_MUTEX
+	definition (cyg_mutex_lock_entry).
+
+2009-10-09  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/objloader.cdl: Eliminate workarounds for file path handling
+	issue in obsolete Cygwin tclsh. Use ACTUAL_CFLAGS for robustness.
+
+2009-09-13  Anthony Tonizzo  <atonizzo@gmail.com>
+
+	* src/objloader.c, src/objelf.c, include/objelf.h : Fixed a memory
+	leak where a library section was loaded but memory allocated was not
+	released. This bug was reported by Davy Wouters on the eCos list.
+	Added minor cosmetics and a number of CYG_ASSERT and if() to test the
+	values returnedby cyg_ldr_load_elf_section().
+
+2009-07-03  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/objloader.cdl, src/objelf.c, src/relocate_ppc.c,
+	  src/relocate_arm.c: Eliminate dependency on CYGPKG_IO_FILEIO when
+	the filesystem loader is not required.
+
+2009-02-07  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/objloader.cdl: Pass file2c.tcl to tclsh directly.
+
+2008-12-01  Anthony Tonizzo  <atonizzo@gmail.com>
+    * src/relocate_arm.c : Added relocation software for the ARM .
+    * src/relocate_i386.c : Added a structure containing the relocation names
+    for every architecture. Only used (and compiled in) for pretty printing.
+    * src/relocate_ppc.c : 
+    * include/relocate_arm.h : New header file for src/relocate_arm.c
+    * cdl/objloader.cdl: Added the option to relocate for the ARM.
+    * src/objloader.c :
+    * src/objelf.c : Erased some redundant debug printout and improved the
+    readability of the rest.
+    
+2008-12-01  Gernot Zankl  <gernot.zankl@gmx.at>
+    * src/loader_memory.c : Added the code to allow the objloader package
+    to load libraries from ROM memory, instead from a file system. The various
+    sections of the library are the copied from ROM to RAM and relocated.
+    * include/loader_memory.h : New header file for src/loader_memory.c
+    * src/objloader.c : Added a line to include the loader_memory header
+    file and code to flush the cache when calling cyg_ldr_find_symbol().
+    * cdl/objloader.cdl: Added one check boxe for each of the supported ways
+    of loading libraries (two for now) so that the user can compile out the
+    loading methods not used.
+
+2006-06-27  Anthony Tonizzo  <atonizzo@gmail.com>
+    * src/loader_fs.c : Minor cosmetic and formatting changes on all files. 
+    Also got rid of some signed/unsigned comparison which did not show up using
+    the PPC toolchain but do when compiled with gcc under the synthetic target.
+    * src/objelf.c :    
+    * src/objloader.c :
+    * src/relocate_i386.c : 
+    * src/relocate_ppc.c : 
+    * include/elf.h :
+    * include/loader_fs.h :
+    * include/objelf.h :
+    * include/relocate_i386.h : 
+    * include/relocate_ppc.h : 
+    * test/test_mods.c : 
+    * test/library/hello.c : 
+    
+2005-07-08  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+    * include/objelf.h: Include hal_tables.h otherwise we get strange
+    linker errors.
+    * cdl/objloader.cdl: Rearranged the building of the test case.
+    * include/relocate_i386.h (New):
+    * src/relocate_i386.c (New): Added a relocator for i386.
+    * src/objelf.c: Fixed various Elf_Rel vs Elf_Rela issues.
+    * test/load_mods.c: 
+    * test/library/hello.c: Modified to make use of the eCos test 
+    infrastructure. Uses a romfs to hold the object file to be loaded.
+    
+2005-05-10  Anthony Tonizzo  <atonizzo@gmail.com>
+
+    * include/elf.h: 
+    * include/loader_fs.h: 
+    * include/objelf.h: 
+    * include/relocate_ppc.h: 
+    * src/loader_fs.c: 
+    * src/objelf.c: 
+    * src/objloader.c: 
+    * src/relocate_ppc.c: 
+    * doc/notes.txt: 
+    * cdl/objloader.cdl:
+    * tests/test_mods.c:
+    * tests/library/hello.c: 
+    Created OBJLDR package.
+    
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2005, 2006, 2008, 2009 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

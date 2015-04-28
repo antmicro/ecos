@@ -1,0 +1,67 @@
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_gps4020.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_gps4020.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc.
+
+2004-04-22  Jani Monoses <jani@iv.ro>
+
+	 * cdl/hal_arm_gps4020.cdl :
+	 Invoke tail with stricter syntax that works in latest coreutils. 
+
+2003-12-05  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* include/hal_diag.h: hal_delay_us() is a C function.
+
+2003-11-10  Gary Thomas  <gary@mlbassoc.com>
+
+	* support/download/tty.c: 
+	* support/download/gps4020_start.S: 
+	* support/download/gps4020_download.c: 
+	* support/download/download_bin.py: 
+	* support/download/download.py: 
+	* support/download/arm.ld: 
+	* support/download/Makefile: 
+	* src/hal_diag.c: 
+	* src/gps4020_misc.c: 
+	* misc/redboot_ROM.ecm: 
+	* misc/redboot_RAM.ecm: 
+	* include/pkgconf/mlt_arm_gps4020_rom.ldi: 
+	* include/pkgconf/mlt_arm_gps4020_rom.h: 
+	* include/pkgconf/mlt_arm_gps4020_ram.ldi: 
+	* include/pkgconf/mlt_arm_gps4020_ram.h: 
+	* include/plf_stub.h: 
+	* include/plf_io.h: 
+	* include/hal_platform_setup.h: 
+	* include/hal_platform_ints.h: 
+	* include/hal_diag.h: 
+	* include/hal_cache.h: 
+	* include/gps4020.h: 
+	* cdl/hal_arm_gps4020.cdl: New package - support for GPS-4020
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

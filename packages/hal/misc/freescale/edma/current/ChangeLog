@@ -1,0 +1,67 @@
+2014-02-13  Ilija Kocho <ilijak@siva.com.mk>
+
+	* misc/freescale/edma/current/doc/edma.sgml
+	* misc/freescale/edma/current/doc/freescale_begin.sgml
+	* misc/freescale/edma/current/doc/freescale_end.sgml
+	New: Add Freescale eDMA to eCos reference manual.
+
+2013-08-26  Ilija Kocho <ilijak@siva.com.mk>
+
+	* include/freescale_edma.h: Fix FREESCALE_EDMA_NBYTES_MLOFFYES_NBYTES_M bug
+	[ Bugzilla 1001896 ]
+
+2013-05-04  Ilija Kocho <ilijak@siva.com.mk>
+
+	* cdl/hal_freescale_edma.cdl: Remove requirement for WRITETHRU cache mode
+	that raised conflict when cache was disabled. Bug reported by Mike Jones.
+	[ Bugzilla 1001838 ]
+
+2013-04-01  Ilija Kocho <ilijak@siva.com.mk>
+
+	* src/hal_freescale_edma.c:	Add clock gating enable.
+
+2013-02-06  Stefan Singer <stefan.singer@freescale.com>
+		    Ilija Kocho <ilijak@siva.com.mk>
+
+	* include/freescale_edma.h src/hal_freescale_edma.c:	
+	enhanced endianness support for devices with big and little endian
+	added support for MPC5xxx in addition to Kinetis
+	(see Bugzilla 1001752).
+	
+2012-05-04  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_freescale_edma.cdl
+	* include/freescale_edma.h
+	* src/hal/freescale_edma.c
+	Add support for 32 channel eDMA [Bugzilla 1001579]
+
+2012-01-06  Ilija Kocho  <ilijak@siva.com.mk>
+
+    * cdl/hal_freescale_edma.cdl
+	* include/freescale_edma.h
+	* src/hal/freescale_edma.c
+	New package -- Freescale eDMA DMA controller support [Bugzilla 1001450]
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
+// Copyright (C) 2012 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 or (at your option) any
+// later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc., 51 Franklin Street,
+// Fifth Floor, Boston, MA  02110-1301, USA.
+// -------------------------------------------
+// ####GPLCOPYRIGHTEND####
+//===========================================================================

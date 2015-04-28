@@ -1,0 +1,199 @@
+2013-06-24  Uwe Kindler <uwe_kindler@web.de>
+
+	* include/canio.h: Added structure cyg_can_err_count_info for reading
+	CAN hardware error counter values from CAN hardware.
+	* doc/can.sgml: Documented new CAN config key
+	CYG_IO_GET_CONFIG_ERR_COUNTERS.
+
+2013-05-06  Uwe Kindler <uwe_kindler@web.de>
+
+	* doc/can.sgml: Documented return code -ENOSPC for cyg_io_set_config()
+	for config keys CYG_IO_SET_CONFIG_CAN_RANGE_FILTER and
+	CYG_IO_SET_CONFIG_CAN_MASK_FILTER
+
+2012-01-22  Bernard Fouché <bernard.fouche@kuantic.com>
+
+	* cdl/io_can.cdl: support for add/remove compiler flags
+	* doc/can.sgml, doc/can_driver_doc.html: updated doc reflecting API
+	changes (range/mask filtering, listen-only mode, return values for
+	xmt_msg/rcv_event, new flags).
+	* include/can.h: given in a match the types of function pointers for
+	can_callbacks_t according to the changes made in can.c.
+	* include/canio.h: flags field in event enlarged to 32 bits to fit
+	new events 'CYGNUM_CAN_EVENT_ERR_ACTIVE' and
+	'CYGNUM_CAN_EVENT_OVERRUN_RX_HW'. Made a 'flag' typedef.
+	cyg_can_event fields reordered so flags size change keeps events the
+	same size.  Defined new filtering capabilities (range/mask). New
+	convenience macro CYGNUM_CAN_EVENT_ALL. New listen-only mode.
+	* src/can.c: can_rcv_event() and can_xmt_msg() now returns cyg_bool
+	(were 'void'). flags using cyg_can_event_flags_t type.
+	[ Bugzilla 1001453 ]
+
+2010-01-13  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* include/can.h: EOF footer: s/SERIAL/CAN/.
+	* src/can.c: can_set_config(): Fixed key's name to drain output:
+	s{CYG_IO_GET_CONFIG_SERIAL_OUTPUT_DRAIN
+	}{CYG_IO_SET_CONFIG_CAN_OUTPUT_DRAIN}.
+
+2007-08-23 Alexey Shusharin <mrfinch@mail.ru>
+	
+	* doc/can.sgml: Callback on event documentation.
+	* src/can.c:  Change one wakeup to callback in a comment.
+	* include/canio.h: changed cyg_addrword_t to CYG_ADDRWORD so
+	  can will compile without the kernel.
+	
+2007-08-06 Alexey Shusharin <mrfinch@mail.ru>
+           Andrew Lunn <andrew.lunn@ascom.ch>
+	
+	* cdl/io_can.cdl: Added option CYGOPT_IO_CAN_SUPPORT_CALLBACK
+      
+	* include/canio.h: Added struct cyg_can_callback_cfg for setting
+          callback configurations.
+       
+	* include/can.h: Added declaration and initialization of callback 
+          configuration in struct can_channel.
+       
+	* src/can.c: Added callback configuration changing and
+          application function call.
+
+2007-07-02 Uwe Kindler <uwe_kindler@web.de>
+    
+	* cdl/io_can.cdl: Added interface CYGINT_IO_CAN_CHANNELS for
+	  counting available CAN channels
+      
+	* include/canio.h: Changed type cyg_can_msgbuf_info. The two
+	  fields are 16 bit now because device drivers may support more
+	  than 256 message buffers (i.e. the LPC2xxx CAN driver)
+    
+2007-06-20  Uwe Kindler  <uwe_kindler@web.de>
+
+	* test/can_filter: Changed filter loop counter from cyg_uint8 to
+	  cyg_uint16 because LPC2xxx CAN driver supports more than 256
+	  message buffers.
+
+2007-03-23  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/io_can.cdl: Added several interfaces for implementation by
+	  device drivers.
+	  Moved several configuration options from device drivers to the
+	  generic CAN driver. With this design a device driver does not
+	  need to provide all configuration options in its CDL file - it
+	  simply needs to implement the provided interfaces. The drawback
+	  of this decicsion is, that it is not possible to control these
+	  options independently for several CAN devices. (But most platforms
+	  will have only 1 channel)
+	  Added configuration option CYGBLD_IO_CAN_EXTRA_TESTS. This option
+	  enables the build of the interactive CAN tests.
+	  
+	* test/can_filter: Added interactive message filtering test
+	
+	* test/can_hdi: Added interactive hardware description interface
+	  test
+	  
+	* test/can_load: Added interactive message handling (reception,
+	  transmission) test.
+	  
+	* test/can_remote: Added interactive remote response buffer test
+	  
+	* test/can_tx: Added interactive basic TX test. All tests are not
+	  part of the eCos test framework because they are interactive. That
+	  means, they require interaction with another user controlled 
+	  CAN node.
+	  
+	* include/can.h: Added identifier masks for standard and extended
+	  identifiers.
+	  Added the line #include CYGDAT_IO_CAN_DEVICE_INL. This enables a
+	  device driver to provide an own device inline file. In this inline
+	  file the driver may define own data types for CAN messages (for
+	  internal storage of CAN messages (see AT91SAM7 CAN driver))
+
+	* include/canio.h: Added baudrate CYGNUM_CAN_KBAUD_AUTO - support of 
+	  automatic baudrate detection if a driver supports such a feature.
+	  Added state CYGNUM_CAN_STATE_CONFIG and mode CYGNUM_CAN_MODE_CONFIG.
+	  The application may use these identifiers to set the CAN device into
+	  a state where it is safe to add/remove/configure message buffers.
+	  Added union data type cyg_can_msg_data. With this data type a 4 byte
+	  alignment of message data is guaranteed, an byte, word and dword 
+	  access to the data is possible and an assignment of two CAN datas are
+	  possible now.
+	  cyg_can_message now uses cyg_can_msg_data union for CAN data.
+	  Replaced SW-Filt flag by autobaud flag in HDI.
+	  Added CAN message access macros for read/write acces of CAN message
+	  structures. These macros hide implementation of CAN message from 
+	  application.
+ 
+	* src/can.c: Added support for device driver defined CAN message 
+	  data types
+
+2006-12-19  Sergei Gavrikov  <sg@sgs.gomel.by>
+
+	* doc/can.sgml: Correctly close para tag.
+
+2006-12-13  Uwe Kindler  <uwe_kindler@web.de>
+
+	* doc/can.sgml: CAN driver SGML documentation added.
+
+2006-08-25  Gary Thomas  <gary@mlbassoc.com>
+
+	* cdl/io_can.cdl: Set parent for more intuitive ConfigTool layout.
+
+2006-03-27  Uwe Kindler  <uwe_kindler@web.de>
+
+	* src/can.c can_rcv_event() Clear the flag field in new event before
+	calling into low level hardware driver.
+
+2006-02-15  Uwe Kindler  <uwe_kindler@web.de>
+
+	* include/can_io.h Added message buffer configuration identifier:
+	CYGNUM_CAN_MSGBUF_RESET_ALL, CYGNUM_CAN_MSGBUF_RX_FILTER_ALL ...
+	Added cfg_id field to cyg_can_msgbuf_cfg data structure.
+
+2005-09-11  Uwe Kindler  <uwe_kindler@web.de>
+
+	* include/can_io.h Added support for get_config to CAN_LOWLEVEL_FUNS
+	structure. 
+	Added additional CAN events. 
+	Added support for can state (cyg_can_state) and CAN mode (cyg_can_mode).  
+	Changed data type of cyg_can_buf_info_t data structure from cyg_int32 
+	to cyg_uint32. 
+	Added support for message box configuration (cyg_can_msgbuf_info).
+	Added support for message filtering (cyg_cn_filter). 
+	Renamed cyg_can_rtr_buf to cyg_can_remote_buf. 
+	Renamed CYGNUM_CAN_RTR_BUF_NA and CYGNUM_CAN_RTR_BUF_INIT to 
+	CYGNUM_CAN_MSGBUF_NA and CYGNUM_CAN_MSGBUF_INIT because they are
+	also used for message filtering. 
+	Added support for hardware description interface. 
+	Added support for CYG_IO_SET_CONFIG_CAN_INPUT_FLUSH,
+	CYG_IO_SET_CONFIG_CAN_OUTPUT_FLUSH and CYG_IO_GET_CONFIG_SERIAL_OUTPUT_DRAIN.
+	
+	* doc/can_driver_doc.html Additional configuration options
+	documented.
+	
+2005-05-24  Uwe Kindler  <uwe_kindler@web.de>
+
+	* Generic CAN driver package created
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2003, 2004 Free Software Foundation, Inc.                  
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

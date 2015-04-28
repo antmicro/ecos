@@ -1,0 +1,136 @@
+# ====================================================================
+#
+#      hal_arm_xc7z.cdl
+#
+#      Xilinx XC7Z HAL package configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      ITR-GmbH
+# Contributors:   
+# Date:           2012-06-25
+#
+#####DESCRIPTIONEND####
+#
+# ====================================================================
+
+cdl_package CYGPKG_HAL_ARM_XC7Z {
+    display       "Xilinx XC7Z variant HAL"
+    parent        CYGPKG_HAL_ARM
+    define_header hal_arm_xc7z.h
+    include_dir   cyg/hal
+    hardware
+    description   "
+        The XC7Z HAL package provides the support needed to run
+        eCos on Xilinx XC7Z based targets."
+
+    compile       xc7z_misc.c xc7z_ostimer.c hal_diag.c
+
+    implements    CYGINT_HAL_DEBUG_GDB_STUBS
+    implements    CYGINT_HAL_DEBUG_GDB_STUBS_BREAK
+    implements    CYGINT_HAL_VIRTUAL_VECTOR_SUPPORT
+    implements    CYGINT_HAL_VIRTUAL_VECTOR_COMM_BAUD_SUPPORT
+    implements    CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9
+    implements    CYGINT_HAL_ARM_THUMB_ARCH
+    
+    cdl_option CYGHWR_HAL_ARM_FPU {
+        display    "Variant FPU support"
+        calculated 1
+        description    "The XC7Z SoC is supports VFPv3 instructions."
+    }
+
+    cdl_option CYGHWR_HAL_ARM_NEON {
+        display    "Variant NEON support"
+        calculated 1
+        description    "The XC7Z SoC is supports NEON instructions."
+    }
+
+    # Let the architectural HAL see this variant's files
+    define_proc {
+        puts $::cdl_system_header "#define CYGBLD_HAL_ARM_VAR_IO_H"
+        puts $::cdl_system_header "#define CYGBLD_HAL_ARM_VAR_ARCH_H"
+    }
+
+    cdl_option CYGHWR_HAL_ARM_XC7Z {
+        display        "XC7Z variant used"
+        flavor         data
+        default_value  {"XC7Z020"}
+        legal_values   {"XC7Z010" "XC7Z020" "XC7Z030" "XC7Z040"}
+        description    "The XC7Z microcontroller family has several variants,
+                        the main differences being the amount of on-chip SRAM,
+                        peripherals and their layout. This option allows the
+                        platform HALs to select the specific microcontroller
+                        being used."
+    }
+
+    cdl_option CYGHWR_HAL_ARM_SOC_PROCESSOR_CLOCK {
+        display       "Processor clock rate"
+        flavor        data
+        default_value 400000000
+        description   "
+           The processor can run at various frequencies.
+           These values are expressed in Hz. It's the CPU frequency."
+    }
+    
+    cdl_component CYGNUM_HAL_RTC_CONSTANTS {
+        display       "Real-time clock constants"
+        flavor        none
+
+        cdl_option CYGNUM_HAL_RTC_NUMERATOR {
+            display       "Real-time clock numerator"
+            flavor        data
+            default_value 1000000000
+        }
+        cdl_option CYGNUM_HAL_RTC_DENOMINATOR {
+            display       "Real-time clock denominator"
+            flavor        data
+            default_value 1000
+        }
+        cdl_option CYGNUM_HAL_RTC_CPU_CLOCK_DIVIDER {
+            display        "Divider of CPU frequency distributed to RTC"
+            flavor         data
+            default_value  4
+        }
+        
+        cdl_option CYGNUM_HAL_RTC_PERIOD {
+            display       "Real-time clock period"
+            flavor        data
+            calculated    ((CYGHWR_HAL_ARM_SOC_PROCESSOR_CLOCK/CYGNUM_HAL_RTC_CPU_CLOCK_DIVIDER)/CYGNUM_HAL_RTC_DENOMINATOR)
+            description   "Value to program into the RTC clock generator. OS timer must be 1 ms."
+        }
+    }
+
+}

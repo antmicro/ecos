@@ -1,0 +1,136 @@
+##==========================================================================
+##
+##      hal_cortexm_fpu.cdl
+##
+##      Cortex-M HAL Floating Point configuration data
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2012 Free Software Foundation, Inc.                  
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):    ilijak
+## Date:         2012-03-03
+## Usage:        script hal_cortexm_fpu.cdl
+##
+######DESCRIPTIONEND####
+##
+##==========================================================================
+
+    #cdl_component CYGPKG_HAL_CORTEXM_FPU {
+        #display          "Floating Point Unit"
+        #flavor           none
+        #no_define
+
+        cdl_interface CYGINT_HAL_FPV4_SP_D16 {
+            display   "FPU is FPv4-SP-D16"
+            flavor     bool
+            implements CYGINT_HAL_CORTEXM_FPU
+        }
+
+        cdl_interface CYGINT_HAL_CORTEXM_FPU {
+            display  "FPU present."
+            flavor   data
+        }
+
+        cdl_component CYGHWR_HAL_CORTEXM_FPU {
+            display        "Use hardware FPU"
+            flavor         bool
+            active_if      { CYGINT_HAL_CORTEXM_FPU }
+            default_value  0
+            compile        cortexm_fpu.c
+
+            description "
+                Cortex-M4F cores have a single precision floating point unit.
+                This option enables FPU usage and provides related FPU control
+                options.
+                Hardware FPU enable, implies Cortex-M4 code generation, and
+                build flags shall be set accordingly, including -mcpu=cortex-m4.
+                As a side effect, the Cortex_M4 build flag will remain \(sticky\)
+                even if hardware FPU is subsequently disabled.
+                "
+
+            cdl_option CYGHWR_HAL_CORTEXM_FPU_SWITCH {
+                display       "FPU context switch"
+                flavor data
+                legal_values  { "ALL" "LAZY" "NONE" }
+                default_value { "LAZY" }
+
+                requires { is_active (CYGPKG_KERNEL) implies
+                    CYGTST_KERNEL_SKIP_MULTI_THREAD_FP_TEST ==
+                    (CYGHWR_HAL_CORTEXM_FPU_SWITCH == "NONE") }
+
+                description   "
+                    This option selects the FPU context switching scheme.
+                    Straight-forward behaviour is to save and
+                    restore FPU state on every CPU context save/restore.
+                    While simple, robust and deterministic, this
+                    approach can be expensive if the FPU is used by
+                    few threads. The alternative schemes, available by this
+                    option, are to use hardware features that allow either:
+                    - LAZY: Save FPU context only if the thread makes use of
+                    the FPU. Where only few threads use FPU this should give
+                    shorter average context switching delay compared to ALL
+                    scheme. If more than one threads use FPU, the worst context
+                    switching time is typically worse than the one for ALL
+                    scheme.
+                    - ALL: Save FPU context for all threads. This is a simple
+                    scheme, which if all, or majority of threads use FPU may
+                    give better average context switching time than LAZY.
+                    This scheme also includes Lazy Stacking of FPU state
+                    for exceptions/interrupts.
+                    - NONE: No FPU state saving, this scheme adds no additional
+                    delay for saving of FPU state to context switching, but is
+                    only suitable if maximum one thread uses floating point."
+            }
+
+        cdl_option CYGHWR_HAL_FPV4_SP_D16 {
+            flavor bool
+            active_if { CYGINT_HAL_FPV4_SP_D16 }
+            calculated { CYGINT_HAL_FPV4_SP_D16 && CYGHWR_HAL_CORTEXM_FPU }
+            display     "FPv4-SP-D16"
+            no_define
+            compile     fpv4_sp_d16.c
+
+            define_proc {
+                puts $::cdl_system_header "#define CYGBLD_HAL_LIBM_H <cyg/hal/fpv4_sp_d16_libm.h>"
+            }
+
+            description "
+                FPv4-SP-D16 is ARMv7 architecture single precision floating
+                point unit with 16 double precision / 32 single precision
+                registers. It is found on Cortex-M4F and Cortex-R5 cores."
+        }
+    #}
+
+# EOF hal_cortexm_fpu.cdl

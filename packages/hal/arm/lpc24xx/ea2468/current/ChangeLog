@@ -1,0 +1,91 @@
+2012-04-23  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/pkgconf/mlt_arm_lpc24xx_ea2468_rom.ldi:
+	* include/pkgconf/mlt_arm_lpc24xx_ea2468_ram.ldi: Relocate fixed
+	vectors to 0x40000020. Previously, the HAL_VSR_GET/SET macros
+	accessed the wrong locations and didn't have any effect; now both
+	hardware and software have the same idea of where the VSR table
+	is.
+	NOTE: that this renders RAM applications built with this layout
+	incompatible with RedBoot built with the old layout. A new RedBoot
+	needs to be installed.
+
+	* cdl/hal_arm_lpc24xx_ea2468.cdl:
+	* tests/fiq.c: Add FIQ test program.
+
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_lpc24xx_ea2468.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_lpc24xx_ea2468.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc. Remove -mno-short-load-words.
+
+2008-11-01  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/hal_arm_lpc24xx_ea2468.cdl: Fixed typo
+	* include/pkgconf/mlt_arm_lpc24xx_ea2468_ram.h: Reserve 1 MB of
+          SDRAM for RedBoot.
+	* include/pkgconf/mlt_arm_lpc24xx_ea2468_ram.ldi: Reserve 1 MB of
+          SDRAM for RedBoot
+	* src/platform_i2c.c: Compile only if I2C channel 0 is supported       
+
+2008-09-18  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/hal_arm_lpc2xxx_ea2468.cdl: Added compile platform_i2c.c and
+	  CYGPKG_HAL_ARM_LPC24XX_EA2468_TESTS for building I2C test
+	* include/plf_io.h: Exported I2C devices and bus via macro
+	  HAL_I2C_EXPORTED_DEVICES, Added I2C related defines, Added
+	  functions declarations  hal_lpc_eeprom_write() and 
+	  hal_lpc_eeprom_read() for I2C EEPROM access
+	* src/ea2468_misc.c: Replaced CYGARC_HAL_LPC24XX_SET_PIN_FUN() macro
+	  calls with hal_set_pin_function() calls
+	* src/platform_i2c.c: New file adds I2C bus support for I2C bus 0 and 
+	  adds support for I2C EEPROM
+	* tests/i2c_eeprom: Simple I2C EEPROM read/write test case
+
+2008-09-11  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/hal_arm_lpc2xxx_ea2468.cdl: Added constraint for
+	CYGHWR_DEVS_ETH_PHY_KSZ8001 if ethernet packages is active
+	  
+2008-07-21  Uwe Kindler  <uwe_kindler@web.de>
+
+	* src/ea2468_misc.c: Added hal_lpc_can_init() to initialize CAN
+	channels
+	* include/plf_io.h: Added HAL_LPC2XXX_INIT_CAN() macro for CAN channel
+	initialisation
+	
+2008-07-06  Uwe Kindler  <uwe_kindler@web.de>
+
+	* Initial release of Embedded Artists LPC2468 OEM board package
+	* cdl/hal_arm_lpc2xxx_ea2468.cdl
+	* include/plf_io.h
+	* include/hal_platform_setup.h
+	* src/ea2468_misc
+
+# ====================================================================
+## ####GPLCOPYRIGHTBEGIN####                                                
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2008 Free Software Foundation, Inc.                        
+##
+## This program is free software; you can redistribute it and/or modify     
+## it under the terms of the GNU General Public License as published by     
+## the Free Software Foundation; either version 2 or (at your option) any   
+## later version.                                                           
+##
+## This program is distributed in the hope that it will be useful, but      
+## WITHOUT ANY WARRANTY; without even the implied warranty of               
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+## General Public License for more details.                                 
+##
+## You should have received a copy of the GNU General Public License        
+## along with this program; if not, write to the                            
+## Free Software Foundation, Inc., 51 Franklin Street,                      
+## Fifth Floor, Boston, MA  02110-1301, USA.                                
+## -------------------------------------------                              
+## ####GPLCOPYRIGHTEND####                                                  
+# ====================================================================
+

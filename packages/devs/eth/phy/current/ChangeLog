@@ -1,0 +1,124 @@
+2011-07-22  Christophe Coutand  <ecos@hotmail.co.uk>  and sergeig
+
+	* cdl/phy_eth_drivers.cdl: Use CYGHWR_DEVS_ETH_PHY_DP8384X name
+	instead CYGHWR_DEVS_ETH_PHY_DP83847
+	* src/DP83847.c: Renamed stat() function, add new PHY DP83848C
+	Update due renaming CYGHWR_DEVS_ETH_PHY_DP83847 to
+	CYGHWR_DEVS_ETH_PHY_DP8384X. [ Bugzilla 1001235 ]
+
+2011-07-02  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* src/KSZ8041.c: More silicon revisions.  [Bugzilla 1001274]
+
+2010-06-10  Christophe Coutand <ccoutand@stmi.com>
+
+	* doc/eth_phy.sgml, include/eth_phy.h: Add Ethernet Gigabit Mode
+	* cdl/phy_eth_drivers.cdl: Add new PHY support
+	* src/IP101A.c, src/IP101A.h: Contributed by Edgar Grimberg
+	* src/VSC8244.c, src/VSC8244.h: Contributed by Christophe Coutand
+	* src/VSC8641.c, src/VSC8641.h: Contributed by Sachin Sushil Chaddha
+
+2008-12-30  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/phy_eth_drivers.cdl: Reference per-package documentation.
+
+2008-10-28  Oliver Munz <munz@speag.ch>
+
+	* cdl/phy_eth_drivers.cdl: 
+	* src/KSZ8041.c: Add support for Micrel KSZ8041 PHY
+	
+2008-08-05  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/phy_eth_drivers.cdl: 
+	* src/KSZ8001.c: Add support for Micrel KSZ8001 PHY
+	
+2007-04-06  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/phy_eth_drivers.cdl: 
+	* src/KS8721.c: Add support for Micrel KS8721 PHY
+	
+2007-01-17  John Eigelaar <jeigelaar@mweb.co.za>
+
+	* cdl/phy_eth_drivers.cdl: 
+	* src/DM9161A.c: Add support for Davicom 9161A.
+
+2006-04-07  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* doc/eth_phy.sgml: Fixed a few typos
+
+2006-03-30  Jay Foster <jay@systech.com>
+	* include/eth_phy.h:  Add default mode value for _eth_phy_cfg().
+	* cdl/phy_eth_drivers.cdl: Add support for ICS189x.
+	* include/eth_phy_dev.h:
+	* src/AM79C874.c:
+	* src/DP83847.c:
+	* src/INLXT972.c: Make debug output CDL configurable.
+	* src/eth_phy.c: Fix bug in _eth_phy_init() that prevented using
+					 a PHY MII address other than 0.
+	* src/ics189x.c: New
+
+2005-08-25  Markus Schade <marks@peppercon.de>
+
+	* src/INLXT972.c: 
+	* cdl/phy_eth_drivers.cdl: Add support for Intel LXT972
+
+2004-10-04  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/phy_eth_drivers.cdl: We call the delay function via VV so we
+	require VV support.
+
+2003-11-07  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/DP83847.c: 
+	* src/AM79C874.c: 
+	* cdl/phy_eth_drivers.cdl: Make auto-negotiation timeout configurable.
+
+2003-09-11  Gary Thomas  <gary@mlbassoc.com>
+
+	* include/eth_phy.h: Minor improvement in status bitfield [comments]
+
+	* doc/eth_phy.sgml: New file - add basic documentation on PHY API.
+
+2003-08-26  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/DP83847.c: 
+	* src/AM79C874.c: New file(s) - driver(s) for PHY devices.
+
+	* src/eth_phy.c: 
+	* include/eth_phy_dev.h: 
+	* include/eth_phy.h: 
+	* cdl/phy_eth_drivers.cdl: Add device/chip specific drivers.
+
+2003-08-19  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/eth_phy.c: 
+	* include/eth_phy.h: 
+	* cdl/phy_eth_drivers.cdl: New file(s) - generic API for dealing
+	with ethernet PHY devices, allowing network drivers more flexibility.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2010 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+	
+	
+

@@ -1,0 +1,72 @@
+2013-04-09  Tomas Frydrych <tomas@sleepfive.com>
+
+	* cdl/hal_cortexm_kinetis_twr_k40x256.cdl:
+	* include/plf_io.h:
+	Implemented support for I2C  [Bugzilla 1001397]
+
+2013-04-01  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* src/twr_k40x256_misc.c: Clock gating synchronised with variant.
+	[ Bugzilla 1001814 ]
+
+2012-11-06  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k40x256.cdl:
+	Sync with variant changes due to hardware floating point support.
+	Changed CYGHWR_HAL_CORTEXM_KINETIS_FLEXNVM.    [Bugzilla 1001607]
+
+2012-10-25  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* src/twr_k40x256_misc.c: Initialization for separate SRAM regions
+	synchronized with variant.                  [Bugzilla 1001606]
+
+2012-05-19  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_cortexm_kinetis_twr_k40x256.cdl: Reference per-package
+	documentation.
+
+2012-05-18  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* doc/twr_k40x512.sgml:
+	New file -- TWR-K40X512 platform documentation. [Bug 1001580]
+
+2012-01-06  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k40x256.cdl:
+	* include/plf_io.h:
+	* src/twr_k40x256_misc.c:
+	Add entry for DMA, Add CYG_HAL_STARTUP_ENV. Add DSPI pins for SPI1 bus.
+	Updated for early clock start. [Bugzilla 1001450]
+
+2011-08-26  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis_twr_k40x256.cdl:
+	* include/plf_arch.h:
+	* include/plf_intr.h:
+	* include/plf_io.h:
+	* src/twr_k40x256_misc.c:
+	New package -- Freescale TWR-K40X256 board.
+	
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2011, 2012 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

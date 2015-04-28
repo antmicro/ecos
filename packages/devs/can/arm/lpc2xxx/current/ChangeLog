@@ -1,0 +1,152 @@
+2013-09-17  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/can_lpc2xxx.cdl: Add CYGHWR_DEVS_CAN_LPC2XXX_BUSOFF_WORKAROUND
+	to enable conditional Bus-Off reset mode workaround. [Bug 1001897]
+	* src/can_lpc2xxx.c: Add function lpc2xxx_reset_error_counters to
+	reset TX and RX error counters to certain values. Function
+	lpc2xxx_start_module now clears both error counters. Add some
+	LPC2XXX_DBG_PRINT statements to lpc2xxx_can_getevent function. Add
+	function lpc2xxx_print_status to ease printing status register
+	content. If a bus error condition occures (ICR_BUS_ERR) the function
+	lpc2xxx_can_getevent now clears the error counters to prevent error
+	ISR from blocking application and to support recovery from bus off
+	condition if option CYGHWR_DEVS_CAN_LPC2XXX_BUSOFF_WORKAROUND is
+	enabled.
+
+2013-09-11  Uwe Kindler <uwe_kindler@web.de>
+
+	* src/can_accfilt_lpc2xxx.c, src/can_lpc2xxx.c: Fix a compile issue of
+	the lpc2xxx driver that only occurs if support for extended 29-bit CAN
+	identifiers is enabled and support for message filtering is disabled.
+	[ Bugzilla 1001901 ]
+
+2013-08-29  Uwe Kindler <uwe_kindler@web.de>
+
+	* includes/can_lpc2xxx_baudrates.h: Added baudrate table for CAN clock
+	of 14.745600 MHz. [ Bugzilla 1001900 ]
+
+2013-06-24  Uwe Kindler <uwe_kindler@web.de>
+
+	* src/can_lpc2xxx.c: Add support for new config key
+	  CYG_IO_GET_CONFIG_CAN_ERR_COUNTERS.
+
+2013-05-06  Uwe Kindler <uwe_kindler@web.de>
+
+	* src/can_lpc2xxx.c: Changed return code for message filter
+	configuration to -ENOSPC if no filters are available to match
+	documentation change.
+
+2012-01-25  Bernard Fouché <bernard.fouche@kuantic.com>
+
+	* Changes made to support CAN IO package update:
+	* cdl/can_lpc2xxx.cdl: CYGOPT_DEVS_CAN_LPC2XXX_EXTENDED_CFG_KEYS
+	replaced by CYG_IO_SET_CONFIG_CAN_RANGE_FILTER.
+	* include/can_lpc2xxx.h: Commented out unused and not implemented
+	things.
+	* src/can_lpc2xxx.c: CYGNUM_CAN_EVENT_OVERRUN_RX_HW instead of
+	CYGNUM_CAN_EVENT_OVERRUN_RX. CYGOPT_DEVS_CAN_LPC2XXX_EXTENDED_CFG_KEYS
+	replaced by CYG_IO_SET_CONFIG_CAN_RANGE_FILTER. can_lpc2xxx.h not
+	required any more. CYGNUM_CAN_MODE_LISTEN_ONLY_ENTER &
+	CYGNUM_CAN_MODE_LISTEN_ONLY_EXIT return -EINVAL.
+	[ Bugzilla 1001453 ]
+
+2008-07-21  Uwe Kindler <uwe_kindler@web.de>
+	
+	* cdl/can_lpc2xxx.cdl: Added CYGOPT_DEVS_CAN_LPC2XXX_ALIE to make 
+	arbitration lost interrupt optional. Added option
+	CYGNUM_DEVS_CAN_LPC2XXX_INT_PRIORITY to configure the interrupt
+	priority for global CAN interrupt in LPC24xx variants.
+	
+	* include/can_lpc2xxx_baudrates.h: Replaced CYGNUM_CAN_LPC2XXX_VPB_CLK
+	by CYGNUM_HAL_ARM_LPC2XXX_CAN_CLK because newer variants like LPC24xx
+	do not have a global VPB_CLK.
+	
+	* src/can_accfilt_lpc2xxx.c: Adjusted LPC2XXX_CAN_FIRST_IN_LUT to
+	be 0 for LPC24xxx variants. Added macro CAN_CHAN_NO_LUT(_info_) to
+	abstract channel numbering from acceptance filter code.
+	
+	* src/can_lpc2xxx.c: Removed icr data field from lpc2xxx_can_info_st
+	structure because it is not required any longer. A lot of small
+	modifications to make the driver usable with newer LPC2xxx variants like
+	LPC24xx. ISR and DSR code changed - instead of disabling interrupts in 
+	IER register they are disabled in VIC by using cyg_drv_interrupt_mask()
+	function calls. Added global CAN ISR and DSR for LPC24xx variants 
+	(they do not support individual interrupt vectors for RX and TX
+	interrupts). Moved LUT error checking code from ISR into DSR to keep
+	ISR as short as possible and made LUT error checking code optional.
+	  
+2008-05-23  Alexey Shusharin <mrfinch@mail.ru>
+
+	* cdl/can_lpc2xxx.cdl: add CAN interrupt priorities
+	
+	* src/can_lpc2xxx.c: add CAN interrupt priorities, 
+	  repair "chan" definition missing in rx_ISR
+	
+	* src/can_accfilt_lpc2xxx.c: add various types of CAN controllers
+	  numbering (depends on LPC2XXX version)
+	
+2007-08-17 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
+	
+	* src/can_lpc2xxx.c: The definition of "info" is missing when only
+	  one CAN channel is configured.
+	
+2007-08-17  Uwe Kindler <uwe_kindler@web.de>
+	
+	* include/can_lpc2xxx_baudrates.h: Removed all prefixed zeros from
+	  baudrate table entries (they aren't intended to be interpreted as 
+	  octal)
+	  
+	* tests/can_baudrates.c
+	  tests/can_busload.c
+	  tests/can_rx_tx.c: removed #include pkgconf/devs_can_loop.h
+	
+2007-08-02  Alexey Shusharin <mrfinch@mail.ru>
+	
+	* src/can_lpc2xxx.c: Added acknowledging call in rx interrupt
+	  (self-reception part)
+	
+2007-07-07  Alexey Shusharin <mrfinch@mail.ru>
+
+	* cdl/can_lpx2xxx.cdl: Option
+	  CYGOPT_DEVS_CAN_LPC2XXX_USE_SELF_RECEPTION added for enabling
+	  self reception requests instead of transmission requests.
+	
+	* src/can_lpc2xxx.c: Some small bugs fixed. Added support for LUT
+	  error. Support for self transmission request added. Debug output
+	  improved.
+	  
+	* src/can_accfilt_lpc2xxx.c: Added support for baudrates of 10kbaud 
+	  and 20 kbaud at clock speed of 60 MHz
+	
+2007-07-01  Uwe Kindler  <uwe_kindler@web.de>
+
+	* LPC2xxx CAN driver package created
+	* cdl/can_lpc2xxx.cdl
+	* include/can_lpc2xxx.h
+	* include/can_lpc2xxx_baudrates.h
+	* src/can_lpc2xxx.c
+	* src/can_accfilt_lpc2xxx.c
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

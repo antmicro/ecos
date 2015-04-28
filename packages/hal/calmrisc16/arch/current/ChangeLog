@@ -1,0 +1,61 @@
+2004-04-22  Jani Monoses <jani@iv.ro>
+
+	 * cdl/hal_calm16.cdl :
+	 Invoke tail with stricter syntax that works in latest coreutils. 
+
+2003-12-08  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/hal_misc.c: Only declare __mem_fault_handler if GDB stubs
+	are included (and it will be used).
+
+2003-01-31  Mark Salter  <msalter@redhat.com>
+
+	* src/hal_syscall.c (hal_syscall_handler): Let generic syscall code
+	handle exit.
+
+2002-04-15  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* src/hal_syscall.c (hal_syscall_handler): Add extra sig argument to
+	__do_syscall.
+
+2001-11-16  Nick Garnett  <nickg@redhat.com>
+
+	* src/hal_misc.c (hal_msbit_index): Fixed this function so that it
+	actually works!
+
+2001-06-08  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* include/hal_cache.h: Correctly indicate absence of cache.
+
+2001-05-03  Mark Salter  <msalter@redhat.com>
+
+	* src/vectors.S: Removed unneeded debugging functions. Fixed
+	register save/restore.
+
+	* src/calm16-stub.c: Remove unneeded {get,put}_register functions.
+
+	* include/calm16-stub.h: Clean out some cruft.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

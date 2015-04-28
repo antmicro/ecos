@@ -1,0 +1,179 @@
+<!-- DOCTYPE part  PUBLIC "-//OASIS//DTD DocBook V3.1//EN" -->
+
+<!-- {{{ Banner                                                     -->
+
+<!-- =============================================================== -->
+<!--                                                                 -->
+<!--     edma.sgml                                                -->
+<!--                                                                 -->
+<!--     EDMA          documentation.                             -->
+<!--                                                                 -->
+<!-- =============================================================== -->
+<!-- ####ECOSDOCCOPYRIGHTBEGIN####                                   -->
+<!-- =============================================================== -->
+<!-- Copyright (C) 2014 Free Software Foundation, Inc. -->
+<!-- This material may be distributed only subject to the terms      -->
+<!-- and conditions set forth in the Open Publication License, v1.0  -->
+<!-- or later (the latest version is presently available at          -->
+<!-- http://www.opencontent.org/openpub/)                            -->
+<!-- Distribution of the work or derivative of the work in any       -->
+<!-- standard (paper) book form is prohibited unless prior           -->
+<!-- permission obtained from the copyright holder                   -->
+<!-- =============================================================== -->
+<!-- ####ECOSDOCCOPYRIGHTEND####                                     -->
+<!-- =============================================================== -->
+<!-- #####DESCRIPTIONBEGIN####                                       -->
+<!--                                                                 -->
+<!-- Author(s):   Ilija Kocho                                        -->
+<!-- Contact(s):  ilijak@siva.com.mk                                 -->
+<!-- Date:        2014/02/12                                         -->
+<!-- Version:     0.01                                               -->
+<!--                                                                 -->
+<!-- ####DESCRIPTIONEND####                                          -->
+<!-- =============================================================== -->
+
+<!-- }}} -->
+
+<!-- <part id="hal-freescale-edma"><title>Freescale eDMA Family Support</title> -->
+
+<refentry id="hal-freescale-edma">
+  <refmeta>
+    <refentrytitle>Freescale eDMA </refentrytitle>
+  </refmeta>
+  <refnamediv>
+    <refname><literal>CYGPKG_HAL_FREESCALE_EDMA</literal></refname>
+    <refpurpose>eCos Support for Freescale eDMA Direct Memory Access controller</refpurpose>
+  </refnamediv>
+  
+  <refsect1 id="hal-freescale-edma-description"><title>Description</title>
+    <para>
+    <emphasis>eDMA</emphasis> is enhanced Direct Memory Access controller found on various Freescale
+    microcontroller families. It is combined with different architectures such as Power Architecture,
+    Coldfire/M68K, ARM, Cortex-M, etc.
+    </para>
+    <para>
+    The eDMA  HAL library provides generic support for module configuration and initialization as well as for executing of DMA transfers.
+    Most common usage of eDMA is as an enhancement of other device. eDMA acts as a cross-bar master and executes fast data
+    transfers on behalf of slave devices.
+    DMA can also perform memory to memory transfers on direct request by the application.
+    In following text the devices and applications 
+    that use DMA shall be referenced as <emphasis>[DMA] users</emphasis>.
+    </para>
+  </refsect1>
+  <refsect1 id="edma-config"><title>Configuration</title>
+    <para>The eDMA package <literal>CYGPKG_HAL_FREESCALE_EDMA</literal> is activated by implementing <literal>CYGINT_HAL_DMA</literal> interface.
+    The CDL provides configuration of DMA multiplexer, channel priorities and interrupt priorities.
+    For the systems with more than 16 channels also there is a provision for configuration of group priorities.
+    Please refer to CDL and eDMA reference manual for details of module operation.
+    </para>
+    <refsect2 id="edma-api"><title>eDMA API</title>
+      <refsect3 id="hal-freescale-edma-init-chanset">
+      <title>hal_freescale_edma_init_chanset</title>
+      <programlisting>
+      void hal_freescale_edma_init_chanset(cyghwr_hal_freescale_dma_set_t *inidat_p);
+      </programlisting>
+      <para>
+      Initialise <parameter>inidat_p</parameter> channel set. A channel set consists of
+      one or more DMA channels.
+      </para>
+      <para>
+      The initialisation parameters are provided by following structure:
+      <programlisting>
+      // DMA Channel set
+      typedef struct cyghwr_hal_freescale_dma_set_s {
+        cyghwr_hal_freescale_edma_t* edma_p;                // eDMA controller [register set]
+        const cyghwr_hal_freescale_dma_chan_set_t *chan_p;  // Channel configuration data
+        cyg_uint8 chan_n;                                   // Number of channels
+      } cyghwr_hal_freescale_dma_set_t;     
+      </programlisting>
+      
+      where:
+      
+      <structfield>chan_p</structfield> points to an array of
+      <structfield>chan_n</structfield> channels.
+      </para>
+      <para>
+      Channel configuration is provided by following structure.
+      <programlisting>
+      // DMA Channel data
+      typedef struct cyghwr_hal_freescale_dma_chan_set_s {
+        cyg_uint8 dma_src;      // Data source
+        cyg_uint8 dma_chan_i;   // Channel index
+        cyg_uint8 dma_prio;     // DMA channel priority
+        cyg_uint8 isr_prio;     // Interrupt priority
+        cyg_uint8 isr_num;      // Interrupt vector
+        cyg_uint8 isr_ena;      // Interruot enable
+      } cyghwr_hal_freescale_dma_chan_set_t;
+      </programlisting>
+      
+      The DMA channel priority <structfield>dma_chan_i</structfield> must be unique for every channel.
+      In order to satisfy this requirement the channel that previously had the given priority shall
+      be assigned with the previous prioruty of the target channel.
+      As a special (and most common case) <literal>FREESCALE_EDMA_DCHPRI_ASIS</literal> shall keep the
+      priority unchanged.
+      </para>
+      </refsect3>
+      
+      <refsect3 id="hal-freescale-edma-transfer-init">
+      <title>hal_freescale_edma_transfer_init</title>
+      <programlisting>
+      void hal_freescale_edma_transfer_init(cyghwr_hal_freescale_dma_set_t *inidat_p,
+                                            cyg_uint8 chan_i,
+                                            const cyghwr_hal_freescale_edma_tcd_t *tcd_cfg_p
+                                            );
+      </programlisting>
+      <para>
+      Initialise transfer. trannsfer on <parameter>chan_i</parameter> channel of
+      <parameter>edma_p</parameter> shall be initialised. with transfer control descriptor
+      <parameter>tcd_cfg_p</parameter>.
+      </para>
+      </refsect3>
+    
+      <refsect3 id="hal-freescale-edma-transfer-diag">
+      <title>hal_freescale_edma_transfer_diag</title>
+      <programlisting>
+      void hal_freescale_edma_transfer_diag(cyghwr_hal_freescale_edma_t
+                                      *edma_p, cyg_uint8 chan_i, cyg_bool recurse);
+      </programlisting>
+      <para>
+      Show contents of a transfer control descriptor set.
+      </para>
+      </refsect3>
+      
+      <refsect3 id="hal-freescale-edma-oper">
+      <title>eDMA operations</title>
+      <para>
+      Following inline functions and macros initiate or stop respective DMA operations.
+      </para>
+      <programlisting>
+      void hal_freescale_edma_erq_enable(cyghwr_hal_freescale_edma_t *edma_p,
+                                         cyg_uint8 chan_i);
+      void hal_freescale_edma_erq_disable(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      void hal_freescale_edma_erq_cleardone(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      void hal_freescale_edma_irq_enable(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      void hal_freescale_edma_irq_disable(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      void hal_freescale_edma_irq_clear(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      void hal_freescale_edma_transfer_clear(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      void hal_freescale_edma_transfer_start(cyghwr_hal_freescale_edma_t *edma_p,
+                                          cyg_uint8 chan_i);
+      
+      #define HAL_DMA_TRANSFER_STOP(__edma,__chan)  \
+              hal_freescale_edma_erq_disable(__edma, __chan)
+      #define HAL_DMA_TRANSFER_START(__edma,__chan) \
+              hal_freescale_edma_erq_enable(__edma, __chan)
+      #define HAL_DMA_TRANSFER_CLEAR(__edma,__chan) \
+              hal_freescale_edma_cleardone(__edma, __chan)
+      </programlisting>
+      </refsect3>
+    </refsect2>
+    </refsect1>
+    
+  </refentry>
+  
+  <!--</part>-->

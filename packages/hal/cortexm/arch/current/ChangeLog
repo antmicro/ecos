@@ -1,0 +1,214 @@
+2014-02-28  John Dallaway  <john@dallaway.org.uk>
+
+	* src/mcount.S: Add mcount functions for call-graph profiling.
+	* cdl/hal_cortexm.cdl: Add option to build mcount functions.
+	[ Bugzilla 1001954 ]
+
+2013-08-25  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_fpu.cdl, include/fpv4_sp_d16_libm.h: Define Cortex-M4F
+	architecture specific builtin mathematical functions.  [ Bugzilla 1001539 ]
+
+2013-04-29  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/cortexm_stub.h: Remove unwanted diag_printf().
+
+2013-02-10  Ilija Kocho  <ilijak@siva.com.mk>
+            Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/hal_cortexm.cdl:
+	* cdl/hal_cortexm_fpu.cdl:   New
+	* include/cortexm_core.h:    New
+	* include/cortexm_fpu.h:     New
+	* include/cortexm_regs.h:
+	* include/cortexm_stub.h:
+	* include/fpv4_sp_d16.h:     New
+	* include/hal_arch.h:
+	* include/hal_arch.inc:      New
+	* include/hal_io.h:
+	* src/context.S:
+	* src/cortexm_fpu.c:         New
+	* src/cortexm_stub.c:
+	* src/fpv4_sp_d16.c:         New
+	* src/hal_misc.c:
+	* src/vectors.S:
+	Add: hardware floating point support for Cortex-M4F [ Bugzilla 1001607 ]
+
+2012-04-23  Ilija Kocho  <ilijak@siva.com.mk>
+
+    * cdl/hal_cortexm.cdl:
+    * include/basetype.h:
+    * include/cortexm_stub.h:
+    * include/hal_arch.h:
+    * include/hal_intr.h:
+    * include/hal_io.h:
+    * src/context.S:
+    * src/cortexm_stub.c:
+    * src/hal_misc.c:
+    * src/vectors.S:
+    Whitespace cleanup [Bugzilla 1001569]
+
+2012-03-06  Ilija Kocho  <ilijak@siva.com.mk>
+
+    * include/hal_intr.h: Fix compiler warning about unused variables.
+    [Bugzilla 1001520]
+
+2012-02-05  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/hal_misc.c (hal_reset_vsr): Ensure we only init intr vectors
+	up to top of VSR table.
+
+2011-08-23  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm.cdl: New CDL option CYGIMP_HAL_ARCH_ENDIAN
+	* include/cortexm_endian.h: New file
+	* include/cortexm_regs.h: New file
+	[ Bugzilla 1001275 ]
+
+2011-04-06  Nick Garnett  <nickg@ecoscentric.com>
+
+	* cdl/cortexm.cdl: Remove M1 CPU family from architecture config
+	file (as not supported for now). [Bugzilla 1001186]
+
+2011-04-02  Ilija Kocho  <ilijak@siva.com.mk>
+	* cdl/cortexm.cdl: Add M4 CPU family to CYGHWR_HAL_CORTEXM. Add
+	FPU (Floating Point Unit) interface.
+	* include/hal_io.h: Add CYGHWR_HAL_CORTEXM_M4 to some preprocessor
+	conditions. [Bugzilla 1001186]
+
+2011-04-01  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/hal_intr.h: Remove double inclusion of var_intr.h
+	header and include it at proper place. [ Bugzilla 1001184 ]
+
+2011-02-17  John Dallaway  <john@dallaway.org.uk>
+
+	* include/hal_intr.h (HAL_DISABLE_INTERRUPTS): Mark operand as
+	an earlyclobber operand to ensure correct register usage. Issue
+	reported by both Ulrich Holeschak and Stanislav Meduna.
+	[ Bugzilla 1001154 ]
+
+2011-02-16  Ilija Kocho <ilijak@siva.com.mk>
+
+	* src/cortexm.ld: Added USER_SECTION() macro. [Bugzilla 1001142 ]
+
+2011-01-20  Christophe Coutand  <ccoutand@stmi.com>
+
+	* include/hal_intr.h:
+	* cdl/hal_cortexm.cdl:
+	Allow variant or platform to define their own RTC clock. Add
+	CDL entry to select SysTick clock source. [ Bugzilla 1001090 ]
+
+2010-12-28  Ilija Kocho <ilijak@siva.com.mk>
+
+	* include/hal_io.h: conditional VTOR setting.
+
+2011-01-13  John Dallaway  <john@dallaway.org.uk>
+
+	* src/vectors.S (hal_default_interrupt_vsr): Save interrupt state
+	if CYGINT_HAL_COMMON_SAVED_INTERRUPT_STATE_REQUIRED is implemented.
+	[ Bugzilla 1001111 ]
+
+2011-01-02  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* cdl/hal_cortexm.cdl: Eliminate some warnings. [ Bugzilla
+	1001083 ]
+
+2010-05-17  Spencer Oliver <spen@spen-soft.co.uk>
+
+	* include/hal_intr.h (HAL_INTERRUPT_STACK_CALL_PENDING_DSRS):
+	* src/hal_misc.c (hal_reset_vsr): Add 0 argument to SWI.
+
+	* src/vectors.S (hal_switch_state_vsr): Eliminate "msr psp,sp",
+	which is now deprecated.
+	(hal_pendable_svc_vsr): Add 0 argument to SWI.
+
+2009-02-27  Simon Kallweit  <simon.kallweit@intefo.ch>
+
+	* include/hal_io.h: Added system control register definitions 
+
+2009-02-13  Nick Garnett  <nickg@ecoscentric.com>
+
+	* include/hal_arch.h: Add include for var_arch.h.
+	(HAL_IDLE_THREAD_ACTION): Tidy up debug code left in by mistake.
+
+2009-02-07  Chris Holgate  <chris@zynaptic.com>
+
+	* src/hal_misc.c:
+	* src/cortexm.ld: 
+	Modified SRAM linker section to support initialisation from ROM.
+
+2008-12-03  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/hal_misc.c (hal_deliver_interrupt): Fix instrumentation call
+	to allow it to compile properly.
+
+2008-11-24  Simon Kallweit  <simon.kallweit@intefo.ch>
+
+	* include/hal_io.c: Fixed MASK_ macro.
+
+2008-11-04  Simon Kallweit  <simon.kallweit@intefo.ch>
+
+	* include/hal_intr.h:
+	Fixed load value of SysTick counter.
+	* src/hal_misc.c:
+	Fixed wrap-around in hal_delay_us().
+
+2008-11-04  Simon Kallweit  <simon.kallweit@intefo.ch>
+
+	* include/hal_intr.h:
+	Fixed base address in reset function.
+
+2008-10-16  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/vectors.S: 
+	* src/hal_misc.c: Tidy some comments and code.
+
+2008-10-10  Nick Garnett  <nickg@ecoscentric.com>
+
+	* src/hal_misc.c (hal_deliver_interrupt): Add support for chained
+	interrupts.
+	(hal_interrupt_end): Only increment scheduler lock when the kernel
+	is present.
+
+	* include/hal_arch.h (HAL_THREAD_INIT_CONTEXT): Add end-stop to
+	new thread states to terminate GDB backtraces.
+
+2008-10-06  Nick Garnett  <nickg@ecoscentric.com>
+
+	* hal_cortexm.cdl:
+	* include/basetype.h:
+	* include/hal_arch.h:
+	* include/hal_intr.h:
+	* include/hal_io.h:
+	* include/cortex_stub.h:
+	* src/vectors.S:
+	* src/context.S:
+	* src/cortexm.ld:
+	* src/cortexm_stub.c:
+	* src/hal_misc.c:
+	New package -- Cortex-M architecture HAL.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2008, 2011, 2014 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

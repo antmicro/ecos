@@ -1,0 +1,67 @@
+2011-01-02  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* cdl/hal_sparc.cdl: Eliminate some warnings. [ Bugzilla 1001083 ]
+
+2004-04-22  Jani Monoses <jani@iv.ro>
+
+	 * cdl/hal_sparc.cdl :
+	 Invoke tail with stricter syntax that works in latest coreutils. 
+
+2003-04-10  Nick Garnett  <nickg@balti.calivar.com>
+
+	* src/sparc.ld: 
+	Added libsupc++.a to GROUP() directive for GCC versions later than
+	3.0.
+
+2002-10-19  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	Patch from Jiri Gaisler:
+	* src/context.S (hal_thread_load_context): Wait a little after writing
+	psr.
+	(hal_setjmp): Ditto.
+	* src/vectors.S (genuine_reset): Reorder window setup writes to
+	streamline.
+	
+
+2002-04-29  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* src/vectors.S:
+	* src/vec_xvsr.S:
+	* src/vec_ivsr.S:
+	Don't use .file as it can confuse debugging since the .file
+	doesn't contain the path and therefore the debugger will never
+	know where it lives! This conflicts with using -Wa,--gstabs.
+
+2002-03-18  Hugo Tyson  <hmt@redhat.com>
+
+	* src/vectors.S: Add CYGPKG_HAL_SPARC_ERC32 to list of ifdefs.
+
+2002-03-14  Jiri Gaisler  <jiri@gaisler.com>
+
+	* Initial version based on the SPARClite HAL.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
+
+//EOF ChangeLog

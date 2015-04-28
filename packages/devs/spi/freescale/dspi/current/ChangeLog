@@ -1,0 +1,79 @@
+2013-07-09  Mike Jones <mjones@proclivis.com>
+
+	* src/spi_freescale_dspi.c: Fix: Kinetis DSPI infinite polling
+	[ Bugzilla 10011879 ]
+
+2013-05-08  Ilija Kocho <ilijak@siva.com.mk>
+
+	* src/spi_freescale_dspi.cdl: Add CYGINT_DEVS_SPI_DMA_USE
+	* src/spi_freescale_dspi.c: Fix: Disable DMA requests for transfers
+	that don't use DMA. [ Bugzilla 1001815 ]
+
+2013-04-01  Ilija Kocho <ilijak@siva.com.mk>
+
+	* include/spi_freescale_dspi.h, include/spi_freescale_busses.inl
+	* include/spi_freescale_dspi_io.h, src/spi_freescale_dspi.c:
+	Optimised receiving of messages that fit in FIFO. Add clock gating.
+	Fix race condition bug in dspi_transaction_end(). [ Bugzilla 1001815 ]
+
+2013-02-06  Stefan Singer <stefan.singer@freescale.com>
+		    Ilija Kocho <ilijak@siva.com.mk>
+
+	* include/spi_freescale_dspi.h, include/spi_freescale_busses.inl
+	* include/spi_freescale_dspi_io.h, include/spi_freescale_dspi_bd.h,
+	* src/spi_freescale_dspi.c:
+	enhanced endianness support for devices with big and little endian
+	added support for MPC5xxx in addition to Kinetis
+	extended support for up to 8 DSPIs
+	(see Bugzilla 1001752).
+
+2012-12-28  Ilija Kocho <ilijak@siva.com.mk>
+
+	* cdl/spi_freescale_dspi.cdl, src/spi_freescale_dspi.c:
+	Tick-only now has option to beehive like other drivers
+	rather than RM (see Bugzilla 1001676).
+	Fixed bug with dropping CS. Chip select options consolidated in a for loop.
+
+	* tests/spi_loopback.c: New file. Add looback test.
+	[Bugzilla 1001719]
+
+2012-05-04  Ilija Kocho <ilijak@siva.com.mk>
+
+	* cdl/spi_freescale_dspi.cdl: 
+	* include/spi_freescale_dspi_buses.inl
+	* src/spi_freescale_dspi.c:
+	Add: support for 32 channel eDMA, support for cached memory.
+	[Bugzilla 1001579]
+
+2012-01-06  Ilija Kocho <ilijak@siva.com.mk>
+
+	* cdl/spi_freescale_dspi.cdl: 
+	* include/spi_freescale_dspi.h
+	* include/spi_freescale_dspi_io.h:
+	* include/spi_freescale_dspi_buses.inl
+	* src/spi_freescale_dspi.c: 
+	New package -- Freescale DSPI SPI driver.  [Bugzilla 1001450]
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2012 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,65 @@
+2009-07-03  Oliver Munz  <munz@speag.ch>
+
+	* src/at91_flash.c: Enable use of the second flash in 512k devices.
+	Resolve potential problem with late PIT-initalisation. Prevent changes
+	to system clock when booting from a boot monitor.
+
+2008-11-17  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/at91_flash.c: Explicitly include <cyg/io/flash_dev.h> rather
+	than just defining _FLASH_PRIVATE_
+
+	* cdl/flash_at91.cdl: Indicate that this driver uses
+	the legacy flash device API.
+
+2008-11-03  Gabor Toeroek <tgabor84@gmail.com>
+
+	* src/at91_flash.c (flash_hwr_init): Add partial support for
+	AT91SAM7SE. This can have a second embedded flash controller and
+	maybe ROM as well as FLASH. Only writing to the first controller
+	is currently supported.
+ 
+2008-10-19  Oliver Munz <munz@speag.ch>
+
+	* src/at91_flash.c (flash_hwr_init): Add support for AT91SAM7XC.
+
+2006-05-23  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/at91_flash.c: Support for the AT91SAM7X devices.
+
+2006-02-19  Oliver Munz <munz@speag.ch>
+	
+	* src/at91_flash.c: Optimize the cyg_uint32 page.
+	  Make the lock/unlock functions work.
+
+2006-02-19  Oliver Munz <munz@speag.ch>
+	    Andrew Lunn <andrew.lunn@ascom.ch>
+
+	* src/at91_flash.c: 
+	* cdl/flash_at91.cdl: .
+	* ChangeLog: Flash driver for the AT91 Embedded Flash controller,
+   	  e.g. the AT91SAM7S devices.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2006, 2008, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

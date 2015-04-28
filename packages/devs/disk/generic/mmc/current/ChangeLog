@@ -1,0 +1,122 @@
+2013-02-18  Ilija Stanislevik  <ilijas@siva.mk>
+
+	* src/mmc_spi.c: Add support for high capacity SD cards.
+	* include/mmc_protocol.h: Add definitions of V2 specific commands,
+	responses and card structure. [ Bugzilla 1001764 ]
+
+2013-02-21  Mike Jones  <mike@proclivis.com>
+
+	* src/mmc_spi.c (mmc_spi_check_for_disk): Modify DEBUG1 to to show
+	CHS in partition table.
+
+2012-05-04  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* src/mmc_spi.c (mmc_spi_send_init): Silence unused var warning.
+	Spotted by Ilija Kocho.
+
+2008-08-19  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/devs_disk_mmc.cdl: Renamed the device to /dev/mmcdiskX so
+	that it is unique with respect to other disk drivers.
+
+2007-05-30  Hajime Ishitani <pigmon@mail.snd.co.jp>
+
+	* src/mmc_spi.c: Revise debug information with addition.
+	Add idle to operational retry wait.
+	* cdl/devs_disk_mmc.cdl: Add idle to operational retry wait parameter.
+
+2006-09-27  Sergei Gavrikov  <sg@sgs.gomel.by>
+
+	* src/mmc_spi.c: (mmc_spi_disk_lookup): just fixed a missed
+	semicolon.
+
+2006-09-21  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* Contribution of MMC/SPI package from eCosCentric. eCosCentric
+	changes prior to contribution are included below for reference:
+
+  2006-09-20  Jonathan Larmour  <jifl@eCosCentric.com>
+  
+  	* src/mmc_spi.c: DISK_FUNS, DISK_CHANNEL and DISK_CONTROLLER are now
+  	implicitly static.
+  	Update DISK_CHANNEL for new io/disk macro definition.
+  
+  2006-04-05  John Dallaway  <jld@ecoscentric.com>
+  
+  	* cdl/devs_disk_mmc.cdl: Add reference to package documentation.
+  
+  2006-03-17  Jonathan Larmour  <jifl@eCosCentric.com>
+  
+  	* src/mmc_spi.c (struct cyg_mmc_spi_disk_info_t): Store underlying
+  	medium's read/write block length.
+  	(mmc_spi_check_for_disk): Store underlying medium's
+  	read/write block length.
+  	(mmc_spi_disk_lookup): Report medium block size to disk layer.
+  	(mmc_spi_disk_read): API now requires sector reads to be with length
+  	of sectors not bytes.
+  	(mmc_spi_disk_write): Ditto.
+  
+  2005-10-28  Jonathan Larmour  <jifl@eCosCentric.com>
+  
+  	* include/mmc_protocol.h: Move from src/ to here.
+  	* src/mmc_spi.c: Reflect above move.
+  
+  2004-08-30  Bart Veer  <bartv@ecoscentric.com>
+  
+  	* src/mmc_spi.c (mmc_spi_write_disk_block): disable background
+  	writes. Some MMC cards don't seem to implement this correctly so
+  	if you are trying to talking to another SPI device the MMC card
+  	still replies.
+  
+  2004-07-03  Bart Veer  <bartv@ecoscentric.com>
+  
+  	* src/mmc_spi.c (MMC_SPI_READ_DATA_TOKEN_RETRIES): increase the
+  	number of iterations. With some cards a read can occasionally take
+  	50* longer than normal.
+  
+  2004-07-01  Bart Veer  <bartv@ecoscentric.com>
+  
+  	* src/mmc_spi.c: reorganize write code, to work around problems
+  	with some cards.
+  
+  2004-06-29  Bart Veer  <bartv@ecoscentric.com>
+  
+  	* src/mmc_spi.c: some cards require an extra delay during a mount
+  	sequence, when doing the first read of a data block. Also added
+  	some recovery code to the mount code in case a previous session
+  	left the card still sending data.
+  
+  2004-06-15  Bart Veer  <bartv@ecoscentric.com>
+  
+  	* src/mmc_spi.c (mmc_spi_check_for_disk): allow platform HALs to
+  	customize the mount sequence.
+  
+  	* doc/disk_mmc.sgml: document the above change.
+  	
+  2004-04-25  Bart Veer  <bartv@ecoscentric.com>
+  
+  	* MMC package created
+  
+  //===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.            
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

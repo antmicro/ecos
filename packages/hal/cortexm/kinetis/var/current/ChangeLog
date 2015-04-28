@@ -1,0 +1,207 @@
+2014-02-13  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cortexm/kinetis/var/current/include/var_intr.h:
+	Add interrupt numbers for second eDMA controller.
+
+	* cortexm/kinetis/var/current/include/var_io_clkgat.h:
+	Add clock gating for ADC2
+
+	* cortexm/kinetis/var/current/include/var_io_gpio.h:
+	Add GPIO port F.
+
+2013-04-28  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/var_intr.h : Redefine CYGNUM_HAL_INTERRUPT_RTC_RTC because of
+	conflict with same named macro defined in hal_intr.h (Cortex-M architecture).
+	Define some interrrupt numbers, previously reservrd.
+	* include/var_io.h : Upgrade RTC registers. [ Bugzilla 1001904 ]
+
+2013-06-12 Mike Jones <mike@proclivis.com>
+
+	* include/var_io_gpio.h
+	Clean up macros to support interrupts and set/get features.
+	
+2013-04-28  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis.cdl: 
+	* cdl/kinetis_ddram.cdl: (New file)
+	* cdl/kinetis_fbram.cdl: (New file)
+	Add FlexBus RAM configuration and caching, DDRAM CDL moved
+	to a separate file. Updated FlexNVM configuration with 512KiB FlexNVM
+	and 16KiB FlexMemory.
+	* cdl/kinetis_clocking.cdl: CYGINT_HAL_CORTEXM_KINETIS_150
+	moved to hal_cortexm_kinetis.cdl
+	* include/var_io_lmem.h, include/hal_cache.h: Add more cache functions.
+	[ Bugzilla 1001837 ]
+	
+2013-04-09  Tomas Frydrych <tomas@sleepfive.com>
+
+	* cdl/kinetis_irq_scheme.cdl:
+	* include/var_io_devs.h:
+	Implemented support for I2C  [Bugzilla 1001397]
+
+2013-04-01  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/var_io.h, include/var_io_clkgat.h, include/var_io_devs.h,
+	* src/hal_diag.c, src/kinetis_ddram.c, src/kinetis_misc.c
+	Add clock gating management and API. [ Bugzilla 1001814 ]
+
+2012-11-06  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis.cdl: Changes to Kinetis part builder related to
+	addition of archhitectural hardware floating point support.
+	CYGHWR_HAL_CORTEXM_KINETIS_FPU and CYGHWR_HAL_CORTEXM_KINETIS_FLEXNVM
+	look and feel like other name building options. Added new Kinetis
+	members to part selection.
+	* include/var_io.h, src/kinetis_misc.c: Enumerated PORT F.
+	[Bugzilla 1001607]
+
+2012-11-04  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/var_io.h: Define register access to FTFL module. 
+	Contributed by Nicolas Aujoux at 2012-09-07 [Bugzilla 1001561]
+
+2012-09-28  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* var/current/cdl/hal_cortexm_kinetis.cdl
+	* var/current/cdl/kinetis_clocking.cdl
+	* var/current/doc/kinetis.sgml
+	* var/current/include/hal_cache.h
+	* var/current/include/var_io_ddrmc.h
+	* var/current/include/var_io_lmem.h
+	* var/current/src/kinetis_ddram.c
+	* var/current/src/kinetis_misc.c:
+	Separate data and code caches, as well as text indentation suggested by Jifl.
+	Fixes to cache and SDRAM CDL and functions Improved SDRAM controller
+	support due to better manufacturer documentation: Configurable pad control.
+	                                           [Bugzilla 1001606]
+
+2012-08-01  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/var_io.h, src/kinetis_misc.c: Add functions and macros
+	for clock gating control to Kinetis.       [Bugzilla 1001642]
+
+2012-05-18  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* include/hal_cache.h, src/kinetis_misc.c: Provide for cache
+	enablement in RAM startup mode            [Bugzilla 1001606]
+
+2012-05-19  John Dallaway  <john@dallaway.org.uk>
+
+	* doc/kinetis.sgml: Close <para> and <refsect2> blocks.
+	* cdl/hal_cortexm_kinetis.cdl: Reference per-package documentation.
+
+2012-05-18  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* doc/kinetis_begin.sgml:
+	* doc/kinetis_end.sgml:
+	* doc/kinetis.sgml:
+	New files -- Kinetis variant documentation. [Bug 1001580]
+
+2012-05-17  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis.cdl:
+	Bug fix: Do not refer external memory if Platform startup is
+	not selected.  [ Bugzilla 1001590 ]
+
+2012-05-04  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis.cdl:
+	* src/kinetis_clocking.cdl:
+	* src/kinetis_clocking.c:
+	* include/hal_cache.h
+	* include/var_io_lmem.h:
+	* include/var_io_ddrmc.h:
+	* include/var_io_devs.h:
+	* include/var_io.h:
+	* src/kinetis_ddram.c:
+	* src/kinetis_misc.c:
+	Add: Clocking support for PLL1 (K70), DDRAM controller
+	Cache, eDMA - 32 chan. [Bugzilla 1001579]
+
+2012-01-11  Tomas Frydrych <tomas@sleepfive.com>
+
+	* include/var_io.h:
+	Allow for overriding of CYGHWR_HAL_KINETIS_SIM_SCGC?_ALL_M mask
+	from platform definitions.
+
+	* include/var_io_devs.h:
+	Define base pointer for SLCD controller
+
+2012-01-05  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/kinetis_irq_scheme.cdl
+	Centralized IRQ priority scheme.
+
+	* cdl/hal_cortexm_kinetis.cdl:
+	* cdl/kinetis_flexbus.cdl
+	* include/var_io_devs.h:
+	* include/var_io.h:
+	* src/kinetis_clocking.c:
+	* src/kinetis_misc.c:
+	Add I/O defs for eDMA, DSPI. Add flexbus control.
+	CYG_HAL_STARTUP parenthed bt CYG_HAL_STARTUP_ENV.
+	Early clock start [Bugzilla 1001450]
+
+2011-11-15  Tomas Frydrych <tomas@sleepfive.com>
+
+	* include/var_io_gpio.h:
+	Convenience macros for manipulating GPIO pins.
+
+2011-10-19  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* cdl/hal_cortexm_kinetis.cdl:
+	* cdl/kinetis_clocking.cdl:
+	* src/hal_diag.c:
+	* src/kinetis_misc.c:
+	* src/kinetis_clocking.c:
+	* include/hal_cache.h:
+	* include/hal_diag.h:
+	* include/plf_stub.h:
+	* include/variant.inc:
+	* include/var_arch.h:
+	* include/var_intr.h:
+	* include/var_io.h:
+	* include/var_io_devs.h:
+	* include/var_io_flexbus.h:
+	* include/pkgconf/mlt_kinetis_flash_sram2s_rom.h
+	* include/pkgconf/mlt_kinetis_flash_sram2s_rom.ldi
+	* include/pkgconf/mlt_kinetis_flash_sram2s_sram.h
+	* include/pkgconf/mlt_kinetis_flash_sram2s_sram.ldi
+	* include/pkgconf/mlt_kinetis_flash_unisram_rom.h
+	* include/pkgconf/mlt_kinetis_flash_unisram_rom.ldi
+	* include/pkgconf/mlt_kinetis_flash_unisram_sram.h
+	* include/pkgconf/mlt_kinetis_flash_unisram_sram.ldi
+	* include/pkgconf/mlt_kinetis_flexnvm_sram2s_rom.h
+	* include/pkgconf/mlt_kinetis_flexnvm_sram2s_rom.ldi
+	* include/pkgconf/mlt_kinetis_flexnvm_sram2s_sram.h
+	* include/pkgconf/mlt_kinetis_flexnvm_sram2s_sram.ldi
+	* include/pkgconf/mlt_kinetis_flexnvm_unisram_rom.h
+	* include/pkgconf/mlt_kinetis_flexnvm_unisram_rom.ldi
+	* include/pkgconf/mlt_kinetis_flexnvm_unisram_sram.h
+	* include/pkgconf/mlt_kinetis_flexnvm_unisram_sram.ldi
+	New package -- Freescale Kinetis variant HAL.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
+// Copyright (C) 2011, 2012 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 or (at your option) any
+// later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc., 51 Franklin Street,
+// Fifth Floor, Boston, MA  02110-1301, USA.
+// -------------------------------------------
+// ####GPLCOPYRIGHTEND####
+//===========================================================================

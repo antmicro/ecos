@@ -1,0 +1,355 @@
+# ====================================================================
+#
+#      hal_arm_lpc2xxx.cdl
+#
+#      Philips LPC2XXX HAL package configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      jani 
+# Contributors:   gthomas, tkoeller, tdrury, nickg
+# Date:           2001-07-12
+#
+#####DESCRIPTIONEND####
+#
+# ====================================================================
+
+cdl_package CYGPKG_HAL_ARM_LPC2XXX {
+    display       "Philips LPC2XXX variant HAL"
+    parent        CYGPKG_HAL_ARM
+    define_header hal_arm_lpc2xxx.h
+    include_dir   cyg/hal
+    hardware
+    description   "
+        The LPC2XXX HAL package provides the support needed to run
+        eCos on Philips LPC2XXX based targets."
+
+    compile       hal_diag.c lpc2xxx_misc.c
+
+    implements    CYGINT_HAL_DEBUG_GDB_STUBS
+    implements    CYGINT_HAL_DEBUG_GDB_STUBS_BREAK
+    implements    CYGINT_HAL_VIRTUAL_VECTOR_SUPPORT
+    implements    CYGINT_HAL_VIRTUAL_VECTOR_COMM_BAUD_SUPPORT
+    implements    CYGINT_HAL_ARM_ARCH_ARM7
+    implements    CYGINT_HAL_ARM_THUMB_ARCH
+
+    # Let the architectural HAL see this variant's files
+    define_proc {
+        puts $::cdl_header "#define CYGBLD_HAL_VAR_INTS_H <cyg/hal/hal_var_ints.h>"
+        puts $::cdl_system_header "#define CYGBLD_HAL_ARM_VAR_IO_H"
+        puts $::cdl_system_header "#define CYGBLD_HAL_ARM_VAR_ARCH_H"
+    }
+
+    # This is going to get really messy before long as the number of parts
+    # explodes. Its useful to know the actual part in use, but its just as
+    # useful to know which family it belongs to. LPC210x shouldn't really
+    # be in the list of devices, but will probably break something if removed.
+    cdl_component CYGHWR_HAL_ARM_LPC2XXX {
+        display        "LPC2XXX variant used"
+        flavor         data
+        default_value  { "LPC210x" }
+        legal_values   { "LPC210x"
+                "LPC2101" "LPC2102" "LPC2103" "LPC2104" "LPC2105" "LPC2106"
+                "LPC2114" "LPC2119" "LPC2124" "LPC2129" "LPC2131" "LPC2132" 
+                "LPC2134" "LPC2136" "LPC2138" "LPC2141" "LPC2142" "LPC2144"
+                "LPC2146" "LPC2148" "LPC2194" "LPC2210" "LPC2212" "LPC2214"
+                "LPC2220" "LPC2290" "LPC2292" "LPC2294" }
+        description    "
+             The LPC2XXX microcontroller family has several variants,
+             the main differences being the amount of on-chip RAM,
+             flash and peripherals. This option allows the platform
+             HALs to select the specific microcontroller being used."
+
+        cdl_option CYGHWR_HAL_ARM_LPC2XXX_FAMILY {
+            display       "LPC2XXX variant family"
+            flavor        data
+            calculated    {
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC22") ? "LPC22XX" :
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC213") ? "LPC213X" :
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC214") ? "LPC214X" :
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC210") ? "LPC210X" :
+                "LPC21XX"
+                          }
+            description   "
+                This specifies the family that the processor
+                belongs to. This is useful as it defines certain common
+                characteristics (e.g lpc22xx has the external bus and
+                lpc214x has USB) which affect which features should be
+                available in the HAL."
+        }
+        
+        cdl_option CYGHWR_HAL_ARM_LPC2XXX_VARIANT_VERSION {
+            display       "LPC2XXX variant version"
+            flavor        data
+            calculated    {
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC21") ? 1 :
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC22") ? 2 :
+                is_substr(CYGHWR_HAL_ARM_LPC2XXX, "LPC24") ? 4 : 0
+                          }
+            description   "
+                This specifies the variant version that the processor
+                belongs to. Some common characteristics may be 
+                different in newer LPC2xxx versions. I.e. the LPC24xx variants
+                are significant different from former LPC2xxx variants." 
+        }
+        
+        cdl_option CYGHWR_HAL_ARM_LPC2XXX_SUFFIX {
+            display       "Suffix of LPC2XXX device"
+            flavor        data
+            legal_values  { "no_suffix" "00" "01" }
+            default_value { "no_suffix" }
+            description   "
+                This option sets the version number of LPC2XXX microcontroller.
+                To denote different version of LPC2XXX the following suffixes 
+                are used: no suffix, /00, /01. All /01 version contain
+                enhanced features."
+        }
+    }
+
+    # Important! Be very careful changing this value. That will always
+    # enter the LPC2XXX bootloader after reset and consequently will
+    # never run your code. You must know what you are doing. Look at
+    # arch. vectors.S for details.
+    cdl_option CYGNUM_HAL_ARM_VECTOR_0x14 {
+        display       "ARM vector at 0x14"
+        flavor        data
+        default_value 0xB4405F62
+        legal_values  0 to 0xFFFFFFFF
+        description "
+           In order to detect if a valid program is present, every
+           user program must have a program signature. This signature
+           is a word-wide number that is stored in the unused
+           location in the ARM7 vector table at 0x00000014. The
+           program signature is the two's compliment of the checksum
+           of the ARM vector table."
+    }
+
+    cdl_component CYGNUM_HAL_ARM_LPC2XXX_VPBDIV {
+        display       "VPB clock divisor"
+        flavor        data
+        legal_values  { 4 2 1 }
+        default_value { 4 }
+        description   "
+            The VPB Divider determines the relationship between the 
+            processor clock (cclk) and the clock used by peripheral 
+            devices (pclk). The VPB Divider serves two purposes. 
+            The first is to provides peripherals with desired pclk 
+            via VPB bus so that they can operate at the speed chosen for the ARM 
+            processor. In order to achieve this, the VPB bus may be slowed down 
+            to one half or one fourth of the processor clock rate. 
+            Because the VPB bus must work properly at power up (and its timing 
+            cannot be altered if it does not work since the VPB divider control 
+            registers reside on the VPB bus), the default condition at reset is 
+            for the VPB bus to run at one quarter speed. The second purpose of 
+            the VPB Divider is to allow power savings when an application 
+            does not require any peripherals to run at the full processor rate.
+            This option sets the divisor for the VPB clock relative to
+            the processor clock. 4 means that the VPB clock runs at
+            one fourth the processor clock, 2 means that it runs at
+            one half of the processor clock and 1 means that it is the
+            same as the processor clock."
+        
+        cdl_option CYGNUM_HAL_ARM_LPC2XXX_PCLK {
+            display       "Peripheral clock"
+            flavor        data
+            calculated    {CYGNUM_HAL_ARM_LPC2XXX_CLOCK_SPEED / CYGNUM_HAL_ARM_LPC2XXX_VPBDIV}
+            description "
+                The peripheral clock is the clock derived from the processor clock
+                speed divided by the VPB clock divisor." 
+        }
+    }
+
+    cdl_component CYGNUM_HAL_ARM_LPC2XXX_XCLKDIV {
+        display         "XCLK clock divisor"
+        flavor          data
+        legal_values    { 4 2 1 }
+        default_value   { 4 }
+        active_if       { CYGHWR_HAL_ARM_LPC2XXX_FAMILY == "LPC22XX" }
+        description     "
+            This option sets the divisor for the XCLK clock relative
+            to the processor clock. 4 means that the XCLK clock runs
+            at one fourth the processor clock, 2 means that it runs at
+            one half of the processor clock and 1 means that it is the
+            same as the processor clock."
+            
+        cdl_option CYGNUM_HAL_ARM_LPC2XXX_XCLK {
+            display       "Clock on XCLK pin"
+            flavor        data
+            calculated    {CYGNUM_HAL_ARM_LPC2XXX_CLOCK_SPEED / CYGNUM_HAL_ARM_LPC2XXX_VPBDIV}
+            description "
+                This option controls the clock that can be driven onto the 
+                A23/XCLK pin" 
+        }
+    }
+
+    cdl_component CYGNUM_HAL_RTC_CONSTANTS {
+        display       "Real-time clock constants"
+        flavor        none
+
+        cdl_option CYGNUM_HAL_RTC_NUMERATOR {
+            display       "Real-time clock numerator"
+            flavor        data
+            default_value 1000000000
+        }
+        cdl_option CYGNUM_HAL_RTC_DENOMINATOR {
+            display       "Real-time clock denominator"
+            flavor        data
+            default_value 100
+        }
+        cdl_option CYGNUM_HAL_RTC_PERIOD {
+            display       "Real-time clock period"
+            flavor        data
+            default_value { ((CYGNUM_HAL_ARM_LPC2XXX_CLOCK_SPEED) / 
+                              CYGNUM_HAL_RTC_DENOMINATOR) }
+        }
+    }
+   
+    # Enable this by default, as I believe it won't affect parts that
+    # don't have the problem (other than slowing them down slightly)
+    # but causes a lock-up on those that do...
+    cdl_option CYGHWR_HAL_ARM_LPC2XXX_EXTINT_ERRATA {
+        display       "EXTINT.1 errata workaround"
+        flavor        bool       
+        default_value 1           
+        description   "
+
+            On some chips writing to the EXTPOLAR or EXTMODE registers
+            while VPBDIV is non-zero can corrupt the latter. Also
+            reading them will yield incorrect values.  Enable this
+            option to work around the problem."  
+    }
+
+    cdl_option CYGHWR_HAL_ARM_LPC2XXX_IDLE_PWRSAVE {
+        display       "Stop clock in idle loop to save power"
+        flavor        bool
+        default_value { is_active(CYGPKG_REDBOOT) ? 0 : 1 }
+        description   "
+           Select this option when it is desired to save power by
+           stoping the processor clock in the idle loop. This is
+           controlled by the PCON register. Generally this is a good
+           thing, but it may be necessary to disable this when
+           debugging via JTAG, as stopping the clock can prevent the
+           debugger getting control of the system."
+    }
+    
+    cdl_option CYGNUM_HAL_KERNEL_COUNTERS_CLOCK_ISR_DEFAULT_PRIORITY {
+	    display		"Default priority for system clock interrupts"
+	    flavor		data
+	    legal_values  { 0 to 16 }
+        default_value 0
+	    description "
+            The LPC2xxx eCos HAL supports up to 17 interrupt levels.
+            Interrupt levels 0 - 15 are vectored IRQs. Vectored IRQs 
+            have a higher priority then non vectored IRQs and they 
+            are processed faster. Non vectored  IRQs are all chained together 
+            into one single slot and the ISR need to  find out which interrupt 
+            occured. The default value for the system clock interrupts is 0 - 
+            this is the highest priority IRQ."
+    }
+
+    cdl_interface CYGINT_HAL_ARM_LPC2XXX_IAP_CALL {
+        display "Interface to manage IAP call"
+    }
+
+    cdl_component CYGBLD_BUILD_HAL_LPC2XXX_WITH_IAP_CALL {
+        display       "IAP (In Application Programming) interface"
+        flavor        bool
+        default_value 1
+        compile       lpc2xxx_iap.c
+        implements    CYGINT_HAL_ARM_LPC2XXX_IAP_CALL
+        
+        cdl_option CYGNUM_HAL_ARM_LPC2XXX_IAP_CALL_SAFE {
+            display       "Disable interrupts during IAP call"
+            flavor        bool
+            default_value 1
+            description   "
+                In most cases IAP calls uses itself to manage on-chip
+                flash memory. LPC2XXX on-chip flash memory is not
+                accessible during erase and write operations. The
+                user should either disable interrupts, or ensure that
+                user interrupt vectors are active in RAM and that
+                the interrupt handlers reside in RAM, before making a
+                flash erase/write IAP call. The IAP code does not use
+                or disable interrupts. This option disable interrupts
+                by default during IAP call (for safety)."
+        }
+
+        cdl_option CYGFUN_HAL_ARM_LPC2XXX_IAP_CALL_WRAP {
+            display       "Wrap for IAP call enabled"
+            flavor        bool
+            active_if     { CYGDAT_HAL_ARM_LPC2XXX_IAP_PRE_CALL || \
+                            CYGDAT_HAL_ARM_LPC2XXX_IAP_POST_CALL }
+            calculated    1
+            description   "
+                This option controls whether IAP call will be wrapped by
+                custom helpers. E.g., IAP flash programming call takes
+                ~ 1 ms per 512 byte line. Single sector or full chip
+                erase takes 400 mS. This can be quite enougth to fire a
+                hardware watchdog. You still can manage it using own pre-
+                and (or) post-calls."
+        }
+
+        # void (*precall)(void)
+        cdl_option CYGDAT_HAL_ARM_LPC2XXX_IAP_PRE_CALL {
+                display         "Use custom IAP pre-call"
+                flavor          booldata
+                default_value   0
+                description "
+                  If enabled, this option will tell IAP call to use the 
+                  value of this option as a custom pre-call."
+        }
+
+        # void (*postcall)(void)
+        cdl_option CYGDAT_HAL_ARM_LPC2XXX_IAP_POST_CALL {
+                display         "Use custom IAP post-call"
+                flavor          booldata
+                default_value   0
+                description "
+                  If enabled, this option will tell IAP call to use the 
+                  value of this option as a custom post-call."
+        }
+    }
+
+    cdl_option CYGPKG_HAL_ARM_LPC2XXX_TESTS {
+        display       "LPC2XXX HAL tests"
+        flavor        data
+        no_define
+        calculated    { "tests/iap_test" }
+        description   "
+            This option specifies the set of tests for the LPC2XXX HAL."
+    }
+
+}

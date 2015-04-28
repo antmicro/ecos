@@ -1,0 +1,145 @@
+2012-03-13  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* src/lpc2xxx_misc.c: Fix compiler warning about variable that is set
+	but not used.
+
+2009-06-10  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* src/hal_diag.c: workaround for a suppressing a compiler warning,
+	cyg_hal_plf_serial_isr(): cyg_hal_is_break() claims ptr on signed
+	char as argument 1: fixed.
+
+2009-01-15  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* include/lpc2xxx_iap.h, src/lpc2xxx_iap.c, tests/iap_test.c: New
+	files: support for IAP (In Application Programming) interface and
+	small test case for hal_lpc2xxx_iap_call().
+	* cdl/hal_arm_lpc2xxx.cdl: CYGINT_HAL_ARM_LPC2XXX_IAP_CALL interface
+	and CYGPKG_HAL_ARM_LPC2XXX_TESTS option added.
+
+2008-12-02  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+            Andrew Lunn      <andrew@lunn.ch>
+
+	* include/var_io.h: Memory access macros added.
+
+2008-07-21  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/hal_arm_lpc2xxx.cdl: Added option
+	CYGHWR_HAL_ARM_LPC2XXX_VARIANT_VERSION to identify the variant version 
+	because some on-chip peripherals changed slightly in newer veriants.
+	CYGNUM_HAL_ARM_LPC2XXX_PCLK is the pre calculated peripheral clock
+	value. CYGNUM_HAL_ARM_LPC2XXX_XCLK is the pre calculated XCLK
+	value.
+	* include/lpc2xxx_misc.h: Added HAL_LPC2XXX_INIT_CAN() macro fo
+	initialisation of CAN channels (required by CAN driver). Added
+	CYGNUM_HAL_ARM_LPC2XXX_CAN_CLK to define the CAN peripheral clock
+	for CAN driver.
+	* include/lpc2xxx_misc.c: Removed functions hal_lpc_get_cclk()
+	hal_lpc_get_pclk() and hal_lpc_get_xclk() because they are not
+	required and all clock values (CCLK, PCLK and XCLK) are 
+	configuration values and pre calculated in CDL file.
+	Added hal_lpc_can_init() function for initialisation of CAN
+	channels.
+	
+2008-05-23  Alexey Shusharin <mrfinch@mail.ru>
+
+	* cdl/hal_arm_lpc2xxx.cdl: add suffix option to denote
+	different versions of LPC2XXX
+	
+2007-08-23  Hans Rosenfeld  <rosenfeld@grumpf.hope-2000.org>
+
+	* include/hal_var_ints.h: use interrupt priority 16 for
+	kernel test intr0/kintr0 interrupts
+
+2007-08-17  Hans Rosenfeld  <rosenfeld@grumpf.hope-2000.org>
+
+	* cdl/hal_arm_lpc2xxx.cdl: added VIC component to support
+	configuration of individual interrupt priorities
+
+2007-07-10  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/hal_arm_lpc2xxx.cdl: Added option
+	CYGNUM_HAL_KERNEL_COUNTERS_CLOCK_ISR_DEFAULT_PRIORITY for
+	configuration of priority of system clock interrupts.
+	
+	* src/lpc2xxx_misc.c: Added support for vectored interrupt
+	controller and up to 17 interrupt priorities. This improves
+	interrupt processing time and makes processing of vectored
+	interrupts more determenistic because no for loop is required
+	for detection of interrupt source.
+
+2007-06-04  Alexey Shusharin <mrfinch@mail.ru>
+
+	* src/hal_diag.c (cyg_hal_plf_serial_isr): Fixed issue with UART
+	ISR handling. Old handler doesn't read the UxIIR register in order
+	to clear the interrupt flag. The resulted in endless interrupts
+	and the DSR never got to run.
+
+2006-02-03  Sergei Gavrikov <sg@sgs.gomel.by>
+
+	* cdl/hal_arm_lpc2xxx.cdl: Added CYGNUM_HAL_ARM_VECTOR_0x14. That
+	gives us a chance to correct a LPC2XXX program signature (ARM
+	unused vector at 0x14).  The program signature is the two's
+	compliment of the checksum of the ARM7 vector table. Note:
+	you can quite overwrite that CDL value in your plf. startup
+	code (hal_platform_setup.h).
+
+2006-05-08  Andy Jackson <andy@grapevinetech.co.uk>
+ 
+	* src/lpc2xxx_misc.c: Fixed issue with VPBDIV initialisation on
+	non lpc22xx parts code.
+
+2006-05-08  Sergei Gavrikov  <sg@belvok.com>
+
+	* src/lpc2xxx.misc (hal_hardware_init): Call HAL_PLF_HARDWARE_INIT
+	for any platform specific initialization.
+
+2006-05-07  Andy Jackson <andy@grapevinetech.co.uk>
+
+	* cdl/hal_arm_lpc2xxx.cdl: Added CYGHWR_HAL_ARM_LPC2XXX_FAMILY,
+	CYGNUM_HAL_ARM_LPC2XXX_VPBDIV, CYGNUM_HAL_ARM_LPC2XXX_XCLKDIV
+	and CYGHWR_HAL_ARM_LPC2XXX_IDLE_PWRSAVE. Changed 
+	CYGHWR_HAL_ARM_LPC2XXX_EXTINT_ERRATA to a bool.
+	* include/hal_var_ints.h: Removed lpc2xxx misc functions and
+	added an include for lpc2xxx_misc.h to avoid breaking things.
+	* include/lpc2xxx_misc.h: New header file for all the lpc2xxx
+	miscellaneous functions.
+	* include/var_arch.h: Made idle powerdown CDL controlled.
+	* include/var_io.h: Changed to use family CDL variables.
+	* src/lpc2xxx_misc.c: Changes to interrupt and VPBDIV code.
+
+2004-09-12  Jani Monoses <jani@iv.ro>
+
+	* src/hal_diag.c: 
+	* src/lpc2xxx_misc.c: 
+	* include/plf_stub.h: 
+	* include/var_io.h: 
+	* include/var_arch.h: 
+	* include/hal_var_ints.h: 
+	* include/hal_diag.h: 
+	* include/hal_cache.h: 
+	* cdl/hal_arm_lpc2xxx.cdl: New port - based on AT91 variant.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

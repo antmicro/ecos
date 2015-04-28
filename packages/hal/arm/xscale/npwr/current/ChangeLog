@@ -1,0 +1,47 @@
+2009-10-16  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/hal_arm_xscale_npwr.cdl: Parent under
+	CYGPKG_HAL_ARM_XSCALE_IOP310.
+
+2002-11-13  Mark Salter  <msalter@redhat.com>
+	* include/hal_platform_setup.h: Use IOP310_EARLY_PCI_SETUP to make
+	some BIOSes happy. BTB_INIT and MMU macros provided elsewhere.
+
+2002-11-12  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/npwr_misc.c: 
+	* include/pkgconf/mlt_arm_xscale_npwr_rom.mlt: 
+	* include/pkgconf/mlt_arm_xscale_npwr_rom.ldi: 
+	* include/pkgconf/mlt_arm_xscale_npwr_rom.h: 
+	* include/pkgconf/mlt_arm_xscale_npwr_ram.mlt: 
+	* include/pkgconf/mlt_arm_xscale_npwr_ram.ldi: 
+	* include/pkgconf/mlt_arm_xscale_npwr_ram.h: 
+	* include/plf_io.h: 
+	* include/hal_platform_setup.h: 
+	* include/hal_platform_ints.h: 
+	* cdl/hal_arm_xscale_npwr.cdl: New platform - NPWR Linux Engine,
+	based on Intel Xscale IOP310 chipset, from Team ASA.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

@@ -1,0 +1,125 @@
+2012-01-25  Bernard Fouché <bernard.fouche@kuantic.com>
+
+	* src/can_mcf52xx.c CYGNUM_CAN_EVENT_OVERRUN_RX_HW instead of
+	CYGNUM_CAN_EVENT_OVERRUN_RX. CYGNUM_CAN_MODE_LISTEN_ONLY_ENTER &
+	CYGNUM_CAN_MODE_LISTEN_ONLY_EXIT return -EINVAL.
+
+2007-03-23  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/can_mcf52xx.cdl Removed interfaces 
+	  CYGINT_DEVS_CAN_MCF52xx_FLEXCAN_SUPP_STD_CAN_ID and
+	  CYGINT_DEVS_CAN_MCF52xx_FLEXCAN_SUPP_EXT_CAN_ID. The generic
+	  CAN I/O layer provides some similar interfaces now.
+	  Driver now implements the new CAN I/O interfaces 
+	  CYGINT_IO_CAN_TIMESTAMP, CYGINT_IO_CAN_RUNTIME_MBOX_CFG
+	  CYGINT_IO_CAN_REMOTE_BUF and CYGINT_IO_CAN_TX_EVENTS,
+	  CYGINT_IO_CAN_STD_CAN_ID, CYGINT_IO_CAN_EXT_CAN_ID
+	  Removed make commands for removed test cases.
+	  Removed cdl component CYGPKG_DEVS_CAN_MCF52xx_FLEXCAN_OPTIONS
+	  because it did not have any functionality.
+	  
+	* src/can_mcf52xx.c Replaced 
+	  CYGINT_DEVS_CAN_MCF52xx_FLEXCAN_SUPP_EXT_CAN_ID with 
+	  generic CAN I/O option CYGOPT_IO_CAN_EXT_CAN_ID and 
+	  CYGINT_DEVS_CAN_MCF52xx_FLEXCAN_SUPP_STD_CAN_ID with
+	  generic CAN I/O option CYGOPT_IO_CAN_STD_CAN_ID
+	  Implemented CAN mode CYGNUM_CAN_MODE_CONFIG.
+	  Changed old access to CAN data (byte array) to access
+	  to new cyg_can_msg_data type.
+	  
+	* tests/flexcan_filter: removed. This tast case is now part of
+	  generic CAN I/O layer.
+	  
+	* tests/flexcan_load: removed. This tast case is now part of
+	  generic CAN I/O layer.
+	
+	* tests/flexcan_remote: removed. This tast case is now part of
+	  generic CAN I/O layer.
+	
+	* tets/flexcan_wake: Did some code cleaning.
+
+2006-02-15  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/can_mcf52xx.cdl Added two interfaces
+	CYGINT_DEVS_CAN_MCF52xx_FLEXCAN_SUPP_STD_CAN_ID and
+	CYGINT_DEVS_CAN_MCF52xx_FLEXCAN_SUPP_EXT_CAN_ID.
+	The number of standard and extended message boxes is now
+	configurable:
+	CYGNUM_DEVS_CAN_MCF52xx_FLEXCAN[set ::flexcan]_STD_MBOXES
+	CYGNUM_DEVS_CAN_MCF52xx_FLEXCAN[set ::flexcan]_EXT_MBOXES
+	Channged default TX buffer to 15.
+
+	* src/can_mcf52xx.c Added initialisation macro for second
+	FlexCAN modul. Driver partly rewritten - support of up to
+	15 message buffers when reception of all CAN frames is
+	configured - improves performance when "bursts" of CAN
+	messages arrive. Changed message buffer configuration -
+	only the config key CYG_IO_SET_CONFIG_CAN_MSGBUF is
+	supported now. The exact configuration option is defined
+	in new data field cyg_can_msgbuf_cfg_id in cyg_can_msgbuf_cfg
+	structure.
+
+	* tests/flexcan_filter.c
+	* tests/flexcan_wake.c
+	* tests/flexcan_remote.c
+	* tests/flexcan_load.c
+	Changed message buffer configuration to support of new
+	config key CYG_IO_SET_CONFIG_CAN_MSGBUF. Removed baudrate
+	runtime configuration of 250 kBaud - now default
+	value is used.
+
+2005-09-20  Uwe Kindler  <uwe_kindler@web.de>
+
+	* src/can_mcf52xx.c Only support events of tx message buffers
+          in flexcan_getevent() if CYGOPT_IO_CAN_TX_EVENT_SUPPORT is
+          active.
+
+2005-09-11  Uwe Kindler  <uwe_kindler@web.de>
+
+	* cdl/can_mcf52xx.cdl Default message buffer configuration 
+	  changed. Message buffer 13 now is transmit message buffer.
+	  Message buffers 14 and 15 are no receive message buffers
+	  for all standard and extended frames.
+	  
+	* src/can_mcf52xx.c Driver partly rewritten. Support for message 
+	  filtering added. Message buffer handling added. Several bugs 
+	  fixed. Support added for configuration options
+	  CYG_IO_SET_CONFIG_CAN_REMOTE_BUF
+	  CYG_IO_SET_CONFIG_CAN_FILTER_MSG
+	  CYG_IO_SET_CONFIG_CAN_FILTER_ALL
+	  CYG_IO_SET_CONFIG_CAN_MODE
+	  CYG_IO_GET_CONFIG_CAN_STATE
+	  CYG_IO_GET_CONFIG_CAN_MSGBUF_INFO
+	  CYG_IO_GET_CONFIG_CAN_HDI
+	  
+	* tests/flexcan_filter.c Test of message filtering addded
+	* tests/flexcan_wake.c Test of mode setting and standby mode of
+	  FlexCAN module added.
+	
+2005-05-24  Uwe Kindler  <uwe_kindler@web.de>
+
+	* mcf52xx FlexCAN driver package created
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

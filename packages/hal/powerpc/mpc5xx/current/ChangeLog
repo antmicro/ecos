@@ -1,0 +1,71 @@
+2008-09-02  Steven Clusgton  <steven.clugston@ncl.ac.uk>
+
+    * include/var_intr.h:
+    * include/var_intr.c: 
+
+    Corrected some interrupt priority level defines used by asserts.
+    Changed confusing SCI0/1 naming to SCI1/2 to be consistent with actual 
+    register names. 
+    Removed some SCI related interrupt acknowledges so that the status 
+    is preserved for the DSR.
+
+2006-11-13  Andreas Fritiofson  <andreas.fritiofson@newmad.se>
+
+    * include/var_intr.h: Fixed a set of incorrect asserts.
+
+2004-04-22  Jani Monoses <jani@iv.ro>
+
+	 * cdl/hal_powerpc_mpc5xx.cdl :
+	 Invoke tail with stricter syntax that works in latest coreutils. 
+
+2004-04-21  Gary Thomas  <gary@mlbassoc.com>
+
+	* src/var_intr.c: 
+	* include/var_regs.h: Changes to allow compilation with latest GCC.
+
+2003-11-30  Bob Koninckx  <bob.koninckx@fmtc.be>
+
+    * include/var_intr.h: Added definitions for maximum/minimum interrupt
+      priorites on SIU/IMB3
+
+2002-11-11  Bob Koninckx  <bob.koninckx@mech.kuleuven.ac.be>
+
+    * include/var_regs.h: Removed double definitions for ICTRL, ICTRL_SERSHOW
+    and ICTRL_NOSERSHOW
+    * src/var_intr.c: Added a very simple serial arbitration isr to make GDB-CTRC
+    work in the absence of any device drivers.
+    * include/var_intr.h: Added a definition for hal_arbitration_isr_sci
+    * include/variant.inc: Make sure FREEZE gets negated before returning from an
+    exception. Failing to do so prevents proper operation of timers etc when
+    debugging.
+    * tests/intr0.c: completely rewritten to something that actually tests something.
+    Not completely finished.
+
+2002-04-25  Bob Koninckx  <bob.koninckx@mech.kuleuven.ac.be>
+2002-04-25  Jonathan Larmour  <jlarmour@redhat.com>
+
+	* New package.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

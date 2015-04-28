@@ -1,0 +1,42 @@
+2001-07-03  Jesper Skov  <jskov@redhat.com>
+
+	* src/wallclock_ref4955.cxx: Don't include kernel config.
+
+2000-05-26  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/wallclock_ref4955.cdl:
+	* src/wallclock_ref4955.cxx:
+	* src/ds1742.inl: [deleted]
+	Added set-get mode. Moved Dallas driver to its own package.
+
+2000-05-25  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/wallclock_ref4955.cdl: 
+	* src/wallclock_ref4955.cxx:
+	* src/ds1742.inl:
+	Added wallclock driver REF4955 (Dallas 1742)
+	(set_ds_hwclock): Clear frequency test bit.
+
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+
+

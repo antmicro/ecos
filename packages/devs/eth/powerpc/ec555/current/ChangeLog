@@ -1,0 +1,39 @@
+2004-04-08  Bob Koninckx <bob.koninckx@o-3s.com>
+	
+	* cdl/ec555_eth_drivers.cdl: Made
+	CYGNUM_DEVS_ETH_POWERPC_EC555_ETH0_BASE	a calculated option that is
+	always consistent with the memory map. Added the possibility to set
+	the esa as a configuration option.
+	
+	* include/devs_eth_powerpc_ec555.inl: Made hardware swapping or
+	software swapping of data bytes (mostly relevant to big endian
+	machines) a configuration option
+
+2003-11-05  Bob Koninckx <bob.koninckx@mech.kuleuven.ac.be>
+
+	* include/devs_eth_powerpc_ec555.inl: 
+	* cdl/ec555_eth_drivers.cdl: New package - support on PowerPC EC555
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

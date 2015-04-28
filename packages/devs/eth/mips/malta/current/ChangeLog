@@ -1,0 +1,59 @@
+2001-07-26  Jesper Skov  <jskov@redhat.com>
+
+	* include/devs_eth_mips_mips32_malta.inl: Removed ESA init
+	definition again now driver has been fixed.
+
+2001-07-24  Jesper Skov  <jskov@redhat.com>
+
+	* include/devs_eth_mips_mips32_malta.inl
+	(CYGHWR_AMD_PCNET_BROKEN_ESA_INIT): Defined.
+
+2001-07-18  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/mips_mips32_malta_eth_drivers.cdl: Default to use eeprom ESA.
+
+2001-07-12  Jesper Skov  <jskov@redhat.com>
+
+	* include/devs_eth_mips_mips32_malta.inl: Let driver find base and
+	interrupt details. Updated esa options.
+
+2001-06-27  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/mips_mips32_malta_eth_drivers.cdl: Implements net drivers.
+
+2001-04-23  Mark Salter  <msalter@redhat.com>
+
+	* include/devs_eth_mips_mips32_malta.inl: Adjust base address to
+	match changed PCI allocation base. This should really be gotten
+	at runtime from the PCI interface, not from a build time constant.
+
+2001-04-03  Jesper Skov  <jskov@redhat.com>
+
+	* cdl/mips_mips32_malta_eth_drivers.cdl: Platform specific
+	information required to use the generic AMD PCNet driver for the
+	Malta platform.
+	* include/devs_eth_mips_mips32_malta.inl: Same.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

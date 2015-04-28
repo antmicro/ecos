@@ -1,0 +1,117 @@
+#==========================================================================
+# 
+#       watchdog_xc7z.cdl
+# 
+#       eCos configuration data for the Xilinx Zynq watchdog timer
+# 
+#==========================================================================
+#####ECOSGPLCOPYRIGHTBEGIN####
+## -------------------------------------------
+## This file is part of eCos, the Embedded Configurable Operating System.
+## Copyright (C) 1998, 1999, 2000, 2001, 2002 Red Hat, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under
+## the terms of the GNU General Public License as published by the Free
+## Software Foundation; either version 2 or (at your option) any later version.
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT ANY
+## WARRANTY; without even the implied warranty of MERCHANTABILITY or
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+## for more details.
+##
+## You should have received a copy of the GNU General Public License along
+## with eCos; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+##
+## As a special exception, if other files instantiate templates or use macros
+## or inline functions from this file, or you compile this file and link it
+## with other works to produce a work based on this file, this file does not
+## by itself cause the resulting work to be covered by the GNU General Public
+## License. However the source code for this file must still be made available
+## in accordance with section (3) of the GNU General Public License.
+##
+## This exception does not invalidate any other reasons why a work based on
+## this file might be covered by the GNU General Public License.
+##
+## Alternative licenses for eCos may be arranged by contacting Red Hat, Inc.
+## at http://sources.redhat.com/ecos/ecos-license/
+## -------------------------------------------
+#####ECOSGPLCOPYRIGHTEND####
+#==========================================================================
+######DESCRIPTIONBEGIN####
+# 
+# Author(s):    ITR GmbH
+# Date:         2012-06-26
+# Purpose:      
+# Description:  watchdog drivers for Xilinx Zynq
+# 
+#####DESCRIPTIONEND####
+# 
+#==========================================================================
+
+cdl_package CYGPKG_DEVS_WATCHDOG_ARM_XC7Z {
+    parent        CYGPKG_IO_WATCHDOG
+    active_if     CYGPKG_IO_WATCHDOG
+    display       "Watchdog driver for Xilinx Zynq"
+    requires      CYGINT_HAL_ARM_ARCH_ARM_XC7Z
+    requires      CYGPKG_KERNEL
+    hardware
+    define_header devs_watchdog_xc7z.h
+    compile       watchdog_xc7z.cxx
+    implements    CYGINT_WATCHDOG_HW_IMPLEMENTATIONS
+    implements    CYGINT_WATCHDOG_RESETS_ON_TIMEOUT
+    active_if     CYGIMP_WATCHDOG_HARDWARE
+    description "Watchdog driver for watchdog contained in the ARM Cortex-A9"
+
+    cdl_option CYGIMP_WATCHDOG_HARDWARE {
+        parent    CYGPKG_IO_WATCHDOG_IMPLEMENTATION
+        display       "Hardware watchdog"
+        default_value 1
+        implements    CYGINT_WATCHDOG_IMPLEMENTATIONS
+    }
+
+    cdl_option CYGNUM_DEVS_WATCHDOG_ARM_XC7Z_TIMEOUT_MS {
+       display        "Desired timeout value in ms"
+       flavor         data
+       legal_values   1 to 256000
+       default_value  100
+       description "
+         This parameter controls the Watchdog timeout interval.
+         Note that you may not get the exact value requested
+         here, the timeout interval may have to be adjusted
+         because of hardware limitations. The actual timeout
+         used will be the smallest possible value that is not
+         less than this parameter."
+    }
+    
+    cdl_component CYGPKG_DEVS_WATCHDOG_ARM_XC7Z_OPTIONS {
+        display "Xilinx Zynq watchdog build options"
+        flavor  none
+        description   "
+       Package specific build options including control over
+       compiler flags used only in building this package,
+       and details of which tests are built."
+
+        cdl_option CYGPKG_DEVICES_WATCHDOG_ARM_XC7Z_CFLAGS_ADD {
+            display "Additional compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the watchdog device. These flags are used in addition
+                to the set of global flags."
+        }
+
+        cdl_option CYGPKG_DEVICES_WATCHDOG_ARM_XC7Z_CFLAGS_REMOVE {
+            display "Suppressed compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the watchdog device. These flags are removed from
+                the set of global flags if present."
+        }
+    }
+}

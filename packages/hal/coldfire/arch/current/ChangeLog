@@ -1,0 +1,46 @@
+2005-06-24  Enrico Piria  <epiriaNOSPAM@NOSPAMfastwebnet.it>
+
+	* src/coldfire.ld:
+	* src/coldfire_stub.c:
+	* src/context.S:
+	* src/hal_misc.c:
+	* src/hal_mk_defs.c:
+	* src/hal_startup.c:
+	* src/vectors.S:
+	* include/arch.inc:
+	* include/basetype.h:
+	* include/coldfire_regs.h:
+	* include/coldfire_stub.h:
+	* include/hal_arch.h:
+	* include/hal_cache.h:
+	* include/hal_intr.h:
+	* include/hal_io.h:
+	* include/hal_startup.h:
+	* cdl/hal_coldfire.cdl:
+	* doc/readme.txt:
+	Rework of the original ColdFire architecture HAL contributed by
+	Wade Jensen.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2006 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

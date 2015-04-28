@@ -1,0 +1,211 @@
+2009-06-03 Oliver Munz <oli@snr.ch>
+
+ 	* Fix the the problem of switching the PCM-settings if 
+ 	the PCM is already up. And improve the flash-controller 
+ 	programming. 
+ 
+2009-01-31  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_at91sam7s.cdl: update compiler flags for gcc 4.x
+
+2009-01-24  Bart Veer <bartv@ecoscentric.com>
+
+	* cdl/hal_arm_at91sam7s.cdl: switch from arm-elf-gcc to
+	arm-eabi-gcc.
+
+2009-11-03  Gabor Toeroek <tgabor84@gmail.com>
+
+	* cdl/hal_arm_at91sam7s.cdl
+	* include/hal_platform_ints.h
+	* include/plf_io.h
+	* include/var_io.h: Add support for AT91SAM7SE
+	
+2009-10-31  Oliver Munz" <munz@speag.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: Allow external clock input to be up
+	to 50Mhz, but the crystal is limited to 30MHz.
+
+2008-10-19  Igor B. Poretsky <poretsky@mlbox.ru>
+	    Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: Fix calculation of RTC period. The TC
+	uses a different divider as the PIT.
+
+2008-09-04  John Eigelaar  <jeigelaar@mweb.co.za>
+
+	* cdl/hal_arm_at91sam7s.cdl: Set MOR OSCCOUNT and PLL Count to
+	values suggests by Atmel. This should make the startup stable for
+	all devices.
+  	
+2008-09-02  John Eigelaar  <jeigelaar@mweb.co.za>
+
+	* include/plf_io.h: Added definitions for devices
+	  that has a second flash controller. Thus far only the 
+	  at91sam7x512 is supported.
+
+2008-09-01  John Eigelaar  <jeigelaar@mweb.co.za>
+
+	* cdl/hal_arm_at91sam7s.cdl: CDL for the MOR OSCCOUNT and 
+	  PLLR PLLCOUNT.
+	* include/hal_platform_setup.h: Turned the MOR OSCCOUNT 
+	  and the PLLR PLLCOUNT setup into CLD configurable 
+	  variables to allow a more flexible clock setup.
+	* include/hal_platform_setup.h: Added setup code for devices
+	  that has a second flash controller i.e. the 512 devices.
+
+2008-08-14  Jürgen Lambrecht <J.Lambrecht@televic.com>
+
+	* include/plf_io.h: removed AT91_SPI_MR_MODFDIS, AT91_WSTC
+	(AT91_WDTC), AT91_AIC because already in var_io.h. Fixed typo.
+
+2008-05-11  James G. Smith <jsmith@rallysmith.co.uk
+            Andrew Lunn  <andrew@lunn.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: CDL for crystal vs clock signal.
+	* include/hal_platform_setup.h: Rework flash wait states to remove
+	redundant code when running at > 60MHz. Support clock signal input
+	when starting the main clock.
+
+2008-04-30  John Eigelaar  <jeigelaar@mweb.co.za>
+
+	* include/pkgconf/mlt_arm_at91sam7x512_rom.{h|ldi}: Added the 
+	memory layout files to support the at91sam7x512  
+	* cdl/hal_arm_at91s.cdl: Added the configuration options to 
+	support the at91sam7x512
+	
+2008-04-23  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* include/hal_platform_setup.h: Fix setting the flash wait states
+	when the clock is running faster than 60MHz. r0 was undefined 
+	causing a data abort.
+	
+2007-03-26  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: SAM7X and SAM7XC have a CAN bus
+	controller.
+
+2007-01-17  John Eigelaar <jeigelaar@mweb.co.za>
+
+	* include/plf_io.h
+	* src/at91sam7s_misc.c
+	Added code to initialise the platform ethernet hardware if need be
+	 
+2007-01-02  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/hal_arm_at91sam7s.cdl Moved HAL_PLATFORM_XXX defines and
+	definition of platform header file (CYGBLD_HAL_PLATFORM_H) from
+	package CYGPKG_HAL_ARM_AT91SAM7 into board specific packages.
+	
+2006-06-01  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: Implement the SPI bus 1 interface for
+	the SAM7X and SAM7XC.
+
+2006-06-01  John Eigelaar <jeigelaar@mweb.co.za>
+
+	* include/plf_io.h: Add SPI DMA registers.
+
+2006-05-20  John Eigelaar <jeigelaar@mweb.co.za>
+
+	include/pkgconf/mlt_arm_at91sam7x128_rom.{h|ldi}
+	include/pkgconf/mlt_arm_at91sam7x256_rom.{h|ldi}: Linker files
+	for AT91SAM7X processor.
+	
+2006-05-17  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/at91sam7s_misc.c: Use the AT91 generic PIO manipulation
+	macros. Move the LED function out into the board specific HAL
+	package.
+
+2006-04-07  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: 
+	* include/pkgconf/mlt_arm_at91sam7s32_rom.ldi: 
+	* include/pkgconf/mlt_arm_at91sam7s64_rom.ldi: 
+	* include/pkgconf/mlt_arm_at91sam7s128_rom.ldi: 
+	* include/pkgconf/mlt_arm_at91sam7s267_rom.ldi: 
+	Allow CDL to control where in flash the image is placed.
+
+2006-03-23  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: Implement the USB interface when chip
+	has the device.
+	
+2006-03-10  Oliver Munz  <oli@snr.ch>
+
+	* hal_arm_at91sam7s.cdl: Change the PLL-defaults so that 96MHz is
+	generated so that the USB does work.
+	
+2006-03-10  Andrew Lunn  <andrew.lunn@ascom.ch>
+            Oliver Munz  <munz@speag.ch>
+	
+	* cdl/hal_arm_at91sam7s.cdl: Set the debug UART as the default
+	channel and fix some dodge spelling.
+	* src/at91sam7s_misc.c (hal_plf_hardware_init): Enable the Debug UART
+	pins for output and control by the device.
+	* include/plf_io.h: Define USART2 to be the debug UART.
+	
+2006-03-01  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl: Change the crystal frequency.  The
+	numbers printed on top of the crystal are misleading. It has a
+	18.432MHz crystal, not 20MHz. This error when combined with the
+	previous fix to the PLL made the serial baud rate wrong.  Change
+	the multiplier and divisor to achieve about the same CPU clock,
+	which should be USB compatible.
+	* src/at91sam7s_misc.c (hal_at91_us_baud): Need the same PLL fix
+	when calculating the baud rate dynamically.
+	* include/plf_io.h: Add the Programmable Clock Output registers.
+	
+2006-02-28  Oliver Munz <munz@speag.ch>
+
+	* include/hal_platform_setup.h: Fix the PLL multiplier settings
+	
+2006-02-25  Andrew Lunn <andrew.lunn@ascom.ch>
+
+	* misc/redboot_R[AO]M.ecm: Disable FIS and fconfig, enable
+	loading directly into flash with the load command.
+	
+2006-01-01  Oliver Munz <munz@speag.ch>
+	    Andrew Lunn <andrew.lunn@ascom.ch>
+
+	* cdl/hal_arm_at91sam7s.cdl:
+	* include/hal_platform_ints.h:
+	* include/hal_platform_setup.h:
+	* include/plf_io.h:
+	* include/pkgconf/mlt_arm_at91sam7s256_rom.h:
+	* include/pkgconf/mlt_arm_at91sam7s256_rom.ldi:
+	* include/pkgconf/mlt_arm_at91sam7s128_rom.h:
+	* include/pkgconf/mlt_arm_at91sam7s128_rom.ldi:
+	* include/pkgconf/mlt_arm_at91sam7s64_rom.h:
+	* include/pkgconf/mlt_arm_at91sam7s64_rom.ldi:
+	* include/pkgconf/mlt_arm_at91sam7s32_rom.h:
+	* include/pkgconf/mlt_arm_at91sam7s32_rom.ldi:
+	* src/at91sam7s_misc.c:
+	* misc/redboot_ROM.ecm:
+	* misc/redboot_RAM.ecm:
+	* ChangeLog: First import of a hal for the AT91SAM7S family.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2006 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

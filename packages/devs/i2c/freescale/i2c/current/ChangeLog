@@ -1,0 +1,39 @@
+2013-04-30  Ilija Kocho  <ilijak@siva.com.mk>
+
+	* src/i2c_freescale.cdl: Add requirement of CYGPKG_KERNEL.
+	[ Bugzilla 1001397 ]
+
+2011-11-20  Tomas Frydrych <tomas@sleepfive.com>
+2013-03-21  Mike Jones <mike@proclivis.com>
+
+	* cdl/i2c_freescale.cdl:
+	* include/i2c_freescale.h:
+	* src/i2c_freescale.c:
+	Tomas: New package -- Freescale I2C driver package. [Bugzilla 1001397]
+	Mike: Made adjustments to state machine behavior to prevent race conditions
+	that led to lockup. Debugged data rate code provided by Ilija Kocho.
+	Fully tested with large PMBus application and verified clock rates.
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
+// Copyright (C) 2011, 2013 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 or (at your option) any
+// later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc., 51 Franklin Street,
+// Fifth Floor, Boston, MA  02110-1301, USA.
+// -------------------------------------------
+// ####GPLCOPYRIGHTEND####
+//===========================================================================

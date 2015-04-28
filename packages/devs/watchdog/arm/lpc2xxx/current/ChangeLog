@@ -1,0 +1,52 @@
+2009-04-28  John Dallaway  <john@dallaway.org.uk>
+
+	* cdl/watchdog_lpc2xxx.cdl: Give CYGIMP_WATCHDOG_HARDWARE a default
+	value rather than a calculated value to accommodate other
+	implementations of CYGINT_WATCHDOG_IMPLEMENTATIONS.
+
+2009-02-09  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/watchdog_lpc2xxx.cxx: switch init priority to
+	CYG_INIT_INTERRUPTS.
+
+2008-11-23  Sergei Gavrikov <sergei.gavrikov@gmail.com>
+            Andrew Lunn     <andrew@lunn.ch>
+	
+	* src/watchdog_lpc2xxx.cxx: Since CYG_HAL_ARM_LPC2XXX_PCLK()
+	macro has been removed from lpc2xxx_misc.h, insert a definition here.
+
+2008-09-03  Sergei Gavrikov <sergei.gavrikov@gmail.com>
+
+	* src/watchdog_lpc2xxx.cxx: Since CYG_HAL_ARM_LPC2XXX_PCLK()
+	macro had been gone away from lpc2xxx_misc.h, it is replaced by
+	an equal CYGNUM_HAL_ARM_LPC2XXX_PCLK constant.
+
+2007-08-19  Sergei Gavrikov  <sg@sgs.gomel.by>
+
+	* src/watchdog_lpc2xxx.cxx: Fixed to work properly in WDINT mode.
+	
+2004-10-04 Jani Monoses <jani@iv.ro>
+
+	* Added watchdog driver for ARM LPC2XXX based on the AT91 code.
+
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  

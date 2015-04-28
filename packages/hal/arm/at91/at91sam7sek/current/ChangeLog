@@ -1,0 +1,44 @@
+2009-07-03  Oliver Munz  <munz@speag.ch>
+
+	* cdl/hal_arm_at91sam7sek.cdl: Support the at91sam7s512 part on this
+	platform.
+
+2007-10-16  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* src/at91sam7sek_misc.c (hal_at91_led): Fix off by one error on
+	GPIO lines for LEDs. Reported by Rasmus Stougaard
+	<rasmus.stougaard@gmail.com>
+
+2007-01-02  Uwe Kindler <uwe_kindler@web.de>
+
+	* cdl/hal_arm_at91sam7sek.cdl: Moved HAL_PLATFORM_XXX defines and
+	definition of platform header file (CYGBLD_HAL_PLATFORM_H) from
+	package CYGPKG_HAL_ARM_AT91SAM7 into board specific packages.
+	
+2006-05-20  Andrew Lunn  <andrew.lunn@ascom.ch>
+
+	* AT91SAM7X-EK development board package
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2006, 2007, 2009 Free Software Foundation, Inc.                        
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================

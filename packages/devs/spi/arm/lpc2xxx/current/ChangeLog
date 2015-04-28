@@ -1,0 +1,45 @@
+2009-02-18  Jonathan Larmour  <jifl@eCosCentric.com>
+
+	* cdl/spi_lpc2xxx.cdl: Fix my mistake in below change and make
+	CDL requires match option names.
+
+2009-02-17  Jonathan Larmour  <jifl@eCosCentric.com>
+2009-01-27  Sergei Gavrikov  <sergei.gavrikov@gmail.com>
+
+	* cdl/spi_lpc2xxx.cdl: Ensure the SPI interrupts are using different
+	priorities: CYGNUM_IO_SPI_ARM_LPC2XXX_SPI{0,1}_INTPRIO entered.
+	* include/spi_lpc2xxx.h: cyg_spi_lpc2xxx_bus_t: spi_prio field added.
+	* src/spi_lpc2xxx.cxx: spi_lpc2xxx_set_config(): fixed copy & paste
+	typo, spi_lpc2xxx_init_bus(): added 'prio' argument to initializer.
+
+2009-02-10  Bart Veer  <bartv@ecoscentric.com>
+
+	* src/spi_lpc2xxx.cxx: update init priority.
+
+2007-07-12  Hans Rosenfeld  <rosenfeld@grumpf.hope-2000.org>
+
+	* lpc2xxx: driver for on-chip SPI units
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2009 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
