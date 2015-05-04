@@ -7577,7 +7577,6 @@ target hwz7zc702 {
     Xilinx HWZ7ZC702 board."
 } 
 
-
 target mars_zx3 {
     alias { "Enclustra ZX3 module" xc7z_mars_zx3 }
     packages { CYGPKG_HAL_ARM
@@ -7599,17 +7598,50 @@ target mars_zx3 {
 }
 
 
+target mercury_zx1_minimal {
+    alias { "Enclustra ZX1 module - minimal set of packages" xc7z_mercury_zx1_minimal }
+    packages { CYGPKG_HAL_ARM
+           CYGPKG_HAL_ARM_XC7Z
+           CYGPKG_HAL_ARM_XC7Z020
+           CYGPKG_HAL_ARM_MERCURY_ZX1
+    }
+    description "
+    The mercury_zx1_minimal target provides the minimal set of packages needed to run eCos on an
+    Enclustra ZX1 module."
+}
+
+target mercury_zx3 {
+    alias { "Enclustra ZX1 module" xc7z_mercury_zx1 }
+    packages { CYGPKG_HAL_ARM
+           CYGPKG_HAL_ARM_XC7Z
+           CYGPKG_HAL_ARM_XC7Z020
+           CYGPKG_HAL_ARM_MERCURY_ZX1
+           CYGPKG_IO_SPI
+           CYGPKG_IO_I2C
+           CYGPKG_DEVS_ETH_ARM_XC7Z
+           CYGPKG_DEVS_ETH_PHY
+           CYGPKG_DEVS_I2C_ARM_XC7Z
+           CYGPKG_IO_SERIAL_ARM_XC7Z
+           CYGPKG_DEVS_QSPI_ARM_XC7Z
+           CYGPKG_DEVS_FLASH_SPI_M25PXX
+    }
+    description "
+    The mercure_zx1 target provides the packages needed to run eCos on an
+    Enclustra ZX1 module."
+}
+
+
 target mars_zx3_minimal {
     alias { "Enclustra ZX3 module - minimal set of packages" xc7z_mars_zx3_minimal }
     packages { CYGPKG_HAL_ARM
            CYGPKG_HAL_ARM_XC7Z
-           CYGPKG_HAL_ARM_XC7Z020	
+           CYGPKG_HAL_ARM_XC7Z020
            CYGPKG_HAL_ARM_MARS_ZX3
     }
     description "
     The mars_zx3_minimal target provides the minimal set of packages needed to run eCos on an
     Enclustra ZX3 module."
-} 
+}
 package CYGPKG_HAL_ARM_XC7Z {
     alias       { "Xilinx XC7Z variant HAL" hal_arm_xc7z arm_xc7z_hal }
     directory   hal/arm/xc7z/var
@@ -7645,6 +7677,15 @@ package CYGPKG_HAL_ARM_MARS_ZX3 {
     description "
         The MARS_ZX3 HAL package provides the support needed to run eCos on
     an Enclustra ZX3 module."
+}
+package CYGPKG_HAL_ARM_MERCURY_ZX1 {
+    alias       { "Enclustra ZX1" hal_arm_xc7z_mercury_zx1 arm_xc7z_mercury_zx1 }
+    directory   hal/arm/xc7z/mercury_zx1
+    script      hal_arm_xc7z_mercury_zx1.cdl
+    hardware
+    description "
+        The MERCURY_ZX1 HAL package provides the support needed to run eCos on
+    an Enclustra ZX1 module."
 }
 package CYGPKG_DEVS_WATCHDOG_ARM_XC7Z {
         alias           { "Watchdog driver for Xilinx Zynq" devices_watchdog_arm_xc7z device_watchdog_arm_xc7z }

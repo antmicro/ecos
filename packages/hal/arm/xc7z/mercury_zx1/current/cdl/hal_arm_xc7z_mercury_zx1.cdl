@@ -1,8 +1,8 @@
 # ====================================================================
 #
-#      hal_arm_mars_zx3.cdl
+#      hal_arm_mercury_zx1.cdl
 #
-#      Enclustra Mars ZX3 module package configuration data
+#      Enclustra Mercury ZX1 module package configuration data
 #
 # ====================================================================
 ## ####ECOSGPLCOPYRIGHTBEGIN####
@@ -39,35 +39,35 @@
 # ====================================================================
 ######DESCRIPTIONBEGIN####
 #
-# Author(s):      Ant Micro
+# Author(s):      Antmicro Ltd
 # Contributors:
-# Date:           2012-07-12
+# Date:           2015-04-27
 #
 #####DESCRIPTIONEND####
 
-cdl_package CYGPKG_HAL_ARM_MARS_ZX3 {
+cdl_package CYGPKG_HAL_ARM_MERCURY_ZX1 {
 
-    display       "Enclustra Mars ZX3 module"
+    display       "Enclustra Mercury ZX1 module"
     parent         CYGPKG_HAL_ARM
 
     include_dir    cyg/hal
-    define_header  hal_arm_mars_zx3.h
+    define_header  hal_arm_mercury_zx1.h
     hardware
 
     description    "
         This HAL platform package provides generic
-        support for the Mars ZX3 modue."
+        support for the Mars ZX1 modue."
 
-    compile       mars_zx3_misc.c
+    compile       mercury_zx1_misc.c
 
     implements    CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9
 
     define_proc {
         puts $::cdl_system_header "#define CYGBLD_HAL_TARGET_H   <pkgconf/hal_arm.h>"
         puts $::cdl_system_header "#define CYGBLD_HAL_VARIANT_H  <pkgconf/hal_arm_xc7z.h>"
-        puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_arm_mars_zx3.h>"
+        puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_arm_mercury_zx1.h>"
         puts $::cdl_header "#define HAL_PLATFORM_CPU    \"Cortex-A9\""
-        puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"Enclustra Mars ZX3\""
+        puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"Enclustra Mercury ZX1\""
         puts $::cdl_header "#define HAL_PLATFORM_EXTRA  \"\""
     }
 
@@ -75,7 +75,7 @@ cdl_package CYGPKG_HAL_ARM_MARS_ZX3 {
         display "Memory layout"
         flavor data
         no_define
-#        calculated { (CYG_HAL_STARTUP == "RAM") ? "arm_mars_zx3_ram" : "arm_mars_zx3_rom" }
+#        calculated { (CYG_HAL_STARTUP == "RAM") ? "arm_mercury_zx1_ram" : "arm_mercury_zx1_rom" }
         calculated { CYG_HAL_STARTUP == "RAM" }
 
         cdl_option CYGHWR_MEMORY_LAYOUT_LDI {
@@ -83,7 +83,7 @@ cdl_package CYGPKG_HAL_ARM_MARS_ZX3 {
             flavor data
             no_define
             define -file system.h CYGHWR_MEMORY_LAYOUT_LDI
-            calculated { (CYGBLD_BUILD_REDBOOT) ? "<pkgconf/mlt_arm_mars_zx3_redboot.ldi>" : "<pkgconf/mlt_arm_mars_zx3_ram.ldi>" }
+            calculated { (CYGBLD_BUILD_REDBOOT) ? "<pkgconf/mlt_arm_mercury_zx1_redboot.ldi>" : "<pkgconf/mlt_arm_mercury_zx1_ram.ldi>" }
 #            calculated { "<pkgconf/mlt_arm_mars_zx3_ram.ldi>" }
         }
 
@@ -92,8 +92,8 @@ cdl_package CYGPKG_HAL_ARM_MARS_ZX3 {
             flavor data
             no_define
             define -file system.h CYGHWR_MEMORY_LAYOUT_H
-            calculated { (CYGBLD_BUILD_REDBOOT) ? "<pkgconf/mlt_arm_mars_zx3_redboot.h>" : "<pkgconf/mlt_arm_mars_zx3_ram.h>" }
-#            calculated { "<pkgconf/mlt_arm_mars_zx3_ram.h>" }
+            calculated { (CYGBLD_BUILD_REDBOOT) ? "<pkgconf/mlt_arm_mercury_zx1_redboot.h>" : "<pkgconf/mlt_arm_mercury_zx1_ram.h>" }
+#            calculated { "<pkgconf/mlt_arm_mercury_zx1_ram.h>" }
         }
     }
 

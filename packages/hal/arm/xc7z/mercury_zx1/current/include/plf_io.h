@@ -4,7 +4,7 @@
 //
 //      plf_io.h
 //
-//      Mars ZX3 board specific registers
+//      Mercury ZX1 board specific registers
 //
 //=============================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
@@ -41,9 +41,9 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Ant Micro <www.antmicro.com>
-// Date:         2012-07-31
-// Purpose:      Mars ZX3 board specific registers
+// Author(s):    Antmicro Ltd <www.antmicro.com>
+// Date:         2015-04-28
+// Purpose:      Mercury ZX1 board specific registers
 // Description:
 // Usage:        #include <cyg/hal/plf_io.h>
 //
