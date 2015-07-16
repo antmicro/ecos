@@ -146,6 +146,8 @@
 #define CYGHWR_HAL_STM32_GPIOG          0x40021800
 #define CYGHWR_HAL_STM32_GPIOH          0x40021C00
 #define CYGHWR_HAL_STM32_GPIOI          0x40022000
+#define CYGHWR_HAL_STM32_GPIOJ          0x40022400
+#define CYGHWR_HAL_STM32_GPIOK          0x40022800
 #endif
 #define CYGHWR_HAL_STM32_CRC            0x40023000
 #if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
@@ -223,11 +225,14 @@
 #define CYGHWR_HAL_STM32_RCC_APB2LPENR          0x64
 #define CYGHWR_HAL_STM32_RCC_BDCR               0x70
 #define CYGHWR_HAL_STM32_RCC_CSR                0x74
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR			0x88
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR			0x8C
 #endif
 
 #define CYGHWR_HAL_STM32_RCC_CR_HSION           BIT_(0)
 #define CYGHWR_HAL_STM32_RCC_CR_HSIRDY          BIT_(1)
 #define CYGHWR_HAL_STM32_RCC_CR_HSITRIM         MASK_(3,5)
+#define CYGHWR_HAL_STM32_RCC_CR_HSITRIM_VALUE(__p)    VALUE_(3,__p)
 #define CYGHWR_HAL_STM32_RCC_CR_HSICAL          MASK_(8,8)
 #define CYGHWR_HAL_STM32_RCC_CR_HSEON           BIT_(16)
 #define CYGHWR_HAL_STM32_RCC_CR_HSERDY          BIT_(17)
@@ -238,6 +243,8 @@
 #if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
 #define CYGHWR_HAL_STM32_RCC_CR_PLLI2SON        BIT_(26)
 #define CYGHWR_HAL_STM32_RCC_CR_PLLI2SRDY       BIT_(27)
+#define CYGHWR_HAL_STM32_RCC_CR_PLLISAION       BIT_(28)
+#define CYGHWR_HAL_STM32_RCC_CR_PLLISAIRDY      BIT_(29)
 #endif
 
 #if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
@@ -442,9 +449,11 @@
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOG       (6)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOH       (7)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOI       (8)
+#define CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOJ       (9)
+#define CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOK       (10)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_CRC        (12)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_BKPSRAM    (18)
-#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4)
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4) || defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_CCMDATARAMEN (20)
 #endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_DMA1       (21)
@@ -547,6 +556,28 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_RCC_CSR_WWDGRSTF       BIT_(30)
 #define CYGHWR_HAL_STM32_RCC_CSR_LPWRRSTF       BIT_(31)
 
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIN_MASK MASK_(6,9)
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIN(__x) VALUE_(6,__x)
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIQ_MASK MASK_(24,4)
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIQ(__x) VALUE_(24,__x)
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIR_MASK MASK_(28,4)
+#define CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIR(__x) VALUE_(28,__x)
+
+
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLIS2DIVQ_MASK		MASK_(0,5)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLIS2DIVQ_VALUE(__x)  VALUE_(0,__x)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVQ_MASK		MASK_(8,5)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVQ_VALUE(__x)	VALUE_(8,__x)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_MASK		MASK_(16,2)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_DIV2		VALUE_(16,0)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_DIV4		VALUE_(16,1)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_DIV8		VALUE_(16,2)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_DIV16		VALUE_(16,3)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_SAI1ASRC_MASK			MASK_(20,2)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_SAI1ASRC_VALUE(__x)	VALUE_(20,__x)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_SAI1BSRC_MASK			MASK_(22,2)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_SAI1BSRC_VALUE(__x)	VALUE_(22,__x)
+#define CYGHWR_HAL_STM32_RCC_DCKCFGR_TIMPRE					BIT_(24)
 
 // Miscellaneous clock control bits
 
@@ -744,6 +775,7 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 // The following macro allows the four EXTICR registers to be indexed
 // as CYGHWR_HAL_STM32_SYSCFG_EXTICR(1) to CYGHWR_HAL_STM32_SYSCFG_EXTICR(4)
 #define CYGHWR_HAL_STM32_SYSCFG_EXTICR(__x)      (4*((__x)-1)+0x08)
+#define CYGHWR_HAL_STM32_SYSCFG_EXTICR_BY_PIN(__x)      ((4*((__x)/4))+0x08)
 
 // The following macros are used to generate the bitfields for setting up
 // external interrupts.  For example, CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTC(12)
@@ -757,6 +789,9 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTF(__x) VALUE_(4*((__x)&3),5)
 #define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTG(__x) VALUE_(4*((__x)&3),6)
 #define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTH(__x) VALUE_(4*((__x)&3),7)
+#define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTI(__x) VALUE_(4*((__x)&3),8)
+#define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTJ(__x) VALUE_(4*((__x)&3),9)
+#define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_PORTK(__x) VALUE_(4*((__x)&3),10)
 #define CYGHWR_HAL_STM32_SYSCFG_EXTICRX_MASK(__x)  VALUE_(4*((__x)&3),0xF)
 
 #define CYGHWR_HAL_STM32_SYSCFG_CMPCR_CMP_DIS      VALUE_(0,0)
@@ -1376,6 +1411,7 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_I2C_CCR                0x1C
 #define CYGHWR_HAL_STM32_I2C_TRISE              0x20
 
+// CR1 Fields
 #define CYGHWR_HAL_STM32_I2C_CR1_PE             BIT_(0)
 #define CYGHWR_HAL_STM32_I2C_CR1_SMBUS          BIT_(1)
 #define CYGHWR_HAL_STM32_I2C_CR1_SMBTYPE        BIT_(3)
@@ -1391,7 +1427,7 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_I2C_CR1_ALERT          BIT_(13)
 #define CYGHWR_HAL_STM32_I2C_CR1_SWRST          BIT_(15)
 
-
+// CR2 Fields
 #define CYGHWR_HAL_STM32_I2C_CR2_FREQ(__x)      VALUE_(0,__x)
 #define CYGHWR_HAL_STM32_I2C_CR2_FREQ_MASK      MASK_(0,6)
 #define CYGHWR_HAL_STM32_I2C_CR2_ITERREN        BIT_(8)
@@ -1400,8 +1436,18 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_I2C_CR2_DMAEN          BIT_(11)
 #define CYGHWR_HAL_STM32_I2C_CR2_LAST           BIT_(12)
 
-// OAR1 and OAR2 omitted, we only support master mode
+// OAR1 fields
+#define CYGHWR_HAL_STM32_I2C_OAR1_ADD(__x)      VALUE_(0,__x)
+#define CYGHWR_HAL_STM32_I2C_OAR1_ADDMODE       BIT_(15)
 
+// OAR2 fields
+#define CYGHWR_HAL_STM32_I2C_OAR2_ENDUAL        BIT_(0)
+#define CYGHWR_HAL_STM32_I2C_OAR2_ADD2(__x)     VALUE_(1,__x)
+
+// DR fields
+#define CYGHWR_HAL_STM32_I2C_DR_MASK            MASK_(0,7)
+
+// SR1 Fields
 #define CYGHWR_HAL_STM32_I2C_SR1_SB             BIT_(0)
 #define CYGHWR_HAL_STM32_I2C_SR1_ADDR           BIT_(1)
 #define CYGHWR_HAL_STM32_I2C_SR1_BTF            BIT_(2)
@@ -1417,7 +1463,7 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_I2C_SR1_TIMEOUT        BIT_(14)
 #define CYGHWR_HAL_STM32_I2C_SR1_SMBALERT       BIT_(15)
 
-
+// SR2 Fields
 #define CYGHWR_HAL_STM32_I2C_SR2_MSL            BIT_(0)
 #define CYGHWR_HAL_STM32_I2C_SR2_BUSY           BIT_(1)
 #define CYGHWR_HAL_STM32_I2C_SR2_TRA            BIT_(2)
@@ -1425,7 +1471,17 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_I2C_SR2_SMBDEFAULT     BIT_(5)
 #define CYGHWR_HAL_STM32_I2C_SR2_SMBHOST        BIT_(6)
 #define CYGHWR_HAL_STM32_I2C_SR2_DUALF          BIT_(7)
+
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4)
 #define CYGHWR_HAL_STM32_I2C_SR2_PEC            MASK_(7,8)
+#else
+#define CYGHWR_HAL_STM32_I2C_SR2_PEC            MASK_(8,7)
+#endif
+
+// CCR Fields
+#define CYGHWR_HAL_STM32_I2C_CCR_MASK           MASK_(0,11)
+#define CYGHWR_HAL_STM32_I2C_CCR_DUTY           BIT_(14)
+#define CYGHWR_HAL_STM32_I2C_CCR_F_S            BIT_(15)
 
 #define CYGHWR_HAL_STM32_I2C_CCR_CCR(__x)       VALUE_(0,__x)
 #define CYGHWR_HAL_STM32_I2C_CCR_CCR_MASK       MASK_(0,12)
@@ -1434,8 +1490,13 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_I2C_CCR_STD            0
 #define CYGHWR_HAL_STM32_I2C_CCR_FAST           BIT_(15)
 
+// TRISE Fields
 #define CYGHWR_HAL_STM32_I2C_TRISE_VAL(__x)     VALUE_(0,__x)
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4)
 #define CYGHWR_HAL_STM32_I2C_TRISE_MASK         MASK_(0,6)
+#else
+#define CYGHWR_HAL_STM32_I2C_TRISE_MASK         MASK_(0,5)
+#endif
 
 // Clock control definitions for each I2C bus
 

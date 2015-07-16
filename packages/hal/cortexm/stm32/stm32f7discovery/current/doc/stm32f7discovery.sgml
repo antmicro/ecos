@@ -1,0 +1,215 @@
+<!-- DOCTYPE part  PUBLIC "-//OASIS//DTD DocBook V3.1//EN" -->
+
+<!-- =============================================================== -->
+<!--                                                                 -->
+<!--     stm32f7discovery.sgml                                       -->
+<!--                                                                 -->
+<!--     STM32F7-Discovery platform HAL documentation                -->
+<!--                                                                 -->
+<!-- =============================================================== -->
+<!-- ####ECOSDOCCOPYRIGHTBEGIN####                                   -->
+<!-- =============================================================== -->
+<!-- Copyright (C) 2003, 2004, 2008, 2013 Free Software Foundation, Inc. -->
+<!-- This material may be distributed only subject to the terms      -->
+<!-- and conditions set forth in the Open Publication License, v1.0  -->
+<!-- or later (the latest version is presently available at          -->
+<!-- http://www.opencontent.org/openpub/)                            -->
+<!-- Distribution of the work or derivative of the work in any       -->
+<!-- standard (paper) book form is prohibited unless prior           -->
+<!-- permission obtained from the copyright holder                   -->
+<!-- =============================================================== -->
+<!-- ####ECOSDOCCOPYRIGHTEND####                                     -->
+<!-- =============================================================== -->
+<!-- #####DESCRIPTIONBEGIN####                                       -->
+<!--                                                                 -->
+<!-- Author(s):   jld                                                -->
+<!-- Based on:    M5272C3 documentation by bartv                     -->
+<!-- Date:        2013-06-07                                         -->
+<!--                                                                 -->
+<!-- ####DESCRIPTIONEND####                                          -->
+<!-- =============================================================== -->
+
+<part id="hal-cortexm-stm32f7discovery-part"><title>STMicroelectronics STM32F7-Discovery Board Support</title>
+
+<refentry id="cortexm-stm32f7discovery">
+  <refmeta>
+    <refentrytitle>Overview</refentrytitle>
+  </refmeta>
+  <refnamediv>
+    <refname>eCos Support for the STMicroelectronics STM32F7-Discovery Board</refname>
+    <refpurpose>Overview</refpurpose>
+  </refnamediv>
+
+  <refsect1 id="cortexm-stm32f7discovery-description"><title>Description</title>
+    <para>
+The STMicroelectronics STM32F7-Discovery board has an STM32F707VGT6 Cortex-M7F processor,
+192KiB of on-chip SRAM, 1MiB of on-chip flash memory, plus motion and audio sensors, an
+audio DAC and a connector for the on-chip USB peripheral. The board also
+features an ST-LINK/V2 serial wire debug (SWD) interface.
+    </para>
+    <para>
+For typical eCos development the ST-LINK/V2 interface is connected via USB to a host
+computer running the OpenOCD on-chip debug tool. OpenOCD provides a GDB server enabling
+the download and debuging of eCos applications via the GDB debugger.
+    </para>
+  </refsect1>
+
+  <refsect1 id="cortexm-stm32f7discovery-hardware"><title>Supported Hardware</title>
+    <para>
+By default, eCos will use the 128KiB of contiguous on-chip SRAM, accessible
+at location 0x20000000. On-chip flash memory at 0x08000000 can be optionally
+used for bootable application code. A further 64KiB of core coupled memory (CCM)
+is mapped to location 0x10000000. This memory is not used by eCos but may be used
+for application-defined static data structures such as thread stacks which require no
+initialization other than that performed during eCos startup and application
+execution. Data structures may be assigned to the <varname>.ccm</varname> section
+within CCM memory using the eCos <varname>CYGBLD_ATTRIB_SECTION</varname> macro. For example:
+    </para>
+    <programlisting>char thread_stack[4096] CYGBLD_ATTRIB_SECTION(".ccm");</programlisting>
+    <para>
+There is a serial driver <varname>CYGPKG_IO_SERIAL_CORTEXM_STM32</varname>
+which supports all on-chip UARTs. However, there are no RS232 drivers or
+serial connectors on the board. STM32 UART4 (named UART3 in the eCos serial driver) is
+enabled for use as a diagnostics channel.
+    </para>
+    <para>
+The GPIO ports are enabled and manipulated only as needed
+to access UART4, the LEDs and the push button. eCos does not
+enable the remaining on-chip peripherals.
+    </para>
+  </refsect1>
+  <refsect1 id="cortexm-stm32f7discovery-tools"><title>Tools</title>
+    <para>
+The STM32F7-Discovery board port is intended to work with GNU tools
+configured for an arm-eabi target. The original porting work was performed using
+binutils 2.18.50.20080513, arm-eabi-gcc 4.3.2, arm-eabi-gdb 7.4.1 and OpenOCD 0.6.1.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="cortexm-stm32f7discovery-setup">
+  <refmeta>
+    <refentrytitle>Setup</refentrytitle>
+  </refmeta>
+  <refnamediv>
+    <refname>Setup</refname>
+    <refpurpose>Preparing for eCos Development with the STM32F7-Discovery board</refpurpose>
+  </refnamediv>
+
+  <refsect1 id="cortexm-stm32f7discovery-overview"><title>Overview</title>
+    <para>
+In a typical development environment the STM32F7-Discovery board is halted
+on reset using OpenOCD communicating via the ST-LINK/V2 SWD interface. eCos
+applications are configured for JTAG startup, then downloaded to the board
+and executed via the arm-eabi-gdb debugger.
+    </para>
+    <para>
+OpenOCD may be configured for use with the STM32F7-Discovery board using the
+board configuration script <filename>stm32F7discovery.cfg</filename> provided with the tool.
+It is also necessary to define a handler for GDB attach events which will halt the board. A
+suitable OpenOCD script is provided at <filename>misc/openocd-misc.cfg</filename> in the
+STM32F7-Discovery platform HAL package. Both scripts may be specified on the OpenOCD
+command line.
+    </para>
+  </refsect1>
+  <refsect1 id="cortexm-stm32f7discovery-config-diagnostic"><title>Diagnostic output</title>
+    <para>
+For diagnostic output, a SparkFun FTDI 3.3v Basic Breakout board or similar
+may be connected to UART4 of the STM32F7-Discovery board using jumper wires as follows:
+    </para>
+    <informaltable frame="all">
+        <tgroup cols="3" colsep="1" rowsep="1" align="left">
+            <thead>
+	        <row>
+                    <entry>Function</entry>
+                    <entry>STM32F7-Discovery header</entry>
+                    <entry>SparkFun FTDI breakout board socket</entry>
+                </row>
+            </thead>
+            <tbody>
+	        <row>
+                    <entry>UART4 Tx</entry>
+                    <entry>PC10</entry>
+                    <entry>RXI</entry>
+                </row>
+                <row>
+                    <entry>Ground</entry>
+                    <entry>GND</entry>
+                    <entry>GND</entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <para>
+The UART is configured at 115200 baud by default and runs with 8 bits,
+no parity, and 1 stop bit. The baud rate can be changed via the
+configuration option <varname>CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_BAUD</varname>.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="cortexm-stm32f7discovery-config">
+  <refmeta>
+    <refentrytitle>Configuration</refentrytitle>
+  </refmeta>
+  <refnamediv>
+    <refname>Configuration</refname>
+    <refpurpose>Platform-specific Configuration Options</refpurpose>
+  </refnamediv>
+
+  <refsect1 id="cortexm-stm32f7discovery-config-overview"><title>Overview</title>
+    <para>
+The STM32F7-Discovery platform HAL package is loaded automatically when eCos is
+configured for an STM32F7-Discovery target. It should never be necessary to load
+this package explicitly. Unloading of the package should only occur as a result
+of switching target hardware.
+    </para>
+  </refsect1>
+
+  <refsect1 id="cortexm-stm32f7discovery-config-startup"><title>Startup</title>
+    <para>
+The STM32F7-Discovery platform HAL package supports two startup types which may be
+selected using the configuration option <varname>CYG_HAL_STARTUP</varname>:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>JTAG</term>
+        <listitem><para>
+This is the startup type which is normally used during application
+development. <application>arm-eabi-gdb</application> is used to download a JTAG
+startup application into memory via OpenOCD and the ST-LINK/V2 SWD debug interface.
+eCos startup code will perform all necessary hardware initialization.
+        </para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>ROM</term>
+        <listitem><para>
+This startup type can be used for finished applications which will
+be programmed into flash at location 0x08000000. It can also be used for
+debugging larger applications which do not fit in available SRAM. The
+application must be programmed to flash using the ST-LINK tool before debugging commences.
+eCos startup code will perform all necessary hardware initialization.
+        </para></listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1 id="cortexm-stm32f7discovery-config-flash"><title>Flash Driver</title>
+    <para>
+The platform HAL package contains flash driver support. This support may be
+activated by loading the eCos flash I/O infrastructure package <varname>CYGPKG_IO_FLASH</varname>.
+    </para>
+  </refsect1>
+
+  <refsect1 id="cortexm-stm32f7discovery-config-clock"><title>System Clock</title>
+    <para>
+By default the system clock interrupts once every 10ms, corresponding
+to a 100Hz clock. This period can be modified using the configuration option
+<varname>CYGNUM_HAL_RTC_PERIOD</varname>.
+    </para>
+  </refsect1>
+</refentry>
+
+</part>
+
+<!-- EOF stm32f7discovery.sgml -->

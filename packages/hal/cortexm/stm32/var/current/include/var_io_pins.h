@@ -406,10 +406,12 @@
 
 __externC void hal_stm32_gpio_set( cyg_uint32 pin );
 __externC void hal_stm32_gpio_out( cyg_uint32 pin, int val );
+__externC void hal_stm32_gpio_toggle( cyg_uint32 pin );
 __externC void hal_stm32_gpio_in ( cyg_uint32 pin, int *val );
 
 #define CYGHWR_HAL_STM32_GPIO_SET(__pin ) hal_stm32_gpio_set( __pin )
 #define CYGHWR_HAL_STM32_GPIO_OUT(__pin, __val ) hal_stm32_gpio_out( __pin, __val )
+#define CYGHWR_HAL_STM32_GPIO_TOGGLE(__pin ) hal_stm32_gpio_toggle( __pin )
 #define CYGHWR_HAL_STM32_GPIO_IN(__pin,  __val ) hal_stm32_gpio_in( __pin, __val )
 
 //-----------------------------------------------------------------------------

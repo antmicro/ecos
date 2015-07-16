@@ -101,7 +101,7 @@ cdl_package CYGPKG_HAL_CORTEXM {
     cdl_option CYGHWR_HAL_CORTEXM {
         display          "Cortex-M CPU family"
         flavor           data
-        legal_values     { "M3" "M4" }
+        legal_values     { "M3" "M4" "M7" }
         default_value    { "M3" }
         description      "
             The Cortex-M architecture has two variants at present. The

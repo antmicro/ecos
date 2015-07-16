@@ -10,7 +10,7 @@
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
 // -------------------------------------------                              
 // This file is part of eCos, the Embedded Configurable Operating System.   
-// Copyright (C) 2008, 2009, 2011 Free Software Foundation, Inc.                        
+// Copyright (C) 2008, 2009, 2011 Free Software Foundation, Inc.            
 //
 // eCos is free software; you can redistribute it and/or modify it under    
 // the terms of the GNU General Public License as published by the Free     
@@ -59,6 +59,18 @@
 //=============================================================================
 // UARTs
 
+#ifdef CYGHWR_HAL_CORTEXM_M7
+#define CYGHWR_HAL_STM32_UART_ISR               0x1C
+#define CYGHWR_HAL_STM32_UART_ICR               0x20
+#define CYGHWR_HAL_STM32_UART_RDR               0x24
+#define CYGHWR_HAL_STM32_UART_TDR               0x28
+#define CYGHWR_HAL_STM32_UART_BRR               0x0c
+#define CYGHWR_HAL_STM32_UART_CR1               0x00
+#define CYGHWR_HAL_STM32_UART_CR2               0x04
+#define CYGHWR_HAL_STM32_UART_CR3               0x08
+#define CYGHWR_HAL_STM32_UART_GTPR              0x10
+
+#else // CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_SR                0x00
 #define CYGHWR_HAL_STM32_UART_DR                0x04
 #define CYGHWR_HAL_STM32_UART_BRR               0x08
@@ -66,6 +78,7 @@
 #define CYGHWR_HAL_STM32_UART_CR2               0x10
 #define CYGHWR_HAL_STM32_UART_CR3               0x14
 #define CYGHWR_HAL_STM32_UART_GTPR              0x18
+#endif //else CYGHWR_HAL_CORTEXM_M7
 
 // SR Bits
 
@@ -83,11 +96,37 @@
 
 // BRR bits
 
+#ifdef CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_BRR_DIVF(__f)      VALUE_(0,__f)
 #define CYGHWR_HAL_STM32_UART_BRR_DIVM(__m)      VALUE_(4,__m)
+#else //CYGHWR_HAL_CORTEXM_M7
+#define CYGHWR_HAL_STM32_UART_DR_DIVF(__f)      VALUE_(0,__f)
+#define CYGHWR_HAL_STM32_UART_DR_DIVM(__m)      VALUE_(4,__m)
+#endif // else CYGHWR_HAL_CORTEXM_M7
 
 // CR1 bits
 
+#ifdef CYGHWR_HAL_CORTEXM_M7
+// #define CYGHWR_HAL_STM32_UART_CR1_SBK           BIT_(0)
+// #define CYGHWR_HAL_STM32_UART_CR1_RWU           BIT_(1)
+#define CYGHWR_HAL_STM32_UART_CR1_RE            BIT_(2)
+#define CYGHWR_HAL_STM32_UART_CR1_TE            BIT_(3)
+#define CYGHWR_HAL_STM32_UART_CR1_IDLEIE        BIT_(4)
+#define CYGHWR_HAL_STM32_UART_CR1_RXNEIE        BIT_(5)
+#define CYGHWR_HAL_STM32_UART_CR1_TCIE          BIT_(6)
+#define CYGHWR_HAL_STM32_UART_CR1_TXEIE         BIT_(7)
+#define CYGHWR_HAL_STM32_UART_CR1_PEIE          BIT_(8)
+#define CYGHWR_HAL_STM32_UART_CR1_PS_EVEN       0
+#define CYGHWR_HAL_STM32_UART_CR1_PS_ODD        BIT_(9)
+#define CYGHWR_HAL_STM32_UART_CR1_PCE           BIT_(10)
+#define CYGHWR_HAL_STM32_UART_CR1_WAKE          BIT_(11)
+#define CYGHWR_HAL_STM32_UART_CR1_M_8           0
+#define CYGHWR_HAL_STM32_UART_CR1_M_9           BIT_(12)
+#define CYGHWR_HAL_STM32_UART_CR1_UE            BIT_(0)
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+#define CYGHWR_HAL_STM32_UART_CR1_OVER8         BIT_(15)
+#endif
+#else // CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_CR1_SBK           BIT_(0)
 #define CYGHWR_HAL_STM32_UART_CR1_RWU           BIT_(1)
 #define CYGHWR_HAL_STM32_UART_CR1_RE            BIT_(2)
@@ -104,13 +143,16 @@
 #define CYGHWR_HAL_STM32_UART_CR1_M_8           0
 #define CYGHWR_HAL_STM32_UART_CR1_M_9           BIT_(12)
 #define CYGHWR_HAL_STM32_UART_CR1_UE            BIT_(13)
-#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
-#define CYGHWR_HAL_STM32_UART_CR1_OVER8         BIT_(15)
-#endif
+#endif // else CYGHWR_HAL_CORTEXM_M7
 
 // CR2 bits
 
+#ifdef CYGHWR_HAL_CORTEXM_M7
+#define CYGHWR_HAL_STM32_UART_CR2_ADD(__a)      VALUE_(28,__a)
+#else // CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_CR2_ADD(__a)      VALUE_(0,__a)
+#endif // else CYGHWR_HAL_CORTEXM_M7
+
 #define CYGHWR_HAL_STM32_UART_CR2_LBDL          BIT_(5)
 #define CYGHWR_HAL_STM32_UART_CR2_LBDIE         BIT_(6)
 #define CYGHWR_HAL_STM32_UART_CR2_LBCL          BIT_(8)
@@ -143,6 +185,9 @@
 #define CYGHWR_HAL_STM32_UART_GTPR_GT(__g)      VALUE_(8,__g)
 
 // UART GPIO pins
+
+
+//#ifdef CYGHWR_HAL_CORTEXM_M7
 
 // NOTE: For those UARTS providing a RTS pin the driver uses HW CTS control but
 // manually controls the RTS as a GPIO.
@@ -252,6 +297,34 @@
 #define CYGHWR_HAL_STM32_UART6_CLOCK            CYGHWR_HAL_STM32_CLOCK( APB2, UART6 )
 
 #endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE
+
+
+//#else // CYGHWR_HAL_CORTEXM_M7
+//#define CYGHWR_HAL_STM32_UART1_RX               CYGHWR_HAL_STM32_GPIO( A, 10, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART1_TX               CYGHWR_HAL_STM32_GPIO( A,  9, OUT_50MHZ , ALT_PUSHPULL  )
+//#define CYGHWR_HAL_STM32_UART1_CTS              CYGHWR_HAL_STM32_GPIO( A, 11, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART1_RTS              CYGHWR_HAL_STM32_GPIO( A, 12, OUT_50MHZ , OUT_PUSHPULL  )
+//
+//#define CYGHWR_HAL_STM32_UART2_RX               CYGHWR_HAL_STM32_GPIO( A,  3, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART2_TX               CYGHWR_HAL_STM32_GPIO( A,  2, OUT_50MHZ , ALT_PUSHPULL  )
+//#define CYGHWR_HAL_STM32_UART2_CTS              CYGHWR_HAL_STM32_GPIO( A,  0, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART2_RTS              CYGHWR_HAL_STM32_GPIO( A,  1, OUT_50MHZ , OUT_PUSHPULL  )
+//
+//#define CYGHWR_HAL_STM32_UART3_RX               CYGHWR_HAL_STM32_GPIO( B, 11, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART3_TX               CYGHWR_HAL_STM32_GPIO( B, 10, OUT_50MHZ , ALT_PUSHPULL  )
+//#define CYGHWR_HAL_STM32_UART3_CTS              CYGHWR_HAL_STM32_GPIO( B, 13, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART3_RTS              CYGHWR_HAL_STM32_GPIO( B, 14, OUT_50MHZ , OUT_PUSHPULL  )
+//
+//#define CYGHWR_HAL_STM32_UART4_RX               CYGHWR_HAL_STM32_GPIO( C, 11, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART4_TX               CYGHWR_HAL_STM32_GPIO( C, 10, OUT_50MHZ , ALT_PUSHPULL  )
+//#define CYGHWR_HAL_STM32_UART4_CTS              CYGHWR_HAL_STM32_GPIO_NONE
+//#define CYGHWR_HAL_STM32_UART4_RTS              CYGHWR_HAL_STM32_GPIO_NONE
+//
+//#define CYGHWR_HAL_STM32_UART5_RX               CYGHWR_HAL_STM32_GPIO( C,  2, IN        , FLOATING      )
+//#define CYGHWR_HAL_STM32_UART5_TX               CYGHWR_HAL_STM32_GPIO( C, 12, OUT_50MHZ , ALT_PUSHPULL  )
+//#define CYGHWR_HAL_STM32_UART5_CTS              CYGHWR_HAL_STM32_GPIO_NONE
+//#define CYGHWR_HAL_STM32_UART5_RTS              CYGHWR_HAL_STM32_GPIO_NONE
+//#endif // else  CYGHWR_HAL_CORTEXM_M7
 
 #ifndef __ASSEMBLER__
 

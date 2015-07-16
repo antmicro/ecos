@@ -63,7 +63,6 @@
 #include <cyg/hal/hal_arch.h>           // HAL header
 #include <cyg/hal/hal_intr.h>           // HAL header
 #include <cyg/hal/hal_if.h>             // HAL header
-
 #ifdef CYGFUN_HAL_CORTEXM_STM32_PROFILE_TIMER
 #include <cyg/hal/drv_api.h>            // CYG_ISR_HANDLED
 #include <cyg/profile/profile.h>        // __profile_hit()
@@ -168,17 +167,23 @@ void hal_start_clocks( void )
     cr = CYGHWR_HAL_STM32_RCC_CR_HSION;
     HAL_WRITE_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, cr );
     
+    // Restore default HSITRIM value
+
+    cr |= CYGHWR_HAL_STM32_RCC_CR_HSITRIM_VALUE(16);
+
+#if defined(CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_SOURCE_HSE)
     // Start up HSE clock
     
     cr |= CYGHWR_HAL_STM32_RCC_CR_HSEON;
     HAL_WRITE_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, cr );
     
     // Wait for HSE clock to startup
-    
+
     do
     {
         HAL_READ_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, cr );
     } while( !(cr & CYGHWR_HAL_STM32_RCC_CR_HSERDY) );
+#endif
 
     // Configure clocks
     
@@ -411,7 +416,20 @@ __externC void hal_stm32_gpio_out( cyg_uint32 pin, int val )
     CYGHWR_HAL_STM32_GPIO_BSRR_SET( port, bit, val );
 #endif // if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
 }
-    
+
+__externC void hal_stm32_gpio_toggle( cyg_uint32 pin)
+{
+    cyg_uint32 val;
+    //TODO: toogle operation for F1 family
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    CYG_ADDRESS port = CYGHWR_HAL_STM32_GPIO_PORT(pin);
+    int bit = CYGHWR_HAL_STM32_GPIO_BIT(pin);
+    CYGHWR_HAL_STM32_GPIO_ODR_GET(port, bit, val);
+    val ^= 1;
+    CYGHWR_HAL_STM32_GPIO_BSRR_SET( port, bit, val );
+#endif // if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+}
+
 __externC void hal_stm32_gpio_in ( cyg_uint32 pin, int *val )
 {
 #if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)

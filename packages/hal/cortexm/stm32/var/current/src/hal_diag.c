@@ -78,7 +78,7 @@ typedef struct {
 #endif
     cyg_uint32          baud_rate;
     int                 irq_state;
-    
+
 } channel_data_t;
 
 // If remap isn't supported (e.g. F2/F4 parts) just #define to nothing. The struct initialiser will still work.
@@ -99,6 +99,7 @@ typedef struct {
 #endif
 
 static channel_data_t stm32_ser_channels[] = {
+#ifdef CYGHWR_HAL_CORTEXM_M7
 #if CYGINT_HAL_STM32_UART0>0
     { 0, CYGHWR_HAL_STM32_UART1, 1000, CYGNUM_HAL_INTERRUPT_UART1, CYGHWR_HAL_STM32_UART1_RX, CYGHWR_HAL_STM32_UART1_TX,
       CYGHWR_HAL_STM32_UART1_CLOCK, CYGHWR_HAL_STM32_UART1_REMAP_CONFIG },
@@ -124,6 +125,24 @@ static channel_data_t stm32_ser_channels[] = {
       CYGHWR_HAL_STM32_UART6_CLOCK },  // UART6 only supported on F2/F4 so no remap config needed.
 #endif
 };
+#else //CYGHWR_HAL_CORTEXM_M7
+#if CYGINT_HAL_STM32_UART0>0
+    { 0, CYGHWR_HAL_STM32_UART1, 1000, CYGNUM_HAL_INTERRUPT_UART1, CYGHWR_HAL_STM32_UART1_RX, CYGHWR_HAL_STM32_UART1_TX },
+#endif
+#if CYGINT_HAL_STM32_UART1>0
+    { 1, CYGHWR_HAL_STM32_UART2, 1000, CYGNUM_HAL_INTERRUPT_UART2, CYGHWR_HAL_STM32_UART2_RX, CYGHWR_HAL_STM32_UART2_TX },
+#endif
+#if CYGINT_HAL_STM32_UART2>0
+    { 2, CYGHWR_HAL_STM32_UART3, 1000, CYGNUM_HAL_INTERRUPT_UART3, CYGHWR_HAL_STM32_UART3_RX, CYGHWR_HAL_STM32_UART3_TX },
+#endif
+#if CYGINT_HAL_STM32_UART3>0
+    { 3, CYGHWR_HAL_STM32_UART4, 1000, CYGNUM_HAL_INTERRUPT_UART4, CYGHWR_HAL_STM32_UART4_RX, CYGHWR_HAL_STM32_UART4_TX },
+#endif
+#if CYGINT_HAL_STM32_UART4>0
+    { 4, CYGHWR_HAL_STM32_UART5, 1000, CYGNUM_HAL_INTERRUPT_UART5, CYGHWR_HAL_STM32_UART5_RX, CYGHWR_HAL_STM32_UART5_TX },
+#endif
+};
+#endif // else CYGHWR_HAL_CORTEXM_M7
 
 //-----------------------------------------------------------------------------
 
@@ -165,7 +184,7 @@ hal_stm32_serial_init_channel(void* __ch_data)
 
     // Enable the uart
     cr1 |= CYGHWR_HAL_STM32_UART_CR1_UE;
-    HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );    
+    HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );
 
 }
 
@@ -178,12 +197,20 @@ hal_stm32_serial_putc(void *__ch_data, char c)
 
      do
      {
-         HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, sr );
+	#ifdef CYGHWR_HAL_CORTEXM_M7
+         HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, sr );
+	#else
+	 HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, sr );
+	#endif
      } while ((sr & CYGHWR_HAL_STM32_UART_SR_TXE) == 0);
 
-     HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );     
-    
-    CYGARC_HAL_RESTORE_GP();    
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+     HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c );
+    #else
+     HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
+    #endif
+
+    CYGARC_HAL_RESTORE_GP();
 }
 
 static cyg_bool
@@ -194,16 +221,24 @@ hal_stm32_serial_getc_nonblock(void* __ch_data, cyg_uint8* ch)
     cyg_uint32 c;
     CYGARC_HAL_SAVE_GP();
 
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, sr );
+    #else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, sr );
+    #endif
 
     if( (sr & CYGHWR_HAL_STM32_UART_SR_RXNE) == 0 )
         return false;
 
-    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );     
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c );
+    #else
+    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
+    #endif
 
     *ch = (cyg_uint8)c;
 
-    CYGARC_HAL_RESTORE_GP();    
+    CYGARC_HAL_RESTORE_GP();
 
     return true;
 }
@@ -226,7 +261,7 @@ hal_stm32_serial_getc(void* __ch_data)
 #if defined(CYGSEM_HAL_VIRTUAL_VECTOR_DIAG)
 
 static void
-hal_stm32_serial_write(void* __ch_data, const cyg_uint8* __buf, 
+hal_stm32_serial_write(void* __ch_data, const cyg_uint8* __buf,
                          cyg_uint32 __len)
 {
     CYGARC_HAL_SAVE_GP();
@@ -262,7 +297,7 @@ hal_stm32_serial_getc_timeout(void* __ch_data, cyg_uint8* ch)
         res = hal_stm32_serial_getc_nonblock(__ch_data, ch);
         if (res || 0 == delay_count--)
             break;
-        
+
         CYGACC_CALL_IF_DELAY_US(10);
     }
 
@@ -291,7 +326,7 @@ hal_stm32_serial_control(void *__ch_data, __comm_control_cmd_t __func, ...)
         HAL_INTERRUPT_UNMASK( chan->isr_vector );
         HAL_READ_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );
         cr1 |= CYGHWR_HAL_STM32_UART_CR1_RXNEIE;
-        HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );        
+        HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );
         break;
     case __COMMCTL_IRQ_DISABLE:
         ret = chan->irq_state;
@@ -299,7 +334,7 @@ hal_stm32_serial_control(void *__ch_data, __comm_control_cmd_t __func, ...)
         HAL_INTERRUPT_MASK( chan->isr_vector );
         HAL_READ_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );
         cr1 &= ~CYGHWR_HAL_STM32_UART_CR1_RXNEIE;
-        HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );        
+        HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );
         break;
     case __COMMCTL_DBG_ISR_VECTOR:
         ret = chan->isr_vector;
@@ -314,7 +349,7 @@ hal_stm32_serial_control(void *__ch_data, __comm_control_cmd_t __func, ...)
         chan->msec_timeout = va_arg(ap, cyg_uint32);
 
         va_end(ap);
-    }        
+    }
     case __COMMCTL_GETBAUD:
         ret = chan->baud_rate;
         break;
@@ -333,7 +368,7 @@ hal_stm32_serial_control(void *__ch_data, __comm_control_cmd_t __func, ...)
 }
 
 static int
-hal_stm32_serial_isr(void *__ch_data, int* __ctrlc, 
+hal_stm32_serial_isr(void *__ch_data, int* __ctrlc,
                        CYG_ADDRWORD __vector, CYG_ADDRWORD __data)
 {
     channel_data_t* chan = (channel_data_t*)__ch_data;
@@ -346,7 +381,7 @@ hal_stm32_serial_isr(void *__ch_data, int* __ctrlc,
      if( hal_stm32_serial_getc_nonblock(__ch_data, &ch) )
      {
          if( cyg_hal_is_break( (char *)&ch , 1 ) )
-             *__ctrlc = 1; 
+             *__ctrlc = 1;
      }
 
     HAL_INTERRUPT_ACKNOWLEDGE(chan->isr_vector);
@@ -385,7 +420,7 @@ hal_stm32_serial_init(void)
 
     // set debug channel baud rate if different
 #if (CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_BAUD != CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL_BAUD)
-    stm32_ser_channels[CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL]->baud_rate = 
+    stm32_ser_channels[CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL]->baud_rate =
         CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL_BAUD;
     update_baud_rate( &stm32_ser_channels[CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL] );
 #endif

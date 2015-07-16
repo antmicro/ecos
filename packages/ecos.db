@@ -7174,6 +7174,16 @@ package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
             eCos on the STMicroelectronics STM32F4-Discovery board."
 }
 
+package CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY {
+        alias		{ "STMicroelectronics STM32F7-Discovery HAL" hal_cortexm_stm32f7discovery }
+        directory	hal/cortexm/stm32/stm32f7discovery
+        script		hal_cortexm_stm32_stm32f7discovery.cdl
+        hardware
+        description "
+            The STM32F7-Discovery HAL package provides the platform support needed to run
+            eCos on the STMicroelectronics STM32F7-Discovery board."
+}
+
 package CYGPKG_IO_SERIAL_CORTEXM_STM32 {
         alias           { "ST STM32 serial device drivers"
                           devs_serial_cortexm_stm32 stm32_serial_driver }
@@ -7308,6 +7318,23 @@ target stm32f4discovery {
         }
         description "The stm32f4discovery target provides the packages needed
         to run eCos on the STMicroelectronics STM32F4-Discovery board."
+}
+
+target stm32f7discovery {
+        alias { "STMicroelectronics STM32F7-Discovery board" }
+        packages {
+                CYGPKG_HAL_CORTEXM
+                CYGPKG_HAL_CORTEXM_STM32
+                CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY
+                CYGPKG_DEVS_FLASH_STM32
+                CYGPKG_IO_SERIAL_CORTEXM_STM32
+                CYGPKG_IO_I2C
+                CYGPKG_DEVS_I2C_CORTEXM_STM32
+                CYGPKG_IO_SPI
+                CYGPKG_DEVS_SPI_CORTEXM_STM32
+        }
+        description "The stm32f7discovery target provides the packages needed
+        to run eCos on the STMicroelectronics STM32F7-Discovery board."
 }
 
 target ek-lm3s811 {

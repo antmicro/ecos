@@ -42,7 +42,7 @@
 // Author(s):     nickg
 // Date:          2008-09-10
 // Purpose:       ST STM32 Serial I/O module
-// Description: 
+// Description:
 //
 //####DESCRIPTIONEND####
 //
@@ -90,11 +90,11 @@ typedef struct stm32_serial_info
 #endif
 
     cyg_bool            tx_active;
-    
+
     volatile cyg_uint8  buf[STM32_RXBUFSIZE];
     volatile int        buf_head;
     volatile int        buf_tail;
-    
+
     cyg_interrupt       serial_interrupt;
     cyg_handle_t        serial_interrupt_handle;
 } stm32_serial_info;
@@ -111,7 +111,7 @@ static bool stm32_serial_putc_interrupt(serial_channel *chan, unsigned char c);
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL5) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL5_BUFSIZE == 0)
 static bool stm32_serial_putc_polled(serial_channel *chan, unsigned char c);
 #endif
-static Cyg_ErrNo stm32_serial_lookup(struct cyg_devtab_entry **tab, 
+static Cyg_ErrNo stm32_serial_lookup(struct cyg_devtab_entry **tab,
                                     struct cyg_devtab_entry *sub_tab,
                                     const char *name);
 static unsigned char stm32_serial_getc_interrupt(serial_channel *chan);
@@ -139,8 +139,8 @@ static void       stm32_serial_DSR(cyg_vector_t vector, cyg_ucount32 count, cyg_
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL3) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL3_BUFSIZE > 0) \
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL4) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL4_BUFSIZE > 0) \
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL5) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL5_BUFSIZE > 0)
-static SERIAL_FUNS(stm32_serial_funs_interrupt, 
-                   stm32_serial_putc_interrupt, 
+static SERIAL_FUNS(stm32_serial_funs_interrupt,
+                   stm32_serial_putc_interrupt,
                    stm32_serial_getc_interrupt,
                    stm32_serial_set_config,
                    stm32_serial_start_xmit,
@@ -154,8 +154,8 @@ static SERIAL_FUNS(stm32_serial_funs_interrupt,
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL3) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL3_BUFSIZE == 0) \
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL4) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL4_BUFSIZE == 0) \
  || (defined(CYGPKG_IO_SERIAL_CORTEXM_STM32_SERIAL5) && CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL5_BUFSIZE == 0)
-static SERIAL_FUNS(stm32_serial_funs_polled, 
-                   stm32_serial_putc_polled, 
+static SERIAL_FUNS(stm32_serial_funs_polled,
+                   stm32_serial_putc_polled,
                    stm32_serial_getc_polled,
                    stm32_serial_set_config,
                    stm32_serial_start_xmit,
@@ -186,7 +186,7 @@ static unsigned char stm32_serial_out_buf0[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL
 static unsigned char stm32_serial_in_buf0[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL0_BUFSIZE];
 
 static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel0,
-                                       stm32_serial_funs_interrupt, 
+                                       stm32_serial_funs_interrupt,
                                        stm32_serial_info0,
                                        CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL0_BAUD),
                                        CYG_SERIAL_STOP_DEFAULT,
@@ -198,7 +198,7 @@ static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel0,
     );
 #else
 static SERIAL_CHANNEL(stm32_serial_channel0,
-                      stm32_serial_funs_polled, 
+                      stm32_serial_funs_polled,
                       stm32_serial_info0,
                       CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL0_BAUD),
                       CYG_SERIAL_STOP_DEFAULT,
@@ -208,11 +208,11 @@ static SERIAL_CHANNEL(stm32_serial_channel0,
     );
 #endif
 
-DEVTAB_ENTRY(stm32_serial_io0, 
+DEVTAB_ENTRY(stm32_serial_io0,
              CYGDAT_IO_SERIAL_CORTEXM_STM32_SERIAL0_NAME,
              0,                     // Does not depend on a lower level interface
-             &cyg_io_serial_devio, 
-             stm32_serial_init, 
+             &cyg_io_serial_devio,
+             stm32_serial_init,
              stm32_serial_lookup,     // Serial driver may need initializing
              &stm32_serial_channel0
     );
@@ -232,7 +232,7 @@ static stm32_serial_info stm32_serial_info1 = {
     cts_pin         : CYGHWR_HAL_STM32_UART2_CTS,
     clk_enable      : CYGHWR_HAL_STM32_UART2_CLOCK,
 #ifdef CYGHWR_HAL_STM32_UART2_REMAP_CONFIG
-    remap           : CYGHWR_HAL_STM32_UART2_REMAP_CONFIG,    
+    remap           : CYGHWR_HAL_STM32_UART2_REMAP_CONFIG,
 #endif
 };
 
@@ -241,7 +241,7 @@ static unsigned char stm32_serial_out_buf1[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL
 static unsigned char stm32_serial_in_buf1[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL1_BUFSIZE];
 
 static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel1,
-                                       stm32_serial_funs_interrupt, 
+                                       stm32_serial_funs_interrupt,
                                        stm32_serial_info1,
                                        CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL1_BAUD),
                                        CYG_SERIAL_STOP_DEFAULT,
@@ -253,7 +253,7 @@ static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel1,
     );
 #else
 static SERIAL_CHANNEL(stm32_serial_channel1,
-                      stm32_serial_funs_polled, 
+                      stm32_serial_funs_polled,
                       stm32_serial_info1,
                       CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL1_BAUD),
                       CYG_SERIAL_STOP_DEFAULT,
@@ -263,11 +263,11 @@ static SERIAL_CHANNEL(stm32_serial_channel1,
     );
 #endif
 
-DEVTAB_ENTRY(stm32_serial_io1, 
+DEVTAB_ENTRY(stm32_serial_io1,
              CYGDAT_IO_SERIAL_CORTEXM_STM32_SERIAL1_NAME,
              0,                     // Does not depend on a lower level interface
-             &cyg_io_serial_devio, 
-             stm32_serial_init, 
+             &cyg_io_serial_devio,
+             stm32_serial_init,
              stm32_serial_lookup,     // Serial driver may need initializing
              &stm32_serial_channel1
     );
@@ -287,7 +287,7 @@ static stm32_serial_info stm32_serial_info2 = {
     cts_pin         : CYGHWR_HAL_STM32_UART3_CTS,
     clk_enable      : CYGHWR_HAL_STM32_UART3_CLOCK,
 #ifdef CYGHWR_HAL_STM32_UART3_REMAP_CONFIG
-    remap           : CYGHWR_HAL_STM32_UART3_REMAP_CONFIG,    
+    remap           : CYGHWR_HAL_STM32_UART3_REMAP_CONFIG,
 #endif
 };
 
@@ -296,7 +296,7 @@ static unsigned char stm32_serial_out_buf2[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL
 static unsigned char stm32_serial_in_buf2[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL2_BUFSIZE];
 
 static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel2,
-                                       stm32_serial_funs_interrupt, 
+                                       stm32_serial_funs_interrupt,
                                        stm32_serial_info2,
                                        CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL2_BAUD),
                                        CYG_SERIAL_STOP_DEFAULT,
@@ -308,7 +308,7 @@ static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel2,
     );
 #else
 static SERIAL_CHANNEL(stm32_serial_channel2,
-                      stm32_serial_funs_polled, 
+                      stm32_serial_funs_polled,
                       stm32_serial_info2,
                       CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL2_BAUD),
                       CYG_SERIAL_STOP_DEFAULT,
@@ -318,11 +318,11 @@ static SERIAL_CHANNEL(stm32_serial_channel2,
     );
 #endif
 
-DEVTAB_ENTRY(stm32_serial_io2, 
+DEVTAB_ENTRY(stm32_serial_io2,
              CYGDAT_IO_SERIAL_CORTEXM_STM32_SERIAL2_NAME,
              0,                     // Does not depend on a lower level interface
-             &cyg_io_serial_devio, 
-             stm32_serial_init, 
+             &cyg_io_serial_devio,
+             stm32_serial_init,
              stm32_serial_lookup,     // Serial driver may need initializing
              &stm32_serial_channel2
     );
@@ -342,7 +342,7 @@ static stm32_serial_info stm32_serial_info3 = {
     cts_pin         : CYGHWR_HAL_STM32_UART4_CTS,
     clk_enable      : CYGHWR_HAL_STM32_UART4_CLOCK,
 #ifdef CYGHWR_HAL_STM32_UART4_REMAP_CONFIG
-    remap           : CYGHWR_HAL_STM32_UART4_REMAP_CONFIG,    
+    remap           : CYGHWR_HAL_STM32_UART4_REMAP_CONFIG,
 #endif
 };
 
@@ -351,7 +351,7 @@ static unsigned char stm32_serial_out_buf3[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL
 static unsigned char stm32_serial_in_buf3[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL3_BUFSIZE];
 
 static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel3,
-                                       stm32_serial_funs_interrupt, 
+                                       stm32_serial_funs_interrupt,
                                        stm32_serial_info3,
                                        CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL3_BAUD),
                                        CYG_SERIAL_STOP_DEFAULT,
@@ -363,7 +363,7 @@ static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel3,
     );
 #else
 static SERIAL_CHANNEL(stm32_serial_channel3,
-                      stm32_serial_funs_polled, 
+                      stm32_serial_funs_polled,
                       stm32_serial_info3,
                       CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL3_BAUD),
                       CYG_SERIAL_STOP_DEFAULT,
@@ -373,11 +373,11 @@ static SERIAL_CHANNEL(stm32_serial_channel3,
     );
 #endif
 
-DEVTAB_ENTRY(stm32_serial_io3, 
+DEVTAB_ENTRY(stm32_serial_io3,
              CYGDAT_IO_SERIAL_CORTEXM_STM32_SERIAL3_NAME,
              0,                     // Does not depend on a lower level interface
-             &cyg_io_serial_devio, 
-             stm32_serial_init, 
+             &cyg_io_serial_devio,
+             stm32_serial_init,
              stm32_serial_lookup,     // Serial driver may need initializing
              &stm32_serial_channel3
     );
@@ -397,7 +397,7 @@ static stm32_serial_info stm32_serial_info4 = {
     cts_pin         : CYGHWR_HAL_STM32_UART5_CTS,
     clk_enable      : CYGHWR_HAL_STM32_UART5_CLOCK,
 #ifdef CYGHWR_HAL_STM32_UART5_REMAP_CONFIG
-    remap           : CYGHWR_HAL_STM32_UART5_REMAP_CONFIG,    
+    remap           : CYGHWR_HAL_STM32_UART5_REMAP_CONFIG,
 #endif
 };
 
@@ -406,7 +406,7 @@ static unsigned char stm32_serial_out_buf4[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL
 static unsigned char stm32_serial_in_buf4[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL4_BUFSIZE];
 
 static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel4,
-                                       stm32_serial_funs_interrupt, 
+                                       stm32_serial_funs_interrupt,
                                        stm32_serial_info4,
                                        CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL4_BAUD),
                                        CYG_SERIAL_STOP_DEFAULT,
@@ -418,7 +418,7 @@ static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel4,
     );
 #else
 static SERIAL_CHANNEL(stm32_serial_channel4,
-                      stm32_serial_funs_polled, 
+                      stm32_serial_funs_polled,
                       stm32_serial_info4,
                       CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL4_BAUD),
                       CYG_SERIAL_STOP_DEFAULT,
@@ -428,11 +428,11 @@ static SERIAL_CHANNEL(stm32_serial_channel4,
     );
 #endif
 
-DEVTAB_ENTRY(stm32_serial_io4, 
+DEVTAB_ENTRY(stm32_serial_io4,
              CYGDAT_IO_SERIAL_CORTEXM_STM32_SERIAL4_NAME,
              0,                     // Does not depend on a lower level interface
-             &cyg_io_serial_devio, 
-             stm32_serial_init, 
+             &cyg_io_serial_devio,
+             stm32_serial_init,
              stm32_serial_lookup,     // Serial driver may need initializing
              &stm32_serial_channel4
     );
@@ -453,7 +453,7 @@ static stm32_serial_info stm32_serial_info5 = {
     cts_pin         : CYGHWR_HAL_STM32_UART6_CTS,
     clk_enable      : CYGHWR_HAL_STM32_UART6_CLOCK,
 #ifdef CYGHWR_HAL_STM32_UART6_REMAP_CONFIG
-    remap           : CYGHWR_HAL_STM32_UART6_REMAP_CONFIG,    
+    remap           : CYGHWR_HAL_STM32_UART6_REMAP_CONFIG,
 #endif
 };
 
@@ -462,7 +462,7 @@ static unsigned char stm32_serial_out_buf5[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL
 static unsigned char stm32_serial_in_buf5[CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL5_BUFSIZE];
 
 static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel5,
-                                       stm32_serial_funs_interrupt, 
+                                       stm32_serial_funs_interrupt,
                                        stm32_serial_info5,
                                        CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL5_BAUD),
                                        CYG_SERIAL_STOP_DEFAULT,
@@ -474,7 +474,7 @@ static SERIAL_CHANNEL_USING_INTERRUPTS(stm32_serial_channel5,
     );
 #else
 static SERIAL_CHANNEL(stm32_serial_channel5,
-                      stm32_serial_funs_polled, 
+                      stm32_serial_funs_polled,
                       stm32_serial_info5,
                       CYG_SERIAL_BAUD_RATE(CYGNUM_IO_SERIAL_CORTEXM_STM32_SERIAL5_BAUD),
                       CYG_SERIAL_STOP_DEFAULT,
@@ -484,11 +484,11 @@ static SERIAL_CHANNEL(stm32_serial_channel5,
     );
 #endif
 
-DEVTAB_ENTRY(stm32_serial_io5, 
+DEVTAB_ENTRY(stm32_serial_io5,
              CYGDAT_IO_SERIAL_CORTEXM_STM32_SERIAL5_NAME,
              0,                     // Does not depend on a lower level interface
-             &cyg_io_serial_devio, 
-             stm32_serial_init, 
+             &cyg_io_serial_devio,
+             stm32_serial_init,
              stm32_serial_lookup,     // Serial driver may need initializing
              &stm32_serial_channel5
     );
@@ -515,7 +515,7 @@ stm32_serial_config_port(serial_channel *chan, cyg_serial_info_t *new_config, bo
 
     // Set up FIFO buffer
     stm32_chan->buf_head = stm32_chan->buf_tail = 0;
-    
+
     // Set up GPIO pins
     CYGHWR_HAL_STM32_GPIO_SET( stm32_chan->rx_pin );
     CYGHWR_HAL_STM32_GPIO_SET( stm32_chan->tx_pin );
@@ -537,7 +537,7 @@ stm32_serial_config_port(serial_channel *chan, cyg_serial_info_t *new_config, bo
         HAL_WRITE_UINT32( afio+CYGHWR_HAL_STM32_AFIO_MAPR, mapr );
     }
 #endif
-    
+
     // Select line parameters
     cr1 |= parity|word_length;
     cr2 |= stop_bits;
@@ -552,7 +552,7 @@ stm32_serial_config_port(serial_channel *chan, cyg_serial_info_t *new_config, bo
 
     // Enable the uart
     cr1 |= CYGHWR_HAL_STM32_UART_CR1_UE;
-    HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );    
+    HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR1, cr1 );
 
 
 #ifdef CYGOPT_IO_SERIAL_FLOW_CONTROL_HW
@@ -569,14 +569,14 @@ stm32_serial_config_port(serial_channel *chan, cyg_serial_info_t *new_config, bo
 
         cr1 |= CYGHWR_HAL_STM32_UART_CR1_RXNEIE;
         cr3 |= CYGHWR_HAL_STM32_UART_CR3_EIE;
-        
+
         HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_CR1, cr1 );
     }
 
-    HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR3, cr3 );         
+    HAL_WRITE_UINT32( base+CYGHWR_HAL_STM32_UART_CR3, cr3 );
 
     stm32_chan->tx_active = false;
-    
+
     if (new_config != &chan->config)
         chan->config = *new_config;
 
@@ -586,7 +586,7 @@ stm32_serial_config_port(serial_channel *chan, cyg_serial_info_t *new_config, bo
 //==========================================================================
 // Function to initialize the device.  Called at bootstrap time.
 
-static bool 
+static bool
 stm32_serial_init(struct cyg_devtab_entry *tab)
 {
     serial_channel * const chan = (serial_channel *) tab->priv;
@@ -614,8 +614,8 @@ stm32_serial_init(struct cyg_devtab_entry *tab)
 //==========================================================================
 // This routine is called when the device is "looked" up (i.e. attached)
 
-static Cyg_ErrNo 
-stm32_serial_lookup(struct cyg_devtab_entry **tab, 
+static Cyg_ErrNo
+stm32_serial_lookup(struct cyg_devtab_entry **tab,
                   struct cyg_devtab_entry *sub_tab,
                   const char *name)
 {
@@ -635,15 +635,24 @@ stm32_serial_putc_interrupt(serial_channel *chan, unsigned char c)
     stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
     const CYG_ADDRWORD base = stm32_chan->base;
     cyg_uint32 status;
-    
+
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, status );
+    #else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, status );
+    #endif
 
     if (status & CYGHWR_HAL_STM32_UART_SR_TXE)
     {
+	#ifdef CYGHWR_HAL_CORTEXM_M7
+	//HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_SR_TXE);
+	HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c );
+	#else
         HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
+	#endif
         return true;
     }
-    
+
     return false;
 }
 
@@ -657,10 +666,18 @@ stm32_serial_putc_polled(serial_channel *chan, unsigned char c)
     cyg_uint32 status;
 
      do {
+	#ifdef CYGHWR_HAL_CORTEXM_M7
+	 HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, status );
+	#else
          HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, status );
+	#endif
      } while ((status & CYGHWR_HAL_STM32_UART_SR_TXE) == 0);
 
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+     HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c /* '?'*/);
+    #else
      HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
+    #endif
 
     return true;
 }
@@ -668,7 +685,7 @@ stm32_serial_putc_polled(serial_channel *chan, unsigned char c)
 //==========================================================================
 // Fetch a character from the device input buffer
 
-static unsigned char 
+static unsigned char
 stm32_serial_getc_interrupt(serial_channel *chan)
 {
     stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
@@ -676,13 +693,17 @@ stm32_serial_getc_interrupt(serial_channel *chan)
     CYG_WORD32 c;
 
     // Read data
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
+    #else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c);
+    #endif
     return (unsigned char) (c&0xFF);
 }
 
 //==========================================================================
 
-static unsigned char 
+static unsigned char
 stm32_serial_getc_polled(serial_channel *chan)
 {
     stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
@@ -691,11 +712,19 @@ stm32_serial_getc_polled(serial_channel *chan)
     cyg_uint32 c;
 
     do {
+	#ifdef CYGHWR_HAL_CORTEXM_M7
+	HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, stat );
+	#else
         HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, stat );
+	#endif
     } while ((stat & CYGHWR_HAL_STM32_UART_SR_RXNE) == 0);
-        
+
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
+    #else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c);
-    
+    #endif
+
     return (unsigned char) (c&0xFF);
 }
 
@@ -723,12 +752,12 @@ stm32_serial_set_config(serial_channel *chan, cyg_uint32 key,
 
     case CYG_IO_SET_CONFIG_SERIAL_HW_RX_FLOW_THROTTLE:
       {
-          stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;          
+          stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
           cyg_uint32 *f = (cyg_uint32 *)xbuf;
 
           if ( *len < sizeof(*f) )
               return -EINVAL;
-          
+
           if ( chan->config.flags & CYGNUM_SERIAL_FLOW_RTSCTS_RX )
           {
               stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
@@ -742,7 +771,7 @@ stm32_serial_set_config(serial_channel *chan, cyg_uint32 key,
           }
       }
       break;
-      
+
     case CYG_IO_SET_CONFIG_SERIAL_HW_FLOW_CONFIG:
       {
         stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
@@ -772,9 +801,9 @@ stm32_serial_set_config(serial_channel *chan, cyg_uint32 key,
         }
         return result;
       }
-      
+
 #endif
-      
+
     default:
         return -EINVAL;
     }
@@ -804,7 +833,7 @@ stm32_serial_start_xmit(serial_channel *chan)
 //==========================================================================
 // Disable the transmitter on the device
 
-static void 
+static void
 stm32_serial_stop_xmit(serial_channel *chan)
 {
     stm32_serial_info * const stm32_chan = (stm32_serial_info *) chan->dev_priv;
@@ -837,7 +866,7 @@ stm32_serial_stop_xmit(serial_channel *chan)
 // interrupts are masked while this is done to prevent an interrupt
 // loop, and to avoid blocking RX interrupts.
 
-static cyg_uint32 
+static cyg_uint32
 stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
 {
     serial_channel * const chan = (serial_channel *) data;
@@ -847,8 +876,12 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
     cyg_uint32 ret = CYG_ISR_HANDLED;
     cyg_drv_interrupt_acknowledge(vector);
 
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
+    #else
     HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_SR, stat);
-    
+    #endif
+
     if( stat & CYGHWR_HAL_STM32_UART_SR_RXNE )
     {
         cyg_uint32 c;
@@ -858,9 +891,13 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
             int next = stm32_chan->buf_head+1;
 
             if( next == STM32_RXBUFSIZE ) next = 0;
-        
+
+	    #ifdef CYGHWR_HAL_CORTEXM_M7
+	    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
+	    #else
             HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c);
-        
+	    #endif
+
             if( next != stm32_chan->buf_tail )
             {
                 stm32_chan->buf[stm32_chan->buf_head] = c&0xFF;
@@ -872,7 +909,12 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
                 // TODO: deal with buffer overflow
             }
 
+	    #ifdef CYGHWR_HAL_CORTEXM_M7
+	    HAL_WRITE_UINT32(base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_SR_RXNE);
+	    HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
+	    #else
             HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_SR, stat);
+	    #endif
         }
     }
     else if( stat & CYGHWR_HAL_STM32_UART_SR_TXE )
@@ -881,7 +923,7 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
         HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_CR1, cr1 );
         cr1 &= ~CYGHWR_HAL_STM32_UART_CR1_TXEIE;
         HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_CR1, cr1 );
-        
+
         ret |= CYG_ISR_CALL_DSR;
     }
 
@@ -890,21 +932,26 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
     {
         // Clear CTS status if we see it.
         stat &= ~CYGHWR_HAL_STM32_UART_SR_CTS;
+
+	#ifdef CYGHWR_HAL_CORTEXM_M7
+	HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_SR_CTS);
+	#else
         HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_SR, stat );
+	#endif
     }
-    
+
     if( stat & (CYGHWR_HAL_STM32_UART_SR_FE|CYGHWR_HAL_STM32_UART_SR_NE|CYGHWR_HAL_STM32_UART_SR_ORE) )
     {
         // TODO: Handle hardware errors
     }
-            
+
     return ret;
 }
 
 //==========================================================================
 // Serial I/O - high level interrupt handler (DSR)
 
-static void       
+static void
 stm32_serial_DSR(cyg_vector_t vector, cyg_ucount32 count, cyg_addrword_t data)
 {
     serial_channel * const chan = (serial_channel *) data;
@@ -920,12 +967,16 @@ stm32_serial_DSR(cyg_vector_t vector, cyg_ucount32 count, cyg_addrword_t data)
         if( next == STM32_RXBUFSIZE ) next = 0;
         c = stm32_chan->buf[stm32_chan->buf_tail];
         stm32_chan->buf_tail = next;
-        
+
         (chan->callbacks->rcv_char)(chan, c);
     }
 
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
+    #else
     HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_SR, stat);
-    
+    #endif
+
     if( stm32_chan->tx_active && stat & CYGHWR_HAL_STM32_UART_SR_TXE )
     {
         cyg_uint32 cr1;

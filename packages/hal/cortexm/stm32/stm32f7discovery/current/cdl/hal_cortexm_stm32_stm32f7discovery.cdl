@@ -1,8 +1,8 @@
 ##==========================================================================
 ##
-##      hal_cortexm_stm32_stm32f4discovery.cdl
+##      hal_cortexm_stm32_stm32f7discovery.cdl
 ##
-##      Cortex-M STM32F4-Discovery platform HAL configuration data
+##      Cortex-M STM32F7-Discovery platform HAL configuration data
 ##
 ##==========================================================================
 ## ####ECOSGPLCOPYRIGHTBEGIN####                                            
@@ -47,49 +47,51 @@
 ##
 ##==========================================================================
 
-cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
-    display       "STMicroelectronics STM32F4-Discovery board HAL"
+cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY {
+    display       "STMicroelectronics STM32F7-Discovery board HAL"
     parent        CYGPKG_HAL_CORTEXM_STM32
 
-    requires      { CYGHWR_HAL_CORTEXM == "M4" }
-    requires      { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F4" &&
-                    CYGHWR_HAL_CORTEXM_STM32_F4 == "F407VG" }
-    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_SOURCE == "HSE" }
-    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_PREDIV == 8 }
-    #requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_MUL == 336 }
+    requires      { CYGHWR_HAL_CORTEXM == "M7" }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F7" &&
+                    CYGHWR_HAL_CORTEXM_STM32_F7 == "F707VG" }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_SOURCE == "HSI" }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_PREDIV == 16 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_MUL == 360 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_SYSCLK_DIV == 2 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLLQ_DIV == 7 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_HCLK_DIV == 1 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK1_DIV == 4 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK2_DIV == 2 }
+    requires	  { CYGNUM_HAL_RTC_DENOMINATOR == 1000 }
 
     include_dir   cyg/hal
     hardware
-    doc           ref/hal-cortexm-stm32f4discovery-part.html
+    doc           ref/hal-cortexm-stm32f7discovery-part.html
     description   "
-        The STM32F4-Discovery HAL package provides the support needed to run
-        eCos on the STMicroelectronics STM32F4-Discovery board."
+        The STM32F7-Discovery HAL package provides the support needed to run
+        eCos on the STMicroelectronics STM32F7-Discovery board."
 
-    compile       stm32f4discovery_misc.c
+    compile       stm32f7discovery_misc.c
 
     define_proc {
         puts $::cdl_system_header "#define CYGBLD_HAL_TARGET_H   <pkgconf/hal_cortexm.h>"
         puts $::cdl_system_header "#define CYGBLD_HAL_VARIANT_H  <pkgconf/hal_cortexm_stm32.h>"
-        puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_cortexm_stm32_stm32f4discovery.h>"
-        puts $::cdl_header "#define HAL_PLATFORM_CPU    \"Cortex-M4\""
-        puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"STMicroelectronics STM32F4-Discovery\""
+        puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_cortexm_stm32_stm32f7discovery.h>"
+        puts $::cdl_header "#define HAL_PLATFORM_CPU    \"Cortex-M7\""
+        puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"STMicroelectronics STM32F7-Discovery\""
         puts $::cdl_header "#define HAL_PLATFORM_EXTRA  \"\""
     }
 
     # use UART4 at PC10,11 for diagnostic I/O (named UART3 in the STM32 variant HAL)
-    implements CYGINT_HAL_STM32_UART3
+    implements CYGINT_HAL_STM32_UART0
 
     implements CYGINT_HAL_FPV4_SP_D16
 
     cdl_component CYG_HAL_STARTUP {
         display       "Startup type"
         flavor        data
-        default_value {"JTAG"}
+	#TOCHECK
+	default_value {"ROM"}
         legal_values  {"JTAG" "ROM"}
         no_define
         define -file system.h CYG_HAL_STARTUP
@@ -104,8 +106,8 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
         display "Memory layout"
         flavor data
         no_define
-        calculated    { (CYG_HAL_STARTUP == "ROM"    ) ? "cortexm_stm32f4discovery_rom"      :
-                        (CYG_HAL_STARTUP == "JTAG"   ) ? "cortexm_stm32f4discovery_jtag"     :
+        calculated    { (CYG_HAL_STARTUP == "ROM"    ) ? "cortexm_stm32f7discovery_rom"      :
+                        (CYG_HAL_STARTUP == "JTAG"   ) ? "cortexm_stm32f7discovery_jtag"     :
                                                          "undefined" }
 
         cdl_option CYGHWR_MEMORY_LAYOUT_LDI {
@@ -129,7 +131,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
     cdl_option CYGARC_HAL_CORTEXM_STM32_INPUT_CLOCK {
         display         "Input clock frequency"
         flavor          data
-        default_value   8000000
+        default_value   16000000
         legal_values    0 to 1000000000
         description     "Main clock input."
     }
@@ -152,9 +154,9 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
         display         "Flash driver support"
         parent          CYGPKG_IO_FLASH
         active_if       CYGPKG_IO_FLASH
-        compile         -library=libextras.a stm32f4discovery_flash.c
+        compile         -library=libextras.a stm32f7discovery_flash.c
         default_value   1
-        description     "Control flash device support for STM32F4-Discovery board."
+        description     "Control flash device support for STM32F7-Discovery board."
     }
 
     cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_COMM_CHANNELS {
@@ -169,7 +171,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
         flavor data
         calculated       0
         description      "
-            The STM32F4-Discovery board has one serial port enabled. This option
+            The STM32F7-Discovery board has one serial port enabled. This option
             informs the rest of the system which port will be used to connect
             to a host running GDB."
      }
@@ -180,7 +182,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
          flavor data
          calculated       0
          description      "
-            The STM32F4-Discovery board has one serial port enabled. This option
+            The STM32F7-Discovery board has one serial port enabled. This option
             informs the rest of the system which port will be used for
             diagnostic output."
      }
@@ -227,7 +229,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
             display "Global compiler flags"
             flavor  data
             no_define
-            default_value { CYGBLD_GLOBAL_WARNFLAGS . "-mcpu=cortex-m3 -mthumb -g -O2 -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions" }
+            default_value { CYGBLD_GLOBAL_WARNFLAGS . "-mcpu=cortex-m7 -mthumb -g -O2 -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions" }
             description   "
                 This option controls the global compiler flags which are used to
                 compile all packages by default. Individual packages may define
@@ -238,21 +240,21 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
             display "Global linker flags"
             flavor  data
             no_define
-            default_value { "-mcpu=cortex-m3 -mthumb -Wl,--gc-sections -Wl,-static -Wl,-n -g -nostdlib" }
+            default_value { "-mcpu=cortex-m7 -mthumb -Wl,--gc-sections -Wl,-static -Wl,-n -g -nostdlib" }
             description   "
                 This option controls the global linker flags. Individual
                 packages may define options which override these global flags."
         }
     }
 
-    cdl_component CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_OPTIONS {
-        display "STM32F4-Discovery HAL build options"
+    cdl_component CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY_OPTIONS {
+        display "STM32F7-Discovery HAL build options"
         flavor  none
         description   "
             Package specific build options including control over
             compiler flags used only in building this HAL package."
 
-        cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_CFLAGS_ADD {
+        cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY_CFLAGS_ADD {
             display "Additional compiler flags"
             flavor  data
             no_define
@@ -262,7 +264,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
                 for building this HAL. These flags are used
                 in addition to the set of global flags."
         }
-        cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_CFLAGS_REMOVE {
+        cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY_CFLAGS_REMOVE {
             display "Suppressed compiler flags"
             flavor  data
             no_define
@@ -275,15 +277,15 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
         }
     }
 
-    cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY_TESTS {
-        display "STM32F4-Discovery tests"
+    cdl_option CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY_TESTS {
+        display "STM32F7-Discovery tests"
         flavor  data
         no_define
         calculated { "tests/gpio" }
         description   "
-            This option specifies the set of tests for the STM32F4-Discovery HAL."
+            This option specifies the set of tests for the STM32F7-Discovery HAL."
     }
 
 }
 
-# EOF hal_cortexm_stm32_stm32f4discovery.cdl
+# EOF hal_cortexm_stm32_stm32f7discovery.cdl
