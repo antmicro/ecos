@@ -1,13 +1,13 @@
-#ifndef CYGONCE_HAL_BASETYPE_H
-#define CYGONCE_HAL_BASETYPE_H
+#ifndef CYGONCE_HAL_PLF_INTR_H
+#define CYGONCE_HAL_PLF_INTR_H
 
-//=============================================================================
+//==========================================================================
 //
-//      basetype.h
+//      plf_intr.h
 //
-//      Standard types for this architecture.
+//      OpenRISC ORPSoC platform-specific interrupt definitions
 //
-//=============================================================================
+//==========================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
 // -------------------------------------------                              
 // This file is part of eCos, the Embedded Configurable Operating System.   
@@ -39,39 +39,40 @@
 // on this file might be covered by the GNU General Public License.         
 // -------------------------------------------                              
 // ####ECOSGPLCOPYRIGHTEND####                                              
-//=============================================================================
+//==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):    sfurman
-// Contributors: nickg
-// Date:         2003-02-28
-// Purpose:      Define architecture base types.
-// Usage:        Included by <cyg/infra/cyg_types.h>, do not use directly
+// Contributors: 
+// Date:         2002-02-28
+// Purpose:      Define platform specific interrupt support
 //              
+// Usage:
+//              #include <cyg/hal/plf_intr.h>
+//              ...
+//              
+//
 //####DESCRIPTIONEND####
 //
+//==========================================================================
 
-#include <pkgconf/hal.h>
 
-//-----------------------------------------------------------------------------
-// Characterize the architecture
+//----------------------------------------------------------------------------
+// Reset.
 
-# define CYG_BYTEORDER           CYG_MSBFIRST    // Big endian
-# define CYG_DOUBLE_BYTEORDER    CYG_MSBFIRST    // Big endian
+// This function should perform a hardware reset
+// For now, it does nothing.
+#define HAL_PLATFORM_RESET() CYG_EMPTY_STATEMENT
 
-//-----------------------------------------------------------------------------
-// Define label translation
-//
-// (The OpenRISC architecture uses the default 1:1 label translation,
-// so we do not need to define any here.)
+// If no HW reset exists, jump to this location instead.
+// The current value is the ROM reset entry point.
+#define HAL_PLATFORM_RESET_ENTRY 0xF0001000
 
-//-----------------------------------------------------------------------------
-// Define the standard variable sizes
-//
-// (The OpenRISC architecture uses the default definitions of the base types,
-// so we do not need to define any here.)
+// Define PIC interrupt numbers for peripherals
+#define CYGNUM_HAL_INTERRUPT_SERIAL_CONSOLE    CYGNUM_HAL_INTERRUPT_2
+#define CYGNUM_HAL_INTERRUPT_SERIAL_DEBUGGER   CYGNUM_HAL_INTERRUPT_3
 
-//-----------------------------------------------------------------------------
-#endif // CYGONCE_HAL_BASETYPE_H
 
-// End of basetype.h
+//--------------------------------------------------------------------------
+#endif // ifndef CYGONCE_HAL_PLF_INTR_H
+// End of plf_intr.h

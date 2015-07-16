@@ -1,11 +1,11 @@
-#ifndef CYGONCE_HAL_BASETYPE_H
-#define CYGONCE_HAL_BASETYPE_H
+#ifndef CYGONCE_PLF_CACHE_H
+#define CYGONCE_PLF_CACHE_H
 
 //=============================================================================
 //
-//      basetype.h
+//      plf_cache.h
 //
-//      Standard types for this architecture.
+//      Platform HAL cache details
 //
 //=============================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
@@ -42,36 +42,67 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    sfurman
-// Contributors: nickg
-// Date:         2003-02-28
-// Purpose:      Define architecture base types.
-// Usage:        Included by <cyg/infra/cyg_types.h>, do not use directly
-//              
+// Author(s):   Piotr Skrzypek
+// Contributors:
+// Date:        2012-04-02
+// Purpose:     Platform cache control API
+// Description: The macros defined here provide the platform specific
+//              cache control operations / behavior.
+// Usage:       Is included via the architecture cache header:
+//              #include <cyg/hal/hal_cache.h>
+//
 //####DESCRIPTIONEND####
 //
-
-#include <pkgconf/hal.h>
-
-//-----------------------------------------------------------------------------
-// Characterize the architecture
-
-# define CYG_BYTEORDER           CYG_MSBFIRST    // Big endian
-# define CYG_DOUBLE_BYTEORDER    CYG_MSBFIRST    // Big endian
+//=============================================================================
 
 //-----------------------------------------------------------------------------
-// Define label translation
+// Data Cache dimensions
 //
-// (The OpenRISC architecture uses the default 1:1 label translation,
-// so we do not need to define any here.)
-
-//-----------------------------------------------------------------------------
-// Define the standard variable sizes
+// Size of the data cache can be adjusted in the configuration file.
+#define HAL_DCACHE_SIZE                 CYGHWR_DCACHE_SIZE
 //
-// (The OpenRISC architecture uses the default definitions of the base types,
-// so we do not need to define any here.)
+// Default line size is 16 bytes. Only 32KB cache has line size of 32 bytes.
+#if CYGHWR_DCACHE_SIZE == 0x8000
+#define HAL_DCACHE_LINE_SIZE            32
+#else
+#define HAL_DCACHE_LINE_SIZE            16
+#endif
+//
+// Currently only 1 way cache is implemented.
+#define HAL_DCACHE_WAYS                 1
+//
+// Cache mode (write-through / write-back) can be selected in the configuration
+// file. Default mode is write-through. Cache mode is selected at synthesis 
+// time and cannot be configured by the software.
+#if defined(CYGHWR_DCACHE_MODE_WRITETHROUGH)
+#define HAL_DCACHE_MODE_WRITETHROUGH
+#elif defined(CYGHWR_DCACHE_MODE_WRITEBACK)
+#define HAL_DCACHE_MODE_WRITEBACK
+#else
+#error Unsupported cache mode
+#endif
+//
+// Compute the number of sets based on previous values
+#define HAL_DCACHE_SETS (HAL_DCACHE_SIZE/(HAL_DCACHE_LINE_SIZE*HAL_DCACHE_WAYS))
 
 //-----------------------------------------------------------------------------
-#endif // CYGONCE_HAL_BASETYPE_H
+// Instruction Cache dimensions
+//
+// Size of the instruction cache can be adjusted in the configuration file.
+#define HAL_ICACHE_SIZE                 CYGHWR_ICACHE_SIZE
+//
+// Default line size is 16 bytes. Only 32KB cache has line size of 32 bytes.
+#if CYGHWR_ICACHE_SIZE == 0x8000
+#define HAL_ICACHE_LINE_SIZE            32
+#else
+#define HAL_ICACHE_LINE_SIZE            16
+#endif
+//
+// Currently only 1 way cache is implemented.
+#define HAL_ICACHE_WAYS                 1
+//
+// Compute the number of sets based on previous values
+#define HAL_ICACHE_SETS (HAL_ICACHE_SIZE/(HAL_ICACHE_LINE_SIZE*HAL_ICACHE_WAYS))
 
-// End of basetype.h
+#endif // ifndef CYGONCE_PLF_CACHE_H
+// End of plf_cache.h

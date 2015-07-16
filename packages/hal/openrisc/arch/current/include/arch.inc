@@ -59,9 +59,9 @@
 
 # Declare given label name as the start of a function accessible from C code
 #define FUNC_START(name)        \
-        .type _##name,@function;   \
-        .globl _##name;            \
-_##name:   
+        .type name,@function;   \
+        .globl name;            \
+name:   
 
 #define FUNC_END(name)
 
@@ -69,6 +69,7 @@ _##name:
 #define sp r1
 #define fp r2
 #define lr r9
+#define rv r11
 
 # Size of GPR regs - 4 bytes for or32
 #define OR1K_GPRSIZE    4
@@ -100,7 +101,6 @@ _##name:
 #define SIZEOF_OR1KREGS (OR1KREG_EEAR  + OR1K_REGSIZE)
 
 #include <cyg/hal/openrisc.inc>
-#include <cyg/hal/platform.inc>
 
 #endif // #ifndef CYGONCE_HAL_ARCH_INC
 

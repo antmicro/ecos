@@ -200,8 +200,8 @@ externC void hal_thread_load_context( CYG_ADDRESS to )
 // HAL_BREAKINST_TYPE is its type.
 
 #define HAL_BREAKPOINT(_label_)                 \
-asm volatile (" .globl  _" #_label_ ";"         \
-              "_" #_label_ ":"                  \
+asm volatile (" .globl  " #_label_ ";"          \
+              #_label_ ":"                      \
               " l.trap 1;"                      \
     );
 

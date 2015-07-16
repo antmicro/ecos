@@ -59,13 +59,7 @@ cdl_package CYGPKG_HAL_OPENRISC {
         for this processor architecture. It is also necessary to
         select a specific target platform HAL package."
 
-# For now, there are no defined variants of the OpenRISC
-#    cdl_interface CYGINT_HAL_OPENRISC_VARIANT {
-#        display  "Number of variant implementations in this configuration"
-#        requires 1 == CYGINT_HAL_OPENRISC_VARIANT
-#    }
-
-    compile       context.S vectors.S hal_misc.c openrisc_stub.c
+    compile       context.S hal_misc.c openrisc_stub.c
 
     make {
         <PREFIX>/lib/vectors.o : <PACKAGE>/src/vectors.S
@@ -96,17 +90,42 @@ cdl_package CYGPKG_HAL_OPENRISC {
         @rm target.tmp
     }
 
-    cdl_option CYGHWR_HAL_OPENRISC_CPU_FREQ {
-        display "CPU frequency"
-        flavor  data
-        legal_values 0 to 1000000
-        default_value 104
-        description "
-           This option contains the frequency of the CPU in MegaHertz.
-           Choose the frequency to match the processor you have. This
-           may affect thing like serial device, interval clock and
-           memory access speed settings."
+    cdl_component CYGPKG_REDBOOT_OPENRISC_OPTIONS {
+        display       "Redboot for OpenRISC options"
+        flavor        none
+        no_define
+        parent        CYGPKG_REDBOOT
+        active_if     CYGPKG_REDBOOT
+        description   "
+            This option lists the target's requirements for a valid Redboot
+            configuration."
+
+        cdl_component CYGPKG_REDBOOT_OPENRISC_LINUX_EXEC {
+            display        "Provide the exec command in RedBoot"
+            flavor         none
+            parent         CYGPKG_REDBOOT_OPENRISC_OPTIONS
+            active_if      CYGBLD_BUILD_REDBOOT_WITH_EXEC
+            description    "
+                This option contains requirements for booting linux
+                from RedBoot. The component is enabled/disabled from
+                RedBoots CDL."
+            compile -library=libextras.a redboot_linux_exec.c
+
+            cdl_option CYGPKG_REDBOOT_OPENRISC_TRAMPOLINE_ADDRESS {
+                display       "Base address of the trampoline code"
+                flavor        data
+                default_value 0x01000000
+                description   "
+                   This is the base address of the trampoline code.
+                   It is OK to set this at the end of the RAM.
+                   Trampoline code may overwrite stack, there is 
+                   nothing wrong with that."
+            }
+        }
+
     }
+
+
 }
 
 # EOF hal_openrisc.cdl

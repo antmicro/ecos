@@ -1,11 +1,8 @@
-#ifndef CYGONCE_HAL_BASETYPE_H
-#define CYGONCE_HAL_BASETYPE_H
-
 //=============================================================================
 //
-//      basetype.h
+//      hal_aux.c
 //
-//      Standard types for this architecture.
+//      HAL auxiliary objects and code; per platform
 //
 //=============================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
@@ -42,36 +39,27 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    sfurman
-// Contributors: nickg
-// Date:         2003-02-28
-// Purpose:      Define architecture base types.
-// Usage:        Included by <cyg/infra/cyg_types.h>, do not use directly
-//              
+// Author(s):   hmt
+// Contributors:hmt
+// Date:        2003-02-28
+// Purpose:     HAL aux objects: startup tables.
+// Description: Tables for per-platform initialization
+//
 //####DESCRIPTIONEND####
 //
+//=============================================================================
 
-#include <pkgconf/hal.h>
+#include <cyg/hal/hal_if.h>
 
-//-----------------------------------------------------------------------------
-// Characterize the architecture
+//--------------------------------------------------------------------------
+// Platform init code.
+void
+hal_platform_init(void)
+{
+    // Basic hardware initialization has already taken place
 
-# define CYG_BYTEORDER           CYG_MSBFIRST    // Big endian
-# define CYG_DOUBLE_BYTEORDER    CYG_MSBFIRST    // Big endian
+    hal_if_init();   // Initialize logical I/O layer (virtual vector support)
+}
 
-//-----------------------------------------------------------------------------
-// Define label translation
-//
-// (The OpenRISC architecture uses the default 1:1 label translation,
-// so we do not need to define any here.)
+// EOF hal_aux.c
 
-//-----------------------------------------------------------------------------
-// Define the standard variable sizes
-//
-// (The OpenRISC architecture uses the default definitions of the base types,
-// so we do not need to define any here.)
-
-//-----------------------------------------------------------------------------
-#endif // CYGONCE_HAL_BASETYPE_H
-
-// End of basetype.h

@@ -175,7 +175,7 @@ cyg_hal_invoke_constructors(void)
 
 /*------------------------------------------------------------------------*/
 /* Determine the index of the ls bit of the supplied mask.                */
-
+//TODO can we use l.ff1 ?
 cyg_uint32 hal_lsbit_index(cyg_uint32 mask)
 {
     cyg_uint32 n = mask;
@@ -197,7 +197,7 @@ cyg_uint32 hal_lsbit_index(cyg_uint32 mask)
 
 /*------------------------------------------------------------------------*/
 /* Determine the index of the ms bit of the supplied mask.                */
-
+//TODO can we use l.fl1 ?
 cyg_uint32 hal_msbit_index(cyg_uint32 mask)
 {
     cyg_uint32 x = mask;    
@@ -281,4 +281,27 @@ void hal_idle_thread_action( cyg_uint32 count )
 }
 
 /*------------------------------------------------------------------------*/
+
+//==========================================================================
+// When compiling C++ code with static objects the compiler
+// inserts a call to __cxa_atexit() with __dso_handle as one of the
+// arguments. __cxa_atexit() would normally be provided by glibc, and
+// __dso_handle is part of crtstuff.c. eCos applications
+// are linked rather differently, so either a differently-configured
+// compiler is needed or dummy versions of these symbols should be
+// provided. If these symbols are not actually used then providing
+// them is still harmless, linker garbage collection will remove them.
+
+void __cxa_atexit(void (*arg1)(void*), void* arg2, void* arg3)
+{
+}
+
+void *__dso_handle = (void*) &__dso_handle;
+
+#include <sys/reent.h>
+
+static struct _reent __impure_data = _REENT_INIT (__impure_data);
+
+struct _reent  *_impure_ptr = &__impure_data;
+
 /* End of hal_misc.c                                                      */

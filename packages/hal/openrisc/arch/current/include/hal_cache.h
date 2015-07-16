@@ -43,7 +43,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):   Scott Furman
-// Contributors:
+// Contributors:Piotr Skrzypek
 // Date:        2003-02-08
 // Purpose:     Cache control API
 // Description: The macros defined here provide the HAL APIs for handling
@@ -57,34 +57,38 @@
 //
 //=============================================================================
 
-//-----------------------------------------------------------------------------
-// Cache dimensions.
-// These really should be defined in var_cache.h. If they are not, then provide
-// a set of numbers that are typical of many variants.
-
-#ifndef HAL_DCACHE_SIZE
-
-// Data cache
-#define HAL_DCACHE_SIZE                 4096    // Size of data cache in bytes
-#define HAL_DCACHE_LINE_SIZE            16      // Bytes in a data cache line
-#define HAL_DCACHE_WAYS                 1       // Associativity of the cache
-
-// Instruction cache
-#define HAL_ICACHE_SIZE                 4096    // Size of cache in bytes
-#define HAL_ICACHE_LINE_SIZE            16      // Bytes in a cache line
-#define HAL_ICACHE_WAYS                 1       // Associativity of the cache
-
-#define HAL_DCACHE_SETS (HAL_DCACHE_SIZE/(HAL_DCACHE_LINE_SIZE*HAL_DCACHE_WAYS))
-#define HAL_ICACHE_SETS (HAL_ICACHE_SIZE/(HAL_ICACHE_LINE_SIZE*HAL_ICACHE_WAYS))
-
-#endif
-
 #ifndef __ASSEMBLER__
 
+#include <cyg/hal/plf_cache.h>
 #include <cyg/hal/hal_arch.h>
 
 //-----------------------------------------------------------------------------
-// Global control of data cache
+// Data cache
+//
+// If HAL_DCACHE_SIZE is undefined, assume that device does not implement
+// data cache. Provide set of empty macros.
+#ifndef HAL_DCACHE_SIZE
+
+//Enable the data cache
+#define HAL_DCACHE_ENABLE()
+
+//Disable the data cache
+#define HAL_DCACHE_DISABLE()
+
+//Invalidate the entire cache
+#define HAL_DCACHE_INVALIDATE_ALL()
+
+//Synchronize the contents of the cache with memory
+#define HAL_DCACHE_SYNC()
+
+// Query the state of the data cache
+#define HAL_DCACHE_IS_ENABLED(_state_)          \
+    CYG_MACRO_START                             \
+    (_state_) = 0;                              \
+    CYG_MACRO_END
+
+// If HAL_DCACHE_SIZE is defined, then implement proper macros.
+#else //#ifndef HAL_DCACHE_SIZE
 
 // Enable the data cache
 #define HAL_DCACHE_ENABLE() MTSPR(SPR_SR, MFSPR(SPR_SR) | SPR_SR_DCE)
@@ -92,8 +96,8 @@
 // Disable the data cache
 #define HAL_DCACHE_DISABLE() MTSPR(SPR_SR, MFSPR(SPR_SR) & ~SPR_SR_DCE)
 
-// Enable or disable the data cache, depending on argument, which is required
-// to be 0 or 1.
+// Support macro. Enable or disable the data cache, depending on argument, 
+// which is required to be 0 or 1.
 #define HAL_SET_DCACHE_ENABLED(enable)                          \
     MTSPR(SPR_SR, MFSPR(SPR_SR) | (SPR_SR_DCE & -(enable)))
 
@@ -118,69 +122,85 @@
     CYG_MACRO_END
 
 // Synchronize the contents of the cache with memory.
-// (Unnecessary on OR12K, since cache is write-through.)
-#define HAL_DCACHE_SYNC()                       \
-    CYG_MACRO_START                             \
-    CYG_MACRO_END
+#define HAL_DCACHE_SYNC() HAL_DCACHE_FLUSH(0, HAL_DCACHE_SIZE)
 
-// Query the state (enabled/disabled) of the data cache
+// Query the state of the data cache
 #define HAL_DCACHE_IS_ENABLED(_state_)                          \
     CYG_MACRO_START                                             \
     (_state_) = (1 - !(MFSPR(SPR_SR) & SPR_SR_DCE));            \
     CYG_MACRO_END
 
-// Load the contents of the given address range into the data cache 
-// and then lock the cache so that it stays there.
-
-// The OpenRISC architecture defines these operations, but no
-// implementation supports them yet.
-
-//#define HAL_DCACHE_LOCK(_base_, _size_)
-        
-// Undo a previous lock operation
-//#define HAL_DCACHE_UNLOCK(_base_, _size_)
-
-// Unlock entire cache
-//#define HAL_DCACHE_UNLOCK_ALL()
-
-
-//-----------------------------------------------------------------------------
-// Data cache line control
-
 // Write dirty cache lines to memory and invalidate the cache entries
 // for the given address range.
-// OR12k has write-through cache, so no flushing of writes to memory
-// are necessary.
 #define HAL_DCACHE_FLUSH( _base_ , _size_ )                          \
-    HAL_DCACHE_INVALIDATE(_base_, _size_)
-   
-// Invalidate cache lines in the given range without writing to memory.
+    CYG_MACRO_START                                                  \
+    int addr;                                                        \
+    int end = _base_ + _size_ - 1;                                   \
+    for (addr = end; addr >= _base_; addr -= HAL_DCACHE_LINE_SIZE) { \
+        MTSPR(SPR_DCBFR, addr);                                      \
+    }                                                                \
+    CYG_MACRO_END
+
+// Invalidate cache lines in the given range without writing to memory
 #define HAL_DCACHE_INVALIDATE( _base_ , _size_ )                     \
     CYG_MACRO_START                                                  \
     int addr;                                                        \
-    int end = _base_ + _size_;                                       \
+    int end = _base_ + _size_ - 1;                                   \
     for (addr = end; addr >= _base_; addr -= HAL_DCACHE_LINE_SIZE) { \
         MTSPR(SPR_DCBIR, addr);                                      \
     }                                                                \
     CYG_MACRO_END
 
-// Write dirty cache lines to memory for the given address range.
-// OR12k has write-through cache, so this is a NOP
+// Write dirty cache lines to memory for the given address range
+#if defined(HAL_DCACHE_MODE_WRITETHROUGH)
+
 #define HAL_DCACHE_STORE( _base_ , _size_ )
 
-// Preread the given range into the cache with the intention of reading
-// from it later.
-//#define HAL_DCACHE_READ_HINT( _base_ , _size_ )
+#elif defined(HAL_DCACHE_MODE_WRITEBACK)
 
-// Preread the given range into the cache with the intention of writing
-// to it later.
-//#define HAL_DCACHE_WRITE_HINT( _base_ , _size_ )
+#define HAL_DCACHE_STORE( _base_ , _size_ )                          \
+    CYG_MACRO_START                                                  \
+    int addr;                                                        \
+    int end = _base_ + _size_ - 1;                                   \
+    for (addr = end; addr >= _base_; addr -= HAL_DCACHE_LINE_SIZE) { \
+        MTSPR(SPR_DCBWR, addr);                                      \
+    }                                                                \
+    CYG_MACRO_END
 
-// Allocate and zero the cache lines associated with the given range.
-//#define HAL_DCACHE_ZERO( _base_ , _size_ )
+#else
+
+#error Unsupported cache mode
+
+#endif
+
+#endif //#ifndef HAL_DCACHE_SIZE
 
 //-----------------------------------------------------------------------------
-// Global control of Instruction cache
+// Instruction cache
+//
+// If HAL_ICACHE_SIZE is undefined, assume that device does not implement
+// instruction cache. Provide set of empty macros.
+#ifndef HAL_ICACHE_SIZE
+
+// Enable the instruction cache
+#define HAL_ICACHE_ENABLE()
+
+// Disable the instruction cache
+#define HAL_ICACHE_DISABLE()
+
+// Invalidate the entire cache
+#define HAL_ICACHE_INVALIDATE_ALL()
+
+// Synchronize the contents of the cache with memory.
+#define HAL_ICACHE_SYNC()
+
+// Query the state of the instruction cache (does not affect the caching)
+#define HAL_ICACHE_IS_ENABLED(_state_)          \
+    CYG_MACRO_START                             \
+    (_state_) = 0;                              \
+    CYG_MACRO_END
+
+#else //#ifndef HAL_ICACHE_SIZE
 
 // Enable the instruction cache
 #define HAL_ICACHE_ENABLE() MTSPR(SPR_SR, MFSPR(SPR_SR) | SPR_SR_ICE)
@@ -188,8 +208,8 @@
 // Disable the instruction cache
 #define HAL_ICACHE_DISABLE() MTSPR(SPR_SR, MFSPR(SPR_SR) & ~SPR_SR_ICE)
 
-// Enable or disable the data cache, depending on argument, which must
-// be 0 or 1.
+// Support macro. Enable or disable the data cache, depending on argument, 
+// which must be 0 or 1.
 #define HAL_SET_ICACHE_ENABLED(enable)                          \
     MTSPR(SPR_SR, MFSPR(SPR_SR) | (SPR_SR_ICE & -(enable)))
 
@@ -222,20 +242,7 @@
     (_state_) = (1 - !(MFSPR(SPR_SR) & SPR_SR_ICE));            \
     CYG_MACRO_END
 
-
-// Load the contents of the given address range into the instruction cache
-// and then lock the cache so that it stays there.
-
-// The OpenRISC architecture defines these operations, but no
-// implementation supports them yet.
-
-//#define HAL_ICACHE_LOCK(_base_, _size_)
-
-// Undo a previous lock operation
-//#define HAL_ICACHE_UNLOCK(_base_, _size_)
-
-// Unlock entire cache
-//#define HAL_ICACHE_UNLOCK_ALL()
+#endif //#ifndef HAL_ICACHE_SIZE
 
 #endif /* __ASSEMBLER__ */
 

@@ -41,7 +41,7 @@
 #######DESCRIPTIONBEGIN####
 ##
 ## Author(s):    sfurman
-## Contributors: 
+## Contributors: Piotr Skrzypek (pskrzypek@antmicro.com)
 ## Date:         2003-01-20
 ## Purpose:      OpenRISC interrupts, exception vectors and reset
 ## Description:  This file defines the code placed into the exception
@@ -65,14 +65,14 @@
 #===========================================================================
                 
         
-        .extern _hal_vsr_table
+        .extern hal_vsr_table
 
-        .extern _cyg_hal_invoke_constructors
-        .extern _cyg_instrument
-        .extern _cyg_start
+        .extern cyg_hal_invoke_constructors
+        .extern cyg_instrument
+        .extern cyg_start
         .extern _hal_IRQ_init
-        .extern _hal_platform_init
-        .extern _initialize_stub
+        .extern hal_platform_init
+        .extern initialize_stub
 
         .extern __bss_start
         .extern __bss_end
@@ -99,7 +99,7 @@
         .p2align 8
         .globl  __exception_\name
 __exception_\name:
-        load32i r3,_start
+        load32i r3,start
         l.jr    r3
         l.nop           # delay slot
         .endm
@@ -110,7 +110,7 @@ __exception_\name:
         .p2align 8
         .globl  __exception_\name
 __exception_\name:
-        l.addi  sp,sp,-SIZEOF_OR1KREGS  # space for registers
+        l.addi  sp,sp,-SIZEOF_OR1KREGS-132  # space for registers
 
         # Store General Purpose Registers (GPRs).
 
@@ -122,6 +122,7 @@ __exception_\name:
         l.sw     8 * OR1K_GPRSIZE(sp), r8
         l.sw     9 * OR1K_GPRSIZE(sp), r9
         l.sw    11 * OR1K_GPRSIZE(sp), r11
+        l.sw    12 * OR1K_GPRSIZE(sp), r12
         l.sw    13 * OR1K_GPRSIZE(sp), r13
         l.sw    15 * OR1K_GPRSIZE(sp), r15
         l.sw    17 * OR1K_GPRSIZE(sp), r17
@@ -132,7 +133,6 @@ __exception_\name:
         l.sw    27 * OR1K_GPRSIZE(sp), r27
         l.sw    29 * OR1K_GPRSIZE(sp), r29
         l.sw    31 * OR1K_GPRSIZE(sp), r31
-
 
 #ifndef CYGDBG_HAL_COMMON_INTERRUPTS_SAVE_MINIMUM_CONTEXT
 
@@ -145,7 +145,6 @@ __exception_\name:
         # an ISR, but we can do so to make debugging easier.
         l.sw     2 * OR1K_GPRSIZE(sp), r2
         l.sw    10 * OR1K_GPRSIZE(sp), r10
-        l.sw    12 * OR1K_GPRSIZE(sp), r12
         l.sw    14 * OR1K_GPRSIZE(sp), r14
         l.sw    16 * OR1K_GPRSIZE(sp), r16
         l.sw    18 * OR1K_GPRSIZE(sp), r18
@@ -156,15 +155,15 @@ __exception_\name:
         l.sw    28 * OR1K_GPRSIZE(sp), r28
         l.sw    30 * OR1K_GPRSIZE(sp), r30
 
+#endif
 	# save MAC LO and HI regs
         l.mfspr r5,r0,SPR_MACLO
         l.sw    OR1KREG_MACLO(sp),r5
         l.mfspr r5,r0,SPR_MACHI
         l.sw    OR1KREG_MACHI(sp),r5
-#endif
         
         # Save SP of interruptee in reg dump
-        l.addi  r5,sp,SIZEOF_OR1KREGS
+        l.addi  r5,sp,SIZEOF_OR1KREGS+132
         l.sw     1 * OR1K_GPRSIZE(sp),r5
 
         # ...and the PC
@@ -189,7 +188,7 @@ __exception_\name:
         # Lookup address of VSR in table and jump to it
         #   Arg 0: Pointer to HAL_SavedRegisters struct
         #   Arg 1: Vector #
-        load32i r5,_hal_vsr_table+(\org>>6)
+        load32i r5,hal_vsr_table+(\org>>6)
         l.lwz   r5,0(r5)
         l.jr    r5                           # To the VSR, Batman
 
@@ -223,9 +222,9 @@ rom_vectors:
 rom_vectors_end:   
 
 
-#if     defined(CYG_HAL_STARTUP_ROM) ||                 \
-        (       defined(CYG_HAL_STARTUP_RAM) &&         \
-                !defined(CYGSEM_HAL_USE_ROM_MONITOR))
+#if (defined(CYG_HAL_STARTUP_ROM)) || \
+    (defined(CYG_HAL_STARTUP_RAM) && !defined(CYGSEM_HAL_USE_ROM_MONITOR)) || \
+    (defined(CYG_HAL_STARTUP_JTAG) && !defined(CYGSEM_HAL_USE_ROM_MONITOR))
 
         .macro  hal_vsr_table_init
 
@@ -233,8 +232,8 @@ rom_vectors_end:
         # vectors were copied to RAM or not.
 
         # First fill with exception handlers
-        load32i r3,_cyg_hal_default_exception_vsr
-        load32i r4,_hal_vsr_table+4  # First entry in table is unused
+        load32i r3,cyg_hal_default_exception_vsr
+        load32i r4,hal_vsr_table+4  # First entry in table is unused
         l.ori   r5,r0,CYGNUM_HAL_VSR_COUNT
 1:      l.sw    0(r4),r3
         l.addi  r5,r5,-1
@@ -243,21 +242,22 @@ rom_vectors_end:
         l.addi  r4,r4,4         # delay slot
 
         # Then fill in the interrupt handlers
-        load32i r4,_hal_vsr_table
-        load32i r3,_cyg_hal_default_interrupt_vsr
+        load32i r4,hal_vsr_table
+        load32i r3,cyg_hal_default_interrupt_vsr
         l.sw    CYGNUM_HAL_VECTOR_INTERRUPT*4(r4),r3
         l.sw    CYGNUM_HAL_VECTOR_TICK_TIMER*4(r4),r3
         .endm
 
-#elif defined(CYG_HAL_STARTUP_RAM) && defined(CYGSEM_HAL_USE_ROM_MONITOR)
+#elif (defined(CYG_HAL_STARTUP_RAM) && defined(CYGSEM_HAL_USE_ROM_MONITOR)) || \
+      (defined(CYG_HAL_STARTUP_JTAG) && defined(CYGSEM_HAL_USE_ROM_MONITOR))
 
         # Initialize the VSR table entries
         # We only take control of the interrupt vectors,
         # the rest are left to the ROM for now...
 
         .macro  hal_vsr_table_init
-        load32i r4,_hal_vsr_table
-        load32i r3,_cyg_hal_default_interrupt_vsr
+        load32i r4,hal_vsr_table
+        load32i r3,cyg_hal_default_interrupt_vsr
         l.sw    CYGNUM_HAL_VECTOR_INTERRUPT*4(r4),r3
         l.sw    CYGNUM_HAL_VECTOR_TICK_TIMER*4(r4),r3
         .endm
@@ -337,14 +337,14 @@ FUNC_START(start)
         # Run platform-specific hardware initialization code.
         # This may include memory controller initialization.
         # Hence, it is not safe to access RAM until after this point.
-        hal_hardware_init 
+        #hal_hardware_init 
 
-#ifdef CYGSEM_HAL_ENABLE_ICACHE_ON_STARTUP
+#if defined(CYGSEM_HAL_ENABLE_ICACHE_ON_STARTUP) && defined(HAL_ICACHE_SIZE)
         # Enable I-Cache
         hal_icache_init
 #endif
 
-#ifdef CYGSEM_HAL_ENABLE_DCACHE_ON_STARTUP
+#if defined(CYGSEM_HAL_ENABLE_DCACHE_ON_STARTUP) && defined(HAL_DCACHE_SIZE)
         # Enable D-Cache
         hal_dcache_init
 #endif
@@ -353,10 +353,11 @@ FUNC_START(start)
 	# Initially, no interrupts are generated by the tick timer.  Later on, that
 	# may change when the kernel is initialized.
 	l.movhi	r3, hi(0x40000000|CYGNUM_HAL_RTC_PERIOD)
+	l.ori r3, r3, lo(CYGNUM_HAL_RTC_PERIOD)
 	l.mtspr	r0,r3, SPR_TTMR
         
-        .globl  _hal_hardware_init_done
-_hal_hardware_init_done:                
+        .globl  hal_hardware_init_done
+hal_hardware_init_done:                
 
         # set up stack
         load32i sp,__interrupt_stack
@@ -415,29 +416,30 @@ _hal_hardware_init_done:
         # Note:  no SBSS section to clear with OpenRISC target
         
         # Platform-specific initialization
-        l.jal   _hal_platform_init
+        l.jal   hal_platform_init
         l.nop   # delay slot
         
         # call c++ constructors
-        l.jal   _cyg_hal_invoke_constructors
+        l.jal   cyg_hal_invoke_constructors
         l.nop   # delay slot
 
 #ifdef CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS
-        l.jal   _initialize_stub
+        l.jal   initialize_stub
         l.nop   # delay slot
 #endif
 
 #if defined(CYGDBG_HAL_DEBUG_GDB_CTRLC_SUPPORT) \
     || defined(CYGDBG_HAL_DEBUG_GDB_BREAK_SUPPORT)
-        .extern _hal_ctrlc_isr_init
-        l.jal   _hal_ctrlc_isr_init
+        .extern hal_ctrlc_isr_init
+        l.jal   hal_ctrlc_isr_init
         l.nop   # delay slot
 #endif
         
-        l.jal   _cyg_start       # call cyg_start()
+        l.jal   cyg_start       # call cyg_start()
         l.nop   # delay slot
 9:      
         l.j     9b              # if we return, loop
+        l.nop   # delay slot
 
 FUNC_END(start)
         
@@ -456,7 +458,7 @@ FUNC_END(start)
 
 FUNC_START(cyg_hal_default_exception_vsr)
 
-        .extern _cyg_hal_exception_handler
+        .extern cyg_hal_exception_handler
 
         # Call C code
 
@@ -464,7 +466,7 @@ FUNC_START(cyg_hal_default_exception_vsr)
 	# directly to restore_state(), which will resume execution
 	# at the location of the exception.
         l.movhi r9, hi(restore_state)
-        l.j     _cyg_hal_exception_handler
+        l.j     cyg_hal_exception_handler
         l.ori   r9,r9,lo(restore_state) #Delay slot
 
         # Control never reaches this point, 
@@ -493,8 +495,8 @@ FUNC_START(cyg_hal_default_interrupt_vsr)
         
         # Set scheduler lock to prevent thread rescheduling while the ISR runs
 #ifdef CYGFUN_HAL_COMMON_KERNEL_SUPPORT                 
-        .extern _cyg_scheduler_sched_lock
-        load32i r5, _cyg_scheduler_sched_lock
+        .extern cyg_scheduler_sched_lock
+        load32i r5, cyg_scheduler_sched_lock
         l.lwz   r6,0(r5)
         l.addi  r6,r6,1
         l.sw    0(r5),r6
@@ -519,13 +521,13 @@ FUNC_START(cyg_hal_default_interrupt_vsr)
 
         # Call C code
 
+
 #if defined(CYGPKG_KERNEL_INSTRUMENT) && defined(CYGDBG_KERNEL_INSTRUMENT_INTR)
         # Log the interrupt if kernel tracing is enabled
         l.ori   r3,r0,0x0301                    # arg1 = type = INTR,RAISE
                                                 # arg2 = vector number
-        l.ori   r5,r0,r0                        # arg3 = 0
-        l.jal   _cyg_instrument                  # call instrument function
-        
+        l.or   r5,r0,r0                         # arg3 = 0
+        l.jal   cyg_instrument                 # call instrument function
 #endif
 
 #if defined(CYGDBG_HAL_DEBUG_GDB_CTRLC_SUPPORT) \
@@ -534,8 +536,8 @@ FUNC_START(cyg_hal_default_interrupt_vsr)
         # away a pointer to the save interrupt state here so that we can
         # plant a breakpoint at some later time.
         
-        .extern _hal_saved_interrupt_state
-        load32i r8,_hal_saved_interrupt_state
+        .extern hal_saved_interrupt_state
+        load32i r8,hal_saved_interrupt_state
         l.sw    0(r8),r31
         
 #endif
@@ -561,7 +563,7 @@ FUNC_START(cyg_hal_default_interrupt_vsr)
         l.ori   r3,r0,CYGNUM_HAL_INTERRUPT_RTC  # delay slot
         
 #ifndef CYGIMP_HAL_COMMON_INTERRUPTS_IGNORE_SPURIOUS
-        l.jal   _hal_spurious_IRQ
+        l.jal   hal_spurious_IRQ
         l.nop
 #endif // CYGIMP_HAL_COMMON_INTERRUPTS_IGNORE_SPURIOUS
         l.j     ignore_spurious_interrupt
@@ -581,10 +583,10 @@ check_for_external_interrupts:
         # At this point, r3 contains the ISR number, from 0-32
         # which will be used to index the table of ISRs
         l.slli  r15,r3,2
-        load32i r9, _hal_interrupt_handlers     # get interrupt handler table
+        load32i r9, hal_interrupt_handlers     # get interrupt handler table
         l.add   r9,r9,r15
         l.lwz   r11,0(r9)                       # load ISR pointer
-        load32i r9, _hal_interrupt_data         # get interrupt data table
+        load32i r9, hal_interrupt_data         # get interrupt data table
         l.add   r9,r9,r15
         l.lwz   r4,0(r9)                        # load data arg to ISR
 
@@ -623,7 +625,7 @@ ignore_spurious_interrupt:
         l.or    r5,r31,r31
 
         # Get opaque object associated w/ interrupt vector
-        load32i r9, _hal_interrupt_objects          # get interrupt data table
+        load32i r9, hal_interrupt_objects          # get interrupt data table
         l.add   r9,r9,r15
         l.lwz   r4,0(r9)
 
@@ -632,8 +634,8 @@ ignore_spurious_interrupt:
         #   Arg 1 = object associated with interrupt
         #   Arg 2 = HAL_SavedRegisters struct
 
-        .extern _interrupt_end
-        l.jal   _interrupt_end                   # call into C to finish off
+        .extern interrupt_end
+        l.jal   interrupt_end                   # call into C to finish off
         l.nop
 #endif
 
@@ -655,6 +657,7 @@ restore_state:
         l.lwz   r8,   8 * OR1K_GPRSIZE(sp)
         l.lwz   r9,   9 * OR1K_GPRSIZE(sp)
         l.lwz   r11, 11 * OR1K_GPRSIZE(sp)
+        l.lwz   r12, 12 * OR1K_GPRSIZE(sp)
         l.lwz   r13, 13 * OR1K_GPRSIZE(sp)
         l.lwz   r15, 15 * OR1K_GPRSIZE(sp)
         l.lwz   r17, 17 * OR1K_GPRSIZE(sp)
@@ -672,7 +675,6 @@ restore_state:
 
         l.lwz   r2,   2 * OR1K_GPRSIZE(sp)
         l.lwz   r10, 10 * OR1K_GPRSIZE(sp)
-        l.lwz   r12, 12 * OR1K_GPRSIZE(sp)
         l.lwz   r14, 14 * OR1K_GPRSIZE(sp)
         l.lwz   r16, 16 * OR1K_GPRSIZE(sp)
         l.lwz   r18, 18 * OR1K_GPRSIZE(sp)
@@ -683,12 +685,12 @@ restore_state:
         l.lwz   r28, 28 * OR1K_GPRSIZE(sp)
         l.lwz   r30, 30 * OR1K_GPRSIZE(sp)
 
+#endif
         # Restore MAC LO and HI regs
         l.lwz   r4, OR1KREG_MACLO(sp)
         l.mtspr r0,r4,SPR_MACLO
         l.lwz   r4, OR1KREG_MACHI(sp)
         l.mtspr r0,r4,SPR_MACHI
-#endif
 
         # Must disable interrupts, since they could clobber ESR and EPC regs
         l.mfspr r3, r0, SPR_SR
@@ -718,7 +720,7 @@ restore_state:
 ## Note: this can only be called from code running on a thread stack
 
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
-        .extern _cyg_interrupt_call_pending_DSRs
+        .extern cyg_interrupt_call_pending_DSRs
 
 	.text
 FUNC_START(hal_interrupt_stack_call_pending_DSRs)
@@ -732,7 +734,7 @@ FUNC_START(hal_interrupt_stack_call_pending_DSRs)
         l.ori   r4, r4, SPR_SR_IEE|SPR_SR_TEE
         l.sw    8(sp),lr
         
-        l.jal   _cyg_interrupt_call_pending_DSRs
+        l.jal   cyg_interrupt_call_pending_DSRs
 	# Enable interrupts before calling DSRs
 	l.mtspr r0, r4, SPR_SR  # Delay slot
 
@@ -798,37 +800,37 @@ FUNC_END(hal_program_new_stack)
         .section ".bss"
 
         .balign 16
-        .global _cyg_interrupt_stack_base
-_cyg_interrupt_stack_base:
+        .global cyg_interrupt_stack_base
+cyg_interrupt_stack_base:
 __interrupt_stack_base:
         .rept CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
         .byte 0
         .endr
         .balign 16
-        .global _cyg_interrupt_stack
-_cyg_interrupt_stack:
+        .global cyg_interrupt_stack
+cyg_interrupt_stack:
 __interrupt_stack:
         
         .long   0,0,0,0,0,0,0,0 
 
 #--------------------------------------
         .data
-        .extern _hal_default_isr
+        .extern hal_default_isr
 
-        .globl  _hal_interrupt_handlers
-_hal_interrupt_handlers:
+        .globl  hal_interrupt_handlers
+hal_interrupt_handlers:
         .rept   CYGNUM_HAL_ISR_COUNT
-        .long   _hal_default_isr
+        .long   hal_default_isr
         .endr
 
-        .globl  _hal_interrupt_data
-_hal_interrupt_data:
+        .globl  hal_interrupt_data
+hal_interrupt_data:
         .rept   CYGNUM_HAL_ISR_COUNT
         .long   0
         .endr
 
-        .globl  _hal_interrupt_objects
-_hal_interrupt_objects:
+        .globl  hal_interrupt_objects
+hal_interrupt_objects:
         .rept   CYGNUM_HAL_ISR_COUNT
         .long   0
         .endr

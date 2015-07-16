@@ -1,11 +1,11 @@
-#ifndef CYGONCE_HAL_BASETYPE_H
-#define CYGONCE_HAL_BASETYPE_H
+#ifndef CYGONCE_HAL_HAL_DIAG_H
+#define CYGONCE_HAL_HAL_DIAG_H
 
 //=============================================================================
 //
-//      basetype.h
+//      hal_diag.h
 //
-//      Standard types for this architecture.
+//      HAL Support for Kernel Diagnostic Routines
 //
 //=============================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
@@ -42,36 +42,26 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    sfurman
-// Contributors: nickg
-// Date:         2003-02-28
-// Purpose:      Define architecture base types.
-// Usage:        Included by <cyg/infra/cyg_types.h>, do not use directly
-//              
+// Author(s):   nickg
+// Contributors:nickg
+// Date:        2003-02-28
+// Purpose:     HAL Support for Kernel Diagnostic Routines
+// Description: Diagnostic routines for use during kernel development.
+// Usage:       #include <cyg/hal/hal_diag.h>
+//
 //####DESCRIPTIONEND####
 //
+//=============================================================================
 
 #include <pkgconf/hal.h>
 
-//-----------------------------------------------------------------------------
-// Characterize the architecture
+#include <cyg/infra/cyg_type.h>
+#include <cyg/hal/hal_if.h>
 
-# define CYG_BYTEORDER           CYG_MSBFIRST    // Big endian
-# define CYG_DOUBLE_BYTEORDER    CYG_MSBFIRST    // Big endian
-
-//-----------------------------------------------------------------------------
-// Define label translation
-//
-// (The OpenRISC architecture uses the default 1:1 label translation,
-// so we do not need to define any here.)
+#define HAL_DIAG_INIT() hal_if_diag_init()
+#define HAL_DIAG_WRITE_CHAR(_c_) hal_if_diag_write_char(_c_)
+#define HAL_DIAG_READ_CHAR(_c_) hal_if_diag_read_char(&_c_)
 
 //-----------------------------------------------------------------------------
-// Define the standard variable sizes
-//
-// (The OpenRISC architecture uses the default definitions of the base types,
-// so we do not need to define any here.)
-
-//-----------------------------------------------------------------------------
-#endif // CYGONCE_HAL_BASETYPE_H
-
-// End of basetype.h
+// end of hal_diag.h
+#endif // CYGONCE_HAL_HAL_DIAG_H

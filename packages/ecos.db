@@ -6573,6 +6573,50 @@ target uE250 {
         eCos on an NMI uEngine uE250 board."
 }
 
+   
+
+#--------------------------------------------------------------------------
+# OpenRISC targets
+
+package CYGPKG_HAL_OPENRISC {
+	alias		{ "OpenRISC HAL" hal_openrisc openrisc_hal }
+	directory	hal/openrisc/arch
+	script		hal_openrisc.cdl
+	hardware
+	description "
+	   The OpenRISC architecture HAL package provides generic
+	   support for this processor architecture. It is also necessary to
+	   select a specific target platform HAL package."
+}
+
+package CYGPKG_HAL_OPENRISC_ORPSOC {
+	alias		{ "OpenRISC Reference Platform System-on-Chip" hal_orpsoc orpsoc_hal }
+	directory	hal/openrisc/orpsoc
+	script		hal_openrisc_orpsoc.cdl
+	hardware
+	description "
+	   The OpenRISC Reference Platform System-on-Chip package should be 
+	   used with ORPSoC compilant simulators or hardware. "
+}
+
+target ORPSoC {
+	alias 		{ "OpenRISC Reference Platform System-on-Chip" orpsoc }
+	packages	{ CYGPKG_HAL_OPENRISC
+			  CYGPKG_HAL_OPENRISC_ORPSOC
+                          CYGPKG_DEVS_SPI_OPENCORES_SIMPLE_SPI
+                          CYGPKG_DEVS_ETH_OPENCORES_ETHMAC
+                          CYGPKG_DEVS_DISK_OPENCORES_SDCMSC
+                          CYGPKG_IO_SERIAL_GENERIC_16X5X
+                          CYGPKG_DEVS_SERIAL_OPENCORES_16550
+	}
+	description "
+	   The ORPSoC (OpenRISC Reference Platform System-on-Chip) target 
+	   provides the packages needed to run eCos in simulator or
+	   hardware environments that conform to the OpenRISC Reference
+	   Platform System-on-Chip."
+}
+
+
 # --------------------------------------------------------------------------
 
 package CYGPKG_DEVS_FLASH_PICASSO {

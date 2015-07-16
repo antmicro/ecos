@@ -1,11 +1,8 @@
-#ifndef CYGONCE_HAL_BASETYPE_H
-#define CYGONCE_HAL_BASETYPE_H
-
 //=============================================================================
 //
-//      basetype.h
+//      plf_stub.h
 //
-//      Standard types for this architecture.
+//      Platform header for GDB stub support.
 //
 //=============================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####                                            
@@ -42,36 +39,30 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    sfurman
-// Contributors: nickg
-// Date:         2003-02-28
-// Purpose:      Define architecture base types.
-// Usage:        Included by <cyg/infra/cyg_types.h>, do not use directly
+// Author(s):   sfurman
+// Contributors:jskov
+// Date:        2003-02-28
+// Purpose:     Platform HAL stub support for PowerPC/VIPER board.
+// Usage:       #include <cyg/hal/plf_stub.h>
 //              
 //####DESCRIPTIONEND####
 //
+//=============================================================================
+
+#ifndef CYGONCE_HAL_PLF_STUB_H
+#define CYGONCE_HAL_PLF_STUB_H
 
 #include <pkgconf/hal.h>
 
+#ifdef CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS
+
+#include <cyg/infra/cyg_type.h>         // CYG_UNUSED_PARAM
+#include <cyg/hal/openrisc_stub.h>
+
+//----------------------------------------------------------------------------
+// Stub initializer.
+
+#endif // ifdef CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS
 //-----------------------------------------------------------------------------
-// Characterize the architecture
-
-# define CYG_BYTEORDER           CYG_MSBFIRST    // Big endian
-# define CYG_DOUBLE_BYTEORDER    CYG_MSBFIRST    // Big endian
-
-//-----------------------------------------------------------------------------
-// Define label translation
-//
-// (The OpenRISC architecture uses the default 1:1 label translation,
-// so we do not need to define any here.)
-
-//-----------------------------------------------------------------------------
-// Define the standard variable sizes
-//
-// (The OpenRISC architecture uses the default definitions of the base types,
-// so we do not need to define any here.)
-
-//-----------------------------------------------------------------------------
-#endif // CYGONCE_HAL_BASETYPE_H
-
-// End of basetype.h
+#endif // CYGONCE_HAL_PLF_STUB_H
+// End of plf_stub.h
