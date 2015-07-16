@@ -1,0 +1,12 @@
+cdl_package CYGPKG_MCC {
+    display       "Multi-Core Communication"
+    include_dir   cyg/mcc
+    requires      CYGPKG_HAL_CORTEXM_VYBRID
+    description   "Multi-Core Communication Library"
+	make {
+		src/mcc: headers
+        $(AR) x $(REPOSITORY)/$(PACKAGE)/src/libmcc.a
+		$(AR) rcs $(PREFIX)/lib/libtarget.a  mcc*.o
+		@rm -rf *.o
+    }
+}

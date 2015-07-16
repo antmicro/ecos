@@ -1,0 +1,314 @@
+##==========================================================================
+##
+##      hal_cortexm_vybrid_col_vf61.cdl
+##
+##      Toradex Colibri VF61 platform HAL configuration data
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2012 Free Software Foundation, Inc.                        
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):    Antmicro Ltd. <contact@antmicro.com>
+## Date:         2014-03-28
+## Based on respective definitions for Kinetis twr_k70f120m platform
+######DESCRIPTIONEND####
+##
+##==========================================================================
+
+cdl_package CYGPKG_HAL_CORTEXM_VYBRID_COL_VF61 {
+    display       "Toradex Colibri VF61 Platform"
+    parent        CYGPKG_HAL_CORTEXM_VYBRID
+    define_header hal_cortexm_vybrid_col_vf61.h
+    include_dir   cyg/hal
+    hardware
+    description   "
+        The Toradex Colibri VF61 Platform HAL package provides the support
+        needed to run eCos on the Colibri VF61 development system."
+
+    compile       col_vf61_misc.c
+
+    requires      { CYGHWR_HAL_CORTEXM_SYSTICK_CLK_SOURCE == "INTERNAL" }
+
+    implements		CYGINT_HAL_CACHE
+    implements		CYGINT_HAL_FPV4_SP_D16
+
+  
+    ##---VYBRID-UARTS-CDL---
+    implements    CYGINT_IO_SERIAL_FREESCALE_UART0
+    implements    CYGINT_IO_SERIAL_FREESCALE_UART1
+    implements    CYGINT_IO_SERIAL_FREESCALE_UART2
+    implements    CYGINT_IO_SERIAL_FREESCALE_UART3
+    implements    CYGINT_IO_SERIAL_FREESCALE_UART4
+    implements    CYGINT_IO_SERIAL_FREESCALE_UART5
+    ##---VYBRID-DIAGNOSTIC-UARTS-CDL---
+ 	implements    CYGINT_HAL_FREESCALE_UART1
+ 	implements    CYGINT_HAL_FREESCALE_UART2
+ 	
+    define_proc {
+        puts $::cdl_system_header "#define CYGBLD_HAL_PLATFORM_H <pkgconf/hal_cortexm_vybrid_col_vf61.h>"
+        puts $::cdl_header "#define HAL_PLATFORM_CPU    \"Cortex-M4\""
+        puts $::cdl_header "#define HAL_PLATFORM_BOARD  \"Toradex Colibri VF61\""
+        puts $::cdl_header "#define HAL_PLATFORM_EXTRA  \"\""
+        puts $::cdl_system_header "#define CYGPRI_KERNEL_TESTS_DHRYSTONE_PASSES 4000000"
+    }
+
+	cdl_component CYGHWR_HAL_COLIBRTIVF61_MEMORY_RESOURCES {
+        display "On platform memory resources"
+        flavor none
+        no_define
+        description "
+        View and manage memory resources.
+        Output is used for naming of 'mlt' files."
+
+
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_DRAM_KIB {
+            display "Colibri DRAM size \[KiB\]"
+            flavor data
+            calculated { 16384 }
+        }
+        
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_DRAM {
+            display "Colibri VF61 DRAM size"
+            flavor data
+            calculated { CYGHWR_HAL_CORTEXM_VYBRID_DRAM_KIB * 0x400}
+        }
+        }
+
+    cdl_component CYG_HAL_STARTUP_ENV {
+        display "Startup type"
+        flavor data
+        no_define
+        calculated {
+            !CYG_HAL_STARTUP_PLF ? CYG_HAL_STARTUP :
+            ((CYG_HAL_STARTUP_PLF == "ByVariant") ?
+            (CYG_HAL_STARTUP . "(Variant)") :
+            (CYG_HAL_STARTUP . "(Platform)"))
+        }
+        description "
+            Startup type configuration defines the system memory layout.
+            Startup type  can be defined by the variant (CYG_HAL_STARTUP_VAR)
+            or a platform (CYG_HAL_STARTUP_PLF). If CYG_HAL_STARTUP_PLF
+            is defined and not equal to 'ByVariant' then it shall
+            override CYG_HAL_STARTUP_VAR."
+    }
+
+    cdl_option CYG_HAL_STARTUP_PLF {
+        display       "By platform"
+        flavor        data
+        parent        CYG_HAL_STARTUP_ENV
+        default_value { "ByVariant" }
+        legal_values  { "ByVariant" "DRAM" }
+		no_define
+        description   "
+            Startup tupes provided by the platform, in addition to variant
+            startup types.
+            If 'ByVariant' is selected, then startup type shall be selected
+            from the variant (CYG_HAL_STARTUP_VAR). Platform's 'ROM' startup
+            builds application similar to Variant's 'ROM' but using external
+            RAM (DDRAM)."
+    }
+
+    cdl_component CYGHWR_MEMORY_LAYOUT_PLF {
+        display "Memory layout by platform"
+        flavor data
+        active_if { CYG_HAL_STARTUP_PLF != "ByVariant" }
+        implements CYGINT_HAL_CORTEXM_VYBRID_DDRAM
+        no_define
+        parent  CYGHWR_MEMORY_LAYOUT
+        calculated {
+            (CYG_HAL_STARTUP_PLF == "ByVariant" ) ? "by variant" :
+            (CYG_HAL_STARTUP == "DRAM") ? "vybrid_ext_dram" :
+            "Error!"
+        }
+        description "
+            Combination of 'Startup type' and 'Vybrid member in use'
+            produces the memory layout."
+    }
+
+	    cdl_component CYG_HAL_VTOR_ADRESS {
+        display       "NVIC VTOR memory"
+        flavor        data
+        calculated    { (CYG_HAL_STARTUP == "DRAM") ? 0x0f000000 :
+        				(CYG_HAL_STARTUP == "OCRAM") ? 0x1f000000 :
+        				(CYG_HAL_STARTUP == "TCML") ? 0x1f800000 :
+        				 0
+                       }
+        description   "      
+        Choose the memory type from which eCOS code will be executed. Possible options are: DDRAM 256MB in external chip on Colibri module
+        and OCRAM (Vybrid's OnChipRAM)"
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_COMM_CHANNELS {
+        display      "Number of communication channels on the board"
+        flavor       data
+        legal_values 0 to 2
+        default_value   2
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL {
+        display          "Debug serial port"
+        active_if        CYGPRI_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL_CONFIGURABLE
+        flavor data
+        legal_values     0 to CYGNUM_HAL_VIRTUAL_VECTOR_COMM_CHANNELS-1
+        default_value    1
+        description      "
+			This option chooses which UART interface will be used for debugging purposes. GDB approach is assumed.  
+        	In general the Colibri VF61 module has 5 UART ports, however availability of certain ports depends on the pinout of carrier board holding the Colibri VF61 module.
+        	Please refer to carrier board's specification/schematic for further details regarding serial port connectivity.
+        	For example Iris Carrier board rev. 1.1 from Toradex has 3 serial interfaces and assumes the following channel mapping: UART0->UARTA, UART1->UARTC, UART2->UARTB.
+        	"
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL {
+        display          "Diagnostic serial port"
+        active_if        CYGPRI_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_CONFIGURABLE
+        flavor data
+        legal_values     0 to CYGNUM_HAL_VIRTUAL_VECTOR_COMM_CHANNELS-1
+        default_value    1
+        description      "
+        	This option chooses which UART port will be used for diagnostic output. 
+        	In general the Colibri VF61 module has 5 UART ports, however availability of certain ports depends on the pinout of carrier board holding the Colibri VF61 module.
+        	Please refer to carrier board's specification/schematic for further details regarding serial port connectivity.
+        	For example Iris Carrier board rev. 1.1 from Toradex has 3 serial interfaces and assumes the following channel mapping: UART0->UARTA, UART1->UARTC, UART2->UARTB.
+            "
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_BAUD {
+        display       "Console serial port baud rate"
+        flavor        data
+        legal_values  9600 19200 38400 57600 115200
+        default_value 115200
+        description   "
+            This option controls the default baud rate used for the
+            console connection.
+            Note: this should match the value chosen for the GDB port if the
+            diagnostic and GDB port are the same."
+    }
+
+    cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_DEBUG_CHANNEL_BAUD {
+        display       "GDB serial port baud rate"
+        flavor        data
+        legal_values  9600 19200 38400 57600 115200
+        default_value 115200
+        description   "
+            This option controls the default baud rate used for the
+            GDB connection.
+            Note: this should match the value chosen for the console port
+            if the console and GDB port are the same."
+    }
+
+
+    cdl_component CYGHWR_HAL_DEVS_IRQ_PRIO_SCHEME {
+        display "Interrupt priority scheme"
+        flavor none
+        description "Consolidated interrupt priority scheme setting."
+    }
+
+    cdl_component CYGBLD_GLOBAL_OPTIONS {
+        display "Global build options"
+        flavor  none
+        parent  CYGPKG_NONE
+        description   "
+            Global build options including control over
+            compiler flags, linker flags and choice of toolchain."
+
+
+        cdl_option CYGBLD_GLOBAL_COMMAND_PREFIX {
+            display "Global command prefix"
+            flavor  data
+            no_define
+            default_value { "arm-eabi" }
+            description "
+                This option specifies the command prefix used when
+                invoking the build tools."
+        }
+
+        cdl_option CYGBLD_GLOBAL_CFLAGS {
+            display "Global compiler flags"
+            flavor  data
+            no_define
+            default_value { CYGBLD_GLOBAL_WARNFLAGS . "-mcpu=cortex-m4 -mthumb -g -O2 -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions" }
+            description   "
+                This option controls the global compiler flags which are used to
+                compile all packages by default. Individual packages may define
+                options which override these global flags."
+        }
+
+        cdl_option CYGBLD_GLOBAL_LDFLAGS {
+            display "Global linker flags"
+            flavor  data
+            no_define
+            default_value { "-mcpu=cortex-m4 -mthumb -Wl,--gc-sections -Wl,-static -Wl,-n -g -nostdlib" }
+            description   "
+                This option controls the global linker flags. Individual
+                packages may define options which override these global flags."
+        }
+    }
+
+    cdl_option CYGSEM_HAL_ROM_MONITOR {
+        display       "Behave as a ROM monitor"
+        flavor        bool
+        default_value 0
+        parent        CYGPKG_HAL_ROM_MONITOR
+        requires      { CYG_HAL_STARTUP == "ROM" || CYG_HAL_STARTUP == "JTAG" }
+        requires      { CYGDBG_HAL_CRCTABLE_LOCATION == "ROM" }
+        description   "
+            Enable this option if this program is to be used as a ROM monitor,
+            i.e. applications will be loaded into RAM on the board, and this
+            ROM monitor may process exceptions or interrupts generated from the
+            application. This enables features such as utilizing a separate
+            interrupt stack when exceptions are generated."
+    }
+
+    cdl_option CYGSEM_HAL_USE_ROM_MONITOR {
+        display       "Work with a ROM monitor"
+        flavor        booldata
+        legal_values  { "Generic" "GDB_stubs" }
+        default_value { CYG_HAL_STARTUP == "RAM" ? "GDB_stubs" : 0 }
+        parent        CYGPKG_HAL_ROM_MONITOR
+        requires      { CYG_HAL_STARTUP == "RAM" }
+        description   "
+            Support can be enabled for different varieties of ROM monitor.
+            This support changes various eCos semantics such as the encoding
+            of diagnostic output, or the overriding of hardware interrupt
+            vectors.
+            Firstly there is \"Generic\" support which prevents the HAL
+            from overriding the hardware vectors that it does not use, to
+            instead allow an installed ROM monitor to handle them. This is
+            the most basic support which is likely to be common to most
+            implementations of ROM monitor.
+            \"GDB_stubs\" provides support when GDB stubs are included in
+            the ROM monitor or boot ROM."
+    }
+}

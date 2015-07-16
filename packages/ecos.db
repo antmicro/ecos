@@ -964,6 +964,15 @@ package CYGPKG_DEVS_RAM_MICRON_CELLULARRAM {
            CellularRam memory devices."
 }
 
+#for Vybrid module
+package CYGPKG_MCC {
+    alias       { "Multi-Core Communication" mcc }
+    directory   mcc
+    script      mcc.cdl
+    description "Multi-Core Communication library."
+}
+
+
 package CYGPKG_DEVS_TOUCH_IPAQ {
 	alias 		{ "Touch screen support for iPAQ" touch_ipaq }
 	directory	devs/touch/arm/ipaq
@@ -7584,6 +7593,45 @@ package CYGPKG_DEVS_ETH_CORTEXM_A2F200_EVAL {
     description   "Ethernet driver specifics for Actel Smartfusion evaluation boards (A2F200 EVAL)."
 }
 
+
+# --------------------------------------------------------------------------
+# Vybrid packages
+
+package CYGPKG_HAL_CORTEXM_VYBRID {
+    alias   { "Freescale Vybrid variant HAL" hal_cortexm_vybrid }
+    directory hal/cortexm/vybrid/var
+    script    hal_cortexm_vybrid.cdl
+    hardware
+	description "
+	The Vybrid HAL package provides the support needed to run
+	eCos on targets based on the Freescale Vybrid VF61
+	family of microcontrollers."
+}
+
+package CYGPKG_HAL_CORTEXM_VYBRID_COL_VF61 {
+    alias   { "Toradex Colibri VF61 HAL" hal_cortexm_col_vf61 }
+    directory hal/cortexm/vybrid/col_vf61
+    script    hal_cortexm_vybrid_col_vf61.cdl
+    hardware
+	description "
+	The Colibri VF61 HAL package provides the support needed to run
+	eCos on the Toradex Colibri VF61 development system."
+}
+
+target toradex_col_vf61 {
+    alias { "Toradex Colibri VF61" col_vf61 }
+    packages { 
+		CYGPKG_HAL_CORTEXM
+		CYGPKG_HAL_CORTEXM_VYBRID
+		CYGPKG_HAL_CORTEXM_VYBRID_COL_VF61
+		CYGPKG_IO_SERIAL_FREESCALE_UART_HDR
+		CYGPKG_IO_SERIAL_FREESCALE_UART
+	     }
+    description "The toradex_col_vf61 target provides the packages needed
+    to run eCos on the Toradex Colibri VF61 development system."
+}
+
+# --------------------------------------------------------------------------
 
 target smartfusion {
         alias { "Actel SmartFusion evaluation board (A2F200_EVAL)" smartfusion }

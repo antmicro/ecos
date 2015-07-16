@@ -1,0 +1,339 @@
+##==========================================================================
+##
+##      hal_cortexm_vybrid.cdl
+##
+##      Cortex-M Freescale Vybrid variant HAL configuration data
+##
+##==========================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2010, 2011, 2012, 2013 Free Software Foundation, Inc.                  
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+##==========================================================================
+#######DESCRIPTIONBEGIN####
+##
+## Author(s):    Antmicro Ltd <contact@antmicro.com>
+## Date:         2014-03-28
+## Based on respective definitions from /hal/cortexm/kinetis/var/current/cdl/hal_cortexm_kinetis.cdl
+## 
+##
+######DESCRIPTIONEND####
+##
+##==========================================================================
+######MODIFICATION#####
+##
+## CYG_HAL_STARTUP_VAR legal_values added "RAM"
+## CYGHWR_MEMORY_LAYOUT addded new compute value (RAM)
+##==========================================================================
+
+cdl_package CYGPKG_HAL_CORTEXM_VYBRID {
+    display       "Freescale Vybrid Cortex-M4 Variant"
+    parent        CYGPKG_HAL_CORTEXM
+    doc           ref/hal-cortexm-vybrid-var.html
+    hardware
+    include_dir   cyg/hal
+    define_header hal_cortexm_vybrid.h
+    description   "
+        This package provides generic support for the Freescale Cortex-M4
+        based Vybrid microcontroller family.
+        It is also necessary to select a variant and platform HAL package."
+
+    compile       hal_diag.c vybrid_misc.c vybrid_clocking.c
+
+    #implements    CYGINT_HAL_DEBUG_GDB_STUBS
+    #implements    CYGINT_HAL_DEBUG_GDB_STUBS_BREAK
+    implements    CYGINT_HAL_VIRTUAL_VECTOR_SUPPORT
+    implements    CYGINT_HAL_VIRTUAL_VECTOR_COMM_BAUD_SUPPORT
+
+	
+	
+    requires      { CYGHWR_HAL_CORTEXM == "M4" }
+
+    define_proc {
+        puts $::cdl_system_header "#define CYGBLD_HAL_TARGET_H   <pkgconf/hal_cortexm.h>"
+        puts $::cdl_system_header "#define CYGBLD_HAL_VARIANT_H  <pkgconf/hal_cortexm_vybrid.h>"
+    }
+
+    cdl_option CYGNUM_HAL_CORTEXM_PRIORITY_LEVEL_BITS {
+        display       "CPU exception priority level bits"
+        flavor        data
+        default_value 4
+        description   "
+            This option defines the number of bits used to encode the
+            exception priority levels that this variant of the Cortex-M
+            CPU implements."
+    }
+
+
+    cdl_option CYGNUM_HAL_KERNEL_COUNTERS_CLOCK_ISR_DEFAULT_PRIORITY {
+        display       "Clock interrupt ISR priority"
+        flavor        data
+        calculated    CYGNUM_HAL_KERNEL_COUNTERS_CLOCK_ISR_DEFAULT_PRIORITY_SP
+        description   "Set clock ISR priority. Default setting is lowest priority."
+    }
+
+
+    cdl_component CYGNUM_HAL_RTC_CONSTANTS {
+        display       "Real-time clock constants"
+        flavor        none
+        no_define
+        cdl_option CYGNUM_HAL_RTC_NUMERATOR {
+            display       "Real-time clock numerator"
+            flavor        data
+            default_value 1000000000
+        }
+        cdl_option CYGNUM_HAL_RTC_DENOMINATOR {
+            display       "Real-time clock denominator"
+            flavor        data
+            default_value 1000
+        }
+        cdl_option CYGNUM_HAL_RTC_PERIOD {
+            display       "Real-time clock period"
+            flavor        data
+            default_value 1000000 / CYGNUM_HAL_RTC_DENOMINATOR
+            description   "
+                The period defined here is something of a fake, it is
+                expressed in terms of a notional 1MHz clock. The value
+                actually installed in the hardware is calculated from
+                the current settings of the clock generation hardware."
+        }
+    }
+
+    cdl_option CYG_HAL_STARTUP_VAR {
+        display      "By variant"
+        flavor        data
+        parent        CYG_HAL_STARTUP_ENV
+        default_value { "OCRAM" }
+        legal_values  { "TCML" "OCRAM" }
+        active_if     ((!CYG_HAL_STARTUP_PLF) || (CYG_HAL_STARTUP_PLF=="ByVariant"))
+        description   "
+            'OCRAM' startup builds a stand-alone application hich will be placed into OnChipRAM. 
+            This type of memory is intended to be written via bootloaders such like uBoot or 
+            from Linux system running on the Cortex A5 core of Vybrid processor.
+            Note: Variant Startup Type can be overriden/overloaded by
+            Platform Startup Type."
+    }
+
+    cdl_component CYG_HAL_STARTUP {
+        display       "Startup type calculator"
+        flavor        data
+        parent        CYG_HAL_STARTUP_ENV
+        calculated    { (CYG_HAL_STARTUP_PLF && (CYG_HAL_STARTUP_PLF!="ByVariant")) ?
+                        CYG_HAL_STARTUP_PLF : CYG_HAL_STARTUP_VAR}
+        define        -file system.h CYG_HAL_STARTUP
+        description   "
+            Startup type defines what type of application shall be built.
+            Startup type  can be defined by variant (CYG_HAL_STARTUP_VAR)
+            or platform (CYG_HAL_STARTUP_PLF). If CYG_HAL_STARTUP_PLF
+            is defined and not equal to 'ByVariant' then it shall
+            override CYG_HAL_STARTUP_VAR."
+    }
+    
+    cdl_component CYGHWR_MEMORY_LAYOUT {
+        display "Memory layout"
+        flavor data
+        no_define
+        parent CYG_HAL_STARTUP_ENV
+        calculated {
+            (CYGHWR_MEMORY_LAYOUT_PLF) ? CYGHWR_MEMORY_LAYOUT_PLF :
+            (CYG_HAL_STARTUP == "TCML") ? "vybrid_tcml"  :
+            (CYG_HAL_STARTUP == "OCRAM") ? "vybrid_ocram"  :
+            "undefined" }
+        description "
+            Combination of 'Startup type' and 'Vybrid part'
+            produces the memory layout."
+
+        cdl_option CYGHWR_MEMORY_LAYOUT_LDI {
+            display "Memory layout linker script fragment"
+            flavor data
+            no_define
+            define -file system.h CYGHWR_MEMORY_LAYOUT_LDI
+            calculated { "<pkgconf/mlt_" . CYGHWR_MEMORY_LAYOUT . ".ldi>" }
+        }
+
+        cdl_option CYGHWR_MEMORY_LAYOUT_H {
+            display "Memory layout header file"
+            flavor data
+            no_define
+            define -file system.h CYGHWR_MEMORY_LAYOUT_H
+            calculated { "<pkgconf/mlt_" . CYGHWR_MEMORY_LAYOUT . ".h>" }
+        }
+    }
+
+
+    cdl_component CYGHWR_HAL_VYBRID_MEMORY_RESOURCES {
+        display "On chip memory resources"
+        flavor none
+        no_define
+        description "
+        View and manage on-chip memory resources.
+        Output is used for naming of 'mlt' files."
+
+
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_OCRAM_KIB {
+            display "Vybrid on chip SysRAM0 size \[KiB\]"
+            flavor data
+            calculated { 256 }
+        }
+        
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_OCRAM {
+            display "Vybrid on chip SysRAM0 size"
+            flavor data
+            calculated { CYGHWR_HAL_CORTEXM_VYBRID_OCRAM_KIB * 0x400}
+        }
+        
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_TCMU_KIB {
+            display "Vybrid on chip TCMU (data) size \[KiB\]"
+            flavor data
+            calculated { 32 }
+        }
+        
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_TCMU {
+            display "Vybrid on chip TCMU (data) size"
+            flavor data
+            calculated { CYGHWR_HAL_CORTEXM_VYBRID_TCMU_KIB * 0x400 }
+        }
+        
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_TCML_KIB {
+            display "Vybrid on chip TCML (data) size \[KiB\]"
+            flavor data
+            calculated { 32 }
+        }
+        
+        cdl_option CYGHWR_HAL_CORTEXM_VYBRID_TCML {
+            display "Vybrid on chip TCML (data) size"
+            flavor data
+            calculated { CYGHWR_HAL_CORTEXM_VYBRID_TCML_KIB * 0x400 }
+        }
+
+
+    }
+
+    cdl_interface CYGINT_HAL_CACHE {
+        display "Platform has cache"
+        flavor bool
+    }
+
+    cdl_interface CYGINT_HAL_HAS_NONCACHED {
+        display "Platform has non-cached regions"
+        flavor bool
+    }
+
+    cdl_component CYGPKG_HAL_VYBRID_CACHE {
+        display "Cache memory"
+        flavor bool
+
+        default_value false
+        active_if (CYGINT_HAL_CACHE)
+    }
+
+    cdl_interface CYGINT_HAL_CORTEXM_VYBRID_DDRAM {
+        display "Platform uses DDRAM"
+        flavor bool
+        description "
+            This interface will be implemented if the specific
+            controller being used provides DDRAM and if DDRAM is
+            used on target hardware"
+    }
+
+
+    for { set ::channel 0 } { $::channel < 6 } { incr ::channel } {
+
+        cdl_interface CYGINT_HAL_FREESCALE_UART[set ::channel] {
+            display     "Platform provides UART [set ::channel] HAL"
+            flavor      bool
+            description "
+                This interface will be implemented if the specific
+                controller being used has on-chip UART [set ::channel],
+                and if that UART is accessible on the target hardware."
+        }
+
+        cdl_interface CYGINT_HAL_FREESCALE_UART[set ::channel]_RTSCTS {
+            display     "Platform provides HAL for UART[set ::channel] hardware flow control."
+            flavor      bool
+            description "
+                This interface will be implemented if the specific
+                on-chip UART [set ::channel] has RTS/CTS flow control
+                that is accessible on the target hardware."
+        }
+    }
+
+    cdl_interface CYGINT_HAL_DMA {
+        display     "Platform uses DMA"
+        flavor      bool
+        description "
+            This interface will be implemented if the specific
+            controller being used provides DMA and if DMA is
+            used on target hardware"
+    }
+
+    cdl_component CYGHWR_HAL_DEVS_IRQ_PRIO_SCHEME_VAR {
+        display     "Variant IRQ priority defaults"
+        no_define
+        flavor      none
+        parent      CYGHWR_HAL_DEVS_IRQ_PRIO_SCHEME
+        description "
+            Interrupt priorities defined by Vybrid variant"
+        script vybrid_irq_scheme.cdl
+    }
+
+    cdl_component CYGPKG_HAL_CORTEXM_VYBRID_OPTIONS {
+        display      "Build options"
+        flavor       none
+        no_define
+        description   "
+            Package specific build options including control over
+            compiler flags used only in building this package."
+
+        cdl_option CYGPKG_HAL_CORTEXM_VYBRID_CFLAGS_ADD {
+            display       "Additional compiler flags"
+            flavor        data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the Vybrid variant HAL package. These flags
+                are used in addition to the set of global flags."
+        }
+
+        cdl_option CYGPKG_HAL_CORTEXM_VYBRID_CFLAGS_REMOVE {
+            display       "Suppressed compiler flags"
+            flavor        data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the Vybrid variant HAL package. These flags
+                are removed from the set of global flags if present."
+        }
+    }
+}
+
+# EOF hal_cortexm_vybrid.cdl
