@@ -51,7 +51,6 @@
 #include <pkgconf/hal.h>
 #include <string.h>
 
-#include <sys/reent.h>
 #include <cyg/hal/hal_io.h>
 #include <cyg/hal/hal_diag.h>
 
@@ -160,15 +159,8 @@ dl_iterate_phdr(void* arg1, void* arg2)
     return -1;
 }
 
-struct _reent impure_data = { 0, 0, "", 0, "C"}; // stub for gcc 4.6.1
-
-struct _reent* _impure_ptr = &impure_data;
-
-int* __errno ()
-{
-    return &_impure_ptr->_errno;
-}
-
+//XXX: workaround for the non eCos compiler
+void* __attribute__ ((weak)) _impure_ptr;
 #endif
 
 #ifndef CYGPKG_LIBC_STDIO
