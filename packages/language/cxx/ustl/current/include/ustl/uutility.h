@@ -189,7 +189,7 @@ inline size_t size_of_elements (size_t n, const T*)
 
 inline uint16_t bswap_16 (uint16_t v)
 {
-#if CPU_HAS_CMPXCHG8	// If it has that, it has bswap.
+#ifdef CPU_HAS_CMPXCHG8	// If it has that, it has bswap.
     if (!__builtin_constant_p(v)) asm ("rorw $8, %0":"+r"(v)); else
 #endif
 	v = v << 8 | v >> 8;
@@ -197,16 +197,16 @@ inline uint16_t bswap_16 (uint16_t v)
 }
 inline uint32_t bswap_32 (uint32_t v)
 {
-#if CPU_HAS_CMPXCHG8
+#ifdef CPU_HAS_CMPXCHG8
     if (!__builtin_constant_p(v)) asm ("bswap %0":"+r"(v)); else
 #endif
 	v = v << 24 | (v & 0xFF00) << 8 | ((v >> 8) & 0xFF00) | v >> 24;
     return (v);
 }
-#if HAVE_INT64_T
+#ifdef HAVE_INT64_T
 inline uint64_t bswap_64 (uint64_t v)
 {
-#if x86_64
+#ifdef x86_64
     if (!__builtin_constant_p(v)) asm ("bswap %0":"+r"(v)); else
 #endif
 	v = (uint64_t(bswap_32(v)) << 32) | bswap_32(v >> 32);
@@ -313,7 +313,7 @@ inline T1 DivRU (T1 n1, T2 n2)
 /// Sets the contents of \p pm to 1 and returns true if the previous value was 0.
 inline bool TestAndSet (int* pm)
 {
-#if CPU_HAS_CMPXCHG8
+#ifdef CPU_HAS_CMPXCHG8
     bool rv;
     int oldVal (1);
     asm volatile ( // cmpxchg compares to %eax and swaps if equal
@@ -323,11 +323,11 @@ inline bool TestAndSet (int* pm)
 	: "2" (oldVal), "a" (0)
 	: "memory");
     return (rv);
-#elif __i386__ || __x86_64__
+#elif defined(__i386__) || defined(__x86_64__)
     int oldVal (1);
     asm volatile ("xchgl %0, %1" : "=r"(oldVal), "=m"(*pm) : "0"(oldVal), "m"(*pm) : "memory");
     return (!oldVal);
-#elif __sparc32__	// This has not been tested
+#elif defined(__sparc32__)	// This has not been tested
     int rv;
     asm volatile ("ldstub %1, %0" : "=r"(rv), "=m"(*pm) : "m"(pm));
     return (!rv);
@@ -342,10 +342,10 @@ inline bool TestAndSet (int* pm)
 inline uoff_t FirstBit (uint32_t v, uoff_t nbv)
 {
     uoff_t n = nbv;
-#if __i386__ || __x86_64__
+#if defined(__i386__) || defined(__x86_64__)
     if (!__builtin_constant_p(v)) asm ("bsr\t%1, %k0":"+r,r"(n):"r,m"(v)); else
 #endif
-#if __GNUC__
+#ifdef __GNUC__
     if (v) n = 31 - __builtin_clz(v);
 #else
     if (v) for (uint32_t m = uint32_t(1)<<(n=31); !(v & m); m >>= 1) --n;
@@ -356,10 +356,10 @@ inline uoff_t FirstBit (uint32_t v, uoff_t nbv)
 inline uoff_t FirstBit (uint64_t v, uoff_t nbv)
 {
     uoff_t n = nbv;
-#if __x86_64__
+#ifdef __x86_64__
     if (!__builtin_constant_p(v)) asm ("bsr\t%1, %0":"+r,r"(n):"r,m"(v)); else
 #endif
-#if __GNUC__
+#ifdef __GNUC__
     if (v) n = 63 - __builtin_clzl(v);
 #else
     if (v) for (uint64_t m = uint64_t(1)<<(n=63); !(v & m); m >>= 1) --n;
@@ -372,7 +372,7 @@ inline uoff_t FirstBit (uint64_t v, uoff_t nbv)
 inline uint32_t NextPow2 (uint32_t v)
 {
     uint32_t r = v-1;
-#if __i386__ || __x86_64__
+#if defined(__i386__) || defined(__x86_64__)
     if (!__builtin_constant_p(r)) asm("bsr\t%0, %0":"+r"(r)); else
 #endif
     { r = FirstBit(r,r); if (r >= BitsInType(r)-1) r = uint32_t(-1); }
@@ -383,7 +383,7 @@ inline uint32_t NextPow2 (uint32_t v)
 template <typename T>
 inline T Rol (T v, size_t n)
 {
-#if __i386__ || __x86_64__
+#if defined(__i386__) || defined(__x86_64__)
     if (!(__builtin_constant_p(v) && __builtin_constant_p(n))) asm("rol\t%b1, %0":"+r,r"(v):"i,c"(n)); else
 #endif
     v = (v << n) | (v >> (BitsInType(T)-n));
@@ -394,7 +394,7 @@ inline T Rol (T v, size_t n)
 template <typename T>
 inline T Ror (T v, size_t n)
 {
-#if __i386__ || __x86_64__
+#if defined(__i386__) || defined(__x86_64__)
     if (!(__builtin_constant_p(v) && __builtin_constant_p(n))) asm("ror\t%b1, %0":"+r,r"(v):"i,c"(n)); else
 #endif
     v = (v >> n) | (v << (BitsInType(T)-n));
@@ -431,9 +431,9 @@ inline DEST noalias_cast (SRC s)
 namespace simd {
     /// Call after you are done using SIMD algorithms for 64 bit tuples.
     #define ALL_MMX_REGS_CHANGELIST "mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7","st","st(1)","st(2)","st(3)","st(4)","st(5)","st(6)","st(7)"
-#if CPU_HAS_3DNOW
+#ifdef CPU_HAS_3DNOW
     inline void reset_mmx (void) { asm ("femms":::ALL_MMX_REGS_CHANGELIST); }
-#elif CPU_HAS_MMX
+#elif defined(CPU_HAS_MMX)
     inline void reset_mmx (void) { asm ("emms":::ALL_MMX_REGS_CHANGELIST); }
 #else
     inline void reset_mmx (void) {}

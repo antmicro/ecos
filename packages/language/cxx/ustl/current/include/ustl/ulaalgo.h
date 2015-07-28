@@ -63,11 +63,11 @@ void transpose (matrix<N,N,T>& m)
 	    swap (m[x][y], m[y][x]);
 }
 
-#if WANT_UNROLLED_COPY
+#ifdef WANT_UNROLLED_COPY
 
-#if CPU_HAS_SSE
+#ifdef CPU_HAS_SSE
 
-#if linux // Non-linux gcc versions (BSD, Solaris) can't handle "x" constraint and provide no alternative.
+#ifdef linux // Non-linux gcc versions (BSD, Solaris) can't handle "x" constraint and provide no alternative.
 template <>
 inline void load_identity (matrix<4,4,float>& m)
 {

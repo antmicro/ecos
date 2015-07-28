@@ -80,7 +80,7 @@ inline void istringstream::set_base (short base)
 /// Sets delimiters to the contents of \p delimiters.
 inline void istringstream::set_delimiters (const char* delimiters)
 {
-#if (__i386__ || __x86_64__) && CPU_HAS_SSE && HAVE_VECTOR_EXTENSIONS
+#if (defined(__i386__) || defined(__x86_64__)) && defined(CPU_HAS_SSE) && defined(HAVE_VECTOR_EXTENSIONS)
     typedef uint32_t v16ud_t __attribute__((vector_size(16)));
     asm("xorps\t%%xmm0, %%xmm0\n\tmovups\t%%xmm0, %0":"=m"(*noalias_cast<v16ud_t*>(m_Delimiters))::"xmm0");
 #else

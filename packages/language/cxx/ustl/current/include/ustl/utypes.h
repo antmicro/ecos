@@ -15,9 +15,9 @@
 #endif
 #define __STDC_LIMIT_MACROS	// For WCHAR_MIN and WCHAR_MAX in stdint.
 #define __STDC_CONSTANT_MACROS	// For UINT??_C macros to avoid using L and UL suffixes on constants.
-#if HAVE_STDINT_H
+#ifdef HAVE_STDINT_H
     #include <stdint.h>
-#elif HAVE_INTTYPES_H
+#elif defined(HAVE_INTTYPES_H)
     #include <inttypes.h>
 #else
     #error "Need standard integer types definitions, usually in stdint.h"
@@ -31,7 +31,7 @@
 #ifndef SIZE_MAX
     #define SIZE_MAX		UINT_MAX
 #endif
-#if sun || __sun		// Solaris defines UINTPTR_MAX as empty.
+#if defined(sun) || defined(__sun)		// Solaris defines UINTPTR_MAX as empty.
     #undef UINTPTR_MAX
     #define UINTPTR_MAX		ULONG_MAX
 #endif

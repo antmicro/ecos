@@ -101,7 +101,7 @@ STD_UNARY_FUNCTOR (fprecipsqrt,	T, (reset_mmx(), 1 / T(sqrt (a))))
 STD_UNARY_FUNCTOR (fsin,	T, (reset_mmx(), T (sin (a))))
 STD_UNARY_FUNCTOR (fcos,	T, (reset_mmx(), T (cos (a))))
 STD_UNARY_FUNCTOR (ftan,	T, (reset_mmx(), T (tan (a))))
-#if HAVE_RINTF
+#ifdef HAVE_RINTF
 STD_CONVERSION_FUNCTOR (fround, (reset_mmx(), D(rintf(a))))
 #else
 STD_CONVERSION_FUNCTOR (fround, (reset_mmx(), D(rint(a))))
@@ -206,7 +206,7 @@ template <typename T> inline int32_t sround (T op) { fround<T,int32_t> obj; retu
 // Vector types to cast tuple data to
 //----------------------------------------------------------------------
 
-#if HAVE_VECTOR_EXTENSIONS && __GNUC__ >= 4
+#if defined(HAVE_VECTOR_EXTENSIONS) && __GNUC__ >= 4
 #define VECTOR_ATTRIBUTE(mode,vs)	__attribute__((vector_size(vs)))
 #else
 #define VECTOR_ATTRIBUTE(mode,vs)
@@ -246,7 +246,7 @@ inline void ipassign (tuple<n,type>::const_iterator oin, tuple<n,type>& oout)
 template <>					\
 inline void pconvert (const tuple<n,type1>& oin, tuple<n,type2>& oout, optype<type1,type2>)
 
-#if CPU_HAS_MMX
+#ifdef CPU_HAS_MMX
 #define STD_MMX_ARGS	: "m"(oout[0]), "m"(oin[0]) : "mm0", "st", "memory"
 #define DBL_MMX_ARGS	: "m"(oout[0]), "m"(oout[2]), "m"(oin[0]), "m"(oin[2]) : "mm0", "mm1", "st", "st(1)", "memory"
 #define MMX_PKOP2_SPEC(n,type,optype,instruction)	\
@@ -390,7 +390,7 @@ MMX_DBL_IPASSIGN_SPEC(4,int32_t)
 #undef STD_MMX_ARGS
 #endif // CPU_HAS_MMX
 
-#if CPU_HAS_SSE
+#ifdef CPU_HAS_SSE
 #define STD_SSE_ARGS	: "m"(oout[0]), "m"(oin[0]) : "xmm0", "memory"
 #define SSE_PKOP2_SPEC(n,type,optype,instruction)	\
 SIMD_PKOP2_SPEC(n,type,optype)		\

@@ -74,7 +74,7 @@ inline typename matrix<NX,NY,T>::column_type matrix<NX,NY,T>::column (size_type 
 //----------------------------------------------------------------------
 // Define SIMD specializations for member functions.
 
-#if CPU_HAS_SSE
+#ifdef CPU_HAS_SSE
 #define MATRIX_R(v)		"m"(v[0]),"m"(v[4]),"m"(v[8]),"m"(v[12])
 #define MATRIX_W(v)		"=m"(v[0]),"=m"(v[4]),"=m"(v[8]),"=m"(v[12])
 #define SSE_TUPLE_SPECS(n,type)				\

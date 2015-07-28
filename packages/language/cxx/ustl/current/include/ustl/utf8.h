@@ -39,7 +39,7 @@ inline size_t Utf8Bytes (wchar_t v)
     if ((uint32_t) v < 128)
 	return (1);
     size_t n;
-    #if __i386__ || __x86_64__
+    #if defined(__i386__) || defined(__x86_64__)
         uint32_t r = 0;
 	asm ("bsr\t%2, %%eax\n\t"
 	    "add\t$4, %0\n\t"

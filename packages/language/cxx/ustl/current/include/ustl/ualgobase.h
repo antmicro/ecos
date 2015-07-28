@@ -115,13 +115,13 @@ inline OutputIterator fill_n (OutputIterator first, size_t count, const T& value
     return (first);
 }
 
-#if CPU_HAS_MMX
+#ifdef CPU_HAS_MMX
 extern "C" void copy_n_fast (const void* src, size_t count, void* dest) throw();
 #else
 inline void copy_n_fast (const void* src, size_t count, void* dest) throw()
     { memcpy (dest, src, count); }
 #endif
-#if __i386__ || __x86_64__
+#if defined(__i386__) || defined(__x86_64__)
 extern "C" void copy_backward_fast (const void* first, const void* last, void* result) throw();
 #else
 inline void copy_backward_fast (const void* first, const void* last, void* result) throw()
@@ -153,7 +153,7 @@ size_t popcount (uint64_t v);
 // Optimized versions for standard types
 //----------------------------------------------------------------------
 
-#if WANT_UNROLLED_COPY
+#ifdef WANT_UNROLLED_COPY
 
 template <typename T>
 inline T* unrolled_copy (const T* first, size_t count, T* result)
@@ -219,7 +219,7 @@ UNROLLED_FILL_SPECIALIZATION(float)
 #define COPY_ALIAS_FUNC(ctype, type, alias_type)			\
 template <> inline type* copy (ctype* first, ctype* last, type* result)	\
 { return ((type*) copy ((const alias_type*) first, (const alias_type*) last, (alias_type*) result)); }
-#if WANT_UNROLLED_COPY
+#ifdef WANT_UNROLLED_COPY
 #if HAVE_THREE_CHAR_TYPES
 COPY_ALIAS_FUNC(const char, char, uint8_t)
 COPY_ALIAS_FUNC(char, char, uint8_t)
@@ -242,7 +242,7 @@ COPY_ALIAS_FUNC(void, void, uint8_t)
 #define COPY_BACKWARD_ALIAS_FUNC(ctype, type, alias_type)				\
 template <> inline type* copy_backward (ctype* first, ctype* last, type* result)	\
 { return ((type*) copy_backward ((const alias_type*) first, (const alias_type*) last, (alias_type*) result)); }
-#if WANT_UNROLLED_COPY
+#ifdef WANT_UNROLLED_COPY
 #if HAVE_THREE_CHAR_TYPES
 COPY_BACKWARD_ALIAS_FUNC(char, char, uint8_t)
 #endif
@@ -261,8 +261,8 @@ template <> inline void fill (type* first, type* last, const v_type& value)	\
 { fill ((alias_type*) first, (alias_type*) last, (const alias_type) value); }
 FILL_ALIAS_FUNC(void, uint8_t, char)
 FILL_ALIAS_FUNC(void, uint8_t, uint8_t)
-#if WANT_UNROLLED_COPY
-#if HAVE_THREE_CHAR_TYPES
+#ifdef WANT_UNROLLED_COPY
+#ifdef HAVE_THREE_CHAR_TYPES
 FILL_ALIAS_FUNC(char, uint8_t, char)
 FILL_ALIAS_FUNC(char, uint8_t, uint8_t)
 #endif
@@ -278,8 +278,8 @@ template <> inline type* copy_n (ctype* first, size_t count, type* result)	\
 { return ((type*) copy_n ((const alias_type*) first, count, (alias_type*) result)); }
 COPY_N_ALIAS_FUNC(const void, void, uint8_t)
 COPY_N_ALIAS_FUNC(void, void, uint8_t)
-#if WANT_UNROLLED_COPY
-#if HAVE_THREE_CHAR_TYPES
+#ifdef WANT_UNROLLED_COPY
+#ifdef HAVE_THREE_CHAR_TYPES
 COPY_N_ALIAS_FUNC(const char, char, uint8_t)
 COPY_N_ALIAS_FUNC(char, char, uint8_t)
 #endif
@@ -301,8 +301,8 @@ template <> inline type* fill_n (type* first, size_t n, const v_type& value)	\
 { return ((type*) fill_n ((alias_type*) first, n, (const alias_type) value)); }
 FILL_N_ALIAS_FUNC(void, uint8_t, char)
 FILL_N_ALIAS_FUNC(void, uint8_t, uint8_t)
-#if WANT_UNROLLED_COPY
-#if HAVE_THREE_CHAR_TYPES
+#ifdef WANT_UNROLLED_COPY
+#ifdef HAVE_THREE_CHAR_TYPES
 FILL_N_ALIAS_FUNC(char, uint8_t, char)
 FILL_N_ALIAS_FUNC(char, uint8_t, uint8_t)
 #endif

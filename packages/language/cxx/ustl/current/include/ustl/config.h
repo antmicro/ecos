@@ -140,7 +140,7 @@ __externC int ioctl( int fd, CYG_ADDRWORD com, ... );
 #endif
 #define DLL_EXPORT
 #define DLL_LOCAL
-#if defined(__GNUC__) && __GNUC__ >= 3 && (__i386__ || __x86_64__)
+#if defined(__GNUC__) && __GNUC__ >= 3 && (defined(__i386__) || defined(__x86_64__))
     /// GCC 3+ supports the prefetch directive, which some CPUs use to improve caching
     #define prefetch(p,rw,loc)  __builtin_prefetch(p,rw,loc)
 #else
