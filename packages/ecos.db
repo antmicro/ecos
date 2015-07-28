@@ -7250,6 +7250,16 @@ package CYGPKG_DEVS_ETH_CORTEXM_STM32 {
     ST STM32 microcontroller family."
 }
 
+package CYGPKG_DEVS_I2C_CORTEXM_STM32 {
+  alias   { "STM32 I2C driver" i2c_stm32 }
+  hardware
+  directory devs/i2c/cortexm/stm32
+  script    i2c_stm32.cdl
+  description "
+              This package provides a generic I2C device driver for the on-chip
+              I2C peripherals in STM32 processors."
+}
+
 target stm3210e_eval {
         alias { "ST STM3210E EVAL board" stm3210e }
         packages { CYGPKG_HAL_CORTEXM
@@ -7315,6 +7325,10 @@ target stm32f4discovery {
                 CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY
                 CYGPKG_DEVS_FLASH_STM32
                 CYGPKG_IO_SERIAL_CORTEXM_STM32
+                CYGPKG_IO_I2C
+                CYGPKG_DEVS_I2C_CORTEXM_STM32
+                CYGPKG_IO_SPI
+                CYGPKG_DEVS_SPI_CORTEXM_STM32
         }
         description "The stm32f4discovery target provides the packages needed
         to run eCos on the STMicroelectronics STM32F4-Discovery board."
