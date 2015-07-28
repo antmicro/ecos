@@ -5,21 +5,22 @@
 
 MEMORY
 {
-    ram   : ORIGIN = 0x20000000, LENGTH = 0x00020000-CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
-    flash : ORIGIN = 0x08000000, LENGTH = 0x00100000
+    ram   : ORIGIN = 0x20000000, LENGTH = 0x00030000-CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+    flash : ORIGIN = 0x08000000, LENGTH = 0x00200000
     ccm   : ORIGIN = 0x10000000, LENGTH = 0x00010000
+    sdram : ORIGIN = 0xC0000000, LENGTH = 0x00010000
 }
 
 hal_vsr_table = 0x20000000;
-hal_virtual_vector_table = hal_vsr_table + 98*4;
+hal_virtual_vector_table = hal_vsr_table + 128*4;
 #if defined(CYGSEM_HAL_VIRTUAL_VECTOR_SUPPORT)
 hal_virtual_vector_table_end = hal_virtual_vector_table + 64*4;
 #else // zero size virtual vector table
 hal_virtual_vector_table_end = hal_virtual_vector_table;
 #endif
 
-// SRAM is 128k.
-hal_startup_stack = 0x20000000 + 1024*128;
+// SRAM is 192k.
+hal_startup_stack = 0x20000000 + 0x00030000;
 
 SECTIONS
 {

@@ -86,6 +86,8 @@ __externC void hal_system_init( void )
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_CCMDATARAMEN) |
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOA) |
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOC) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOB) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOF) |
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOD) );
 
     // Set unused lines on enabled GPIO ports to input with pull down
@@ -124,6 +126,9 @@ __externC void hal_system_init( void )
 
 __externC void hal_platform_init( void )
 {
+    cyg_uint32 reg;
+    CYG_ADDRESS rcc = CYGHWR_HAL_STM32_RCC;
+
 #ifdef CYGDBG_USE_ASSERTS
     __externC char __sram_data_start[];
 #endif
@@ -141,6 +146,43 @@ __externC void hal_platform_init( void )
     CYG_ASSERT( (__sram_data_start - (char*)&hal_vsr_table[0]) >= CYGNUM_HAL_VSR_COUNT*4,
                 "VSR table size does not match" );
 #endif
+
+    /* LCD Clock config */
+    /* disable PLLSAI */
+    HAL_READ_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, reg);
+    reg &= ~(CYGHWR_HAL_STM32_RCC_CR_PLLISAIRDY);
+    HAL_WRITE_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, reg);
+    /* TODO: wait unti SAI is turned off*/
+    HAL_READ_UINT32( rcc+CYGHWR_HAL_STM32_RCC_PLLSAICFGR, reg);
+    /* get value of PLLSAIQ */
+    reg &= CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIQ_MASK; 
+    /* values obtained from SystemClock_Config */
+    /* PLLSAI_VCO Input  = PLL_SOURCE/PLLM */
+    /* PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN */
+    /* LTDC_CLK(first level) = PLLSAI_VCO Output/PLLSAIR */
+    /* PeriphClkInitStruct.PLLSAI.PLLSAIN = 192; */
+    /* PeriphClkInitStruct.PLLSAI.PLLSAIR = 5; */
+    reg |= CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIN(192) | CYGHWR_HAL_STM32_RCC_PLLSAICFGR_PLLSAIR(5);
+    HAL_WRITE_UINT32( rcc+CYGHWR_HAL_STM32_RCC_PLLSAICFGR, reg);
+
+    /* LTDC_CLK = LTDC_CLK(first level)/PLLSAIDIVR
+    PeriphClkInitStruct.PLLSAIDivR = RCC_PLLSAIDIVR_4;
+    #define RCC_PLLSAIDIVR_4                ((uint32_t)0x00010000)*/
+    HAL_READ_UINT32( rcc+CYGHWR_HAL_STM32_RCC_DCKCFGR, reg);
+    reg &= ~CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_MASK;
+    reg |= CYGHWR_HAL_STM32_RCC_DCKCFGR_PLLSAIDIVR_DIV4;
+    HAL_WRITE_UINT32( rcc+CYGHWR_HAL_STM32_RCC_DCKCFGR, reg);
+    // enable PLLSAI
+    HAL_READ_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, reg );
+    reg |= CYGHWR_HAL_STM32_RCC_CR_PLLISAION;
+    HAL_WRITE_UINT32( rcc+CYGHWR_HAL_STM32_RCC_CR, reg );
+
+    // enable clock for GPIOG (LEDs)
+    hal_stm32_clock_enable(CYGHWR_HAL_STM32_CLOCK(AHB1, GPIOG));
+
+    // enable clock for CRC
+    hal_stm32_clock_enable(CYGHWR_HAL_STM32_CLOCK(AHB1, CRC));
+
 }
 
 //==========================================================================
