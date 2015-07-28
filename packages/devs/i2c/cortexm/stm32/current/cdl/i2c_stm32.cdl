@@ -1,0 +1,337 @@
+# ====================================================================
+#
+#      i2c_stm32.cdl
+#
+#      eCos STM32 I2C configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 2010 Free Software Foundation, Inc.                        
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      Martin Rösch <roscmar@gmail.com>
+# Contributors:
+# Date:           2010-10-28
+#
+#####DESCRIPTIONEND####
+#
+# ====================================================================
+
+cdl_package CYGPKG_DEVS_I2C_CORTEXM_STM32 {
+    display     "I2C bus driver for STM32 family of CortexM controllers"
+    
+    parent      CYGPKG_IO_I2C
+    active_if   CYGPKG_IO_I2C
+    active_if   CYGPKG_HAL_CORTEXM_STM32 
+
+    description " 
+           This package provides a generic I2C device driver for the on-chip
+           I2C peripherals in STM32 processors."
+           
+    include_dir cyg/io
+    compile     i2c_stm32.c
+    
+    cdl_component CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS1 {
+        display         "STM32 I2C bus 1"
+        flavor          bool
+        default_value   1
+        description "
+            Enable to use I2C bus 1."
+        
+        cdl_option CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_MODE {
+            display       "SMBus Mode 1"
+            flavor        bool
+            default_value 0
+            requires CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS1_BUSFREQ <= 100000
+            description "
+                SMBus mode with timeout. ARA, SMBA not enabled."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS1_BUSFREQ {
+            display         "Bus clock frequency"
+            flavor          data
+            legal_values    10000 to 400000
+            default_value   100000
+            description "
+                Bus clock frequency in Hz. Set it lower than 100kHz for 
+                standard mode and greater than 100kHz for fast mode."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS1_DUTY_CYCLE {
+            display         "Fast mode duty cycle"
+            flavor          data
+            legal_values    { "2" "16TO9" }
+            default_value   { "2" }
+            description "
+                Duty cycle of the clock signal (Tlow/Thigh), when fast mode 
+                is used."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS1_ADDRESS {
+            display         "Bus address"
+            flavor          data
+            legal_values    0x00 to 0x7F
+            default_value   0x01
+            description "
+                7 bit address of the bus itself (10 bit address is not 
+                supported by the driver yet). Note that the address 0x00 is 
+                usually used as broadcast address."
+        }
+        
+        cdl_option CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_REMAP {
+            display         "Remap I2C bus 1"
+            flavor          bool
+            default_value   1
+            description "
+                Enable to remap I2C bus 1. If the FSMC is active, its NADV
+                signal disturbs the clock signal of the I2C bus, since they 
+                share the same pin. This option should only be disabled, 
+                if the FSMC is not in use."
+        }
+        
+        cdl_component CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT {
+            display         "Interrupt driven communication"
+            implements      CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE
+            default_value   1
+            description "
+                Enable to use interrupts for communication."
+            
+            cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT_EV_PRI {
+                display         "Priority of the event interrupt"
+                flavor          data
+                default_value   8
+                description "
+                    Priority of the event interrupt."
+            }
+            
+            cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT_EE_PRI {
+                display         "Priority of the error interrupt"
+                flavor          data
+                default_value   7
+                description "
+                    Priority of the error interrupt."
+            }
+        }
+        
+        cdl_option CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_POLL {
+            display     "Polled communication"
+            implements  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE
+            description "
+                Poll registers for communication"
+        }
+    }
+    
+    cdl_component CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS2 {
+        display         "STM32 I2C bus 2"
+        flavor          bool
+        default_value   0
+        description "
+              Enable to use I2C bus 2."
+        
+        cdl_option CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS2_MODE {
+            display       "SMBus Mode 2"
+            flavor        bool
+            default_value 0
+            requires CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS2_BUSFREQ <= 100000
+            description "
+                SMBus mode with timeout. ARA, SMBA not enabled."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS2_BUSFREQ {
+            display         "Bus clock frequency"
+            flavor          data
+            legal_values    10000 to 400000
+            default_value   100000
+            description "
+                Bus clock frequency in Hz. Set it lower than 100kHz for 
+                standard mode and greater than 100kHz for fast mode."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS2_DUTY_CYCLE {
+            display         "Fast mode duty cycle"
+            flavor          data
+            legal_values    { "2" "16TO9" }
+            default_value   { "2" }
+            description "
+                Duty cycle of the clock signal (Tlow/Thigh), when fast mode 
+                is used."
+        }
+        
+        cdl_component CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT {
+            display         "Interrupt driven communication"
+            implements      CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE
+            default_value   1
+            description "
+                Enable to use interrupts for communication."
+            
+            cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT_EV_PRI {
+                display         "Priority of the event interrupt"
+                flavor          data
+                default_value   8
+                description "
+                    Priority of the event interrupt."
+            }
+            
+            cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT_EE_PRI {
+                display         "Priority of the error interrupt"
+                flavor          data
+                default_value   7
+                description "
+                    Priority of the error interrupt."
+            }
+        }
+        
+        cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_POLL {
+            display     "Polled communication"
+            implements  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE
+            description "
+                Poll registers for communication"
+        }
+    }
+    
+    cdl_component CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS3 {
+        display         "STM32 I2C bus 3"
+        flavor          bool
+        default_value   0
+        description "
+              Enable to use I2C bus 3."
+        
+        cdl_option CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS3_MODE {
+            display       "SMBus Mode 3"
+            flavor        bool
+            default_value 0
+            requires CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS3_BUSFREQ <= 100000
+            description "
+                SMBus mode with timeout. ARA, SMBA not enabled."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS3_BUSFREQ {
+            display         "Bus clock frequency"
+            flavor          data
+            legal_values    10000 to 400000
+            default_value   100000
+            description "
+                Bus clock frequency in Hz. Set it lower than 100kHz for 
+                standard mode and greater than 100kHz for fast mode."
+        }
+        
+        cdl_option CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS3_DUTY_CYCLE {
+            display         "Fast mode duty cycle"
+            flavor          data
+            legal_values    { "2" "16TO9" }
+            default_value   { "2" }
+            description "
+                Duty cycle of the clock signal (Tlow/Thigh), when fast mode 
+                is used."
+        }
+
+        cdl_option CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS3_REMAP {
+            display         "Remap I2C bus 3"
+            flavor          bool
+            default_value   1
+            description "
+                Enable to remap I2C bus 3."
+        }
+
+        cdl_component CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT {
+            display         "Interrupt driven communication"
+            implements      CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE
+            default_value   1
+            description "
+                Enable to use interrupts for communication."
+            
+            cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT_EV_PRI {
+                display         "Priority of the event interrupt"
+                flavor          data
+                default_value   8
+                description "
+                    Priority of the event interrupt."
+            }
+            
+            cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT_EE_PRI {
+                display         "Priority of the error interrupt"
+                flavor          data
+                default_value   7
+                description "
+                    Priority of the error interrupt."
+            }
+        }
+        
+        cdl_option CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_POLL {
+            display     "Polled communication"
+            implements  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE
+            description "
+                Poll registers for communication"
+        }
+    }
+
+    cdl_option CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL {
+         display        "Driver debug output level"
+         flavor         data
+         legal_values   {0 1 2}
+         default_value  0
+         description   "
+             This option specifies the level of debug data output by
+             the STM32 I2C device driver. A value of 0 signifies
+             no debug data output; 1 signifies error debug data
+             output; 2 signifies verbose debug data output. 
+             The generic eCos I2C driver functions do not return any 
+             error information if a I2C transfer failed. If this option is
+             1 then the driver prints the status flags if a transfer failed
+             or was aborted. It prints the status flags in case of a missing 
+             data or address acknowledge, in case of lost arbitration and in 
+             case of a bus error. A missing acknowledge does not realy indicate
+             an error and may be part of a normal I2C communication. Therefore
+             this option should only be >0 for debug reasons."
+    }
+
+    cdl_option CYGBLD_DEVS_I2C_CORTEXM_STM32_LOOPBACK_TEST {
+        display       "Build STM32 I2C loopback test"
+        flavor        bool
+        no_define
+        default_value 0
+        requires      CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS1
+        description   "
+            This option enables the building of the STM32 I2C loopback test.
+            Refer to the comments in tests/loopback.c for details of how to
+            use this test."
+    }
+
+    cdl_option CYGPKG_DEVS_I2C_CORTEXM_STM32_TESTS {
+        display         "I2C tests"
+        active_if       CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS1
+        flavor          data
+        no_define
+        calculated      { CYGBLD_DEVS_I2C_CORTEXM_STM32_LOOPBACK_TEST ? "tests/loopback" : "" } 
+    }
+}

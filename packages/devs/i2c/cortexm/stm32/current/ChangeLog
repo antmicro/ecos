@@ -1,0 +1,46 @@
+2013-04-02  Michael Jones  <mjones@proclivis.com>
+
+	* cdl/i2c_stm32.cdl:
+	* include/i2c_stm32.h:
+	* src/i2c_stm32.c:
+	Modify cyg_stm32_i2c_init such that the driver works with a
+	STMicroelectronics STM3240G-EVAL board. Tried to preserve
+	origonal support for STM32F1XX but have no means of testing.
+	Added CDL to allow SMBus mode timeouts, but did not add other
+	SMBus feature support. Modify the fast mode frequency calculation
+	and verified the driver works at 400Khz. Made some changes to 
+	comments. Added code to support ACK/NACK control but commented
+	it out to prevent driver lockups. Added some test code for a 
+	loopback test that reads/writes a small number of values to the on
+	board touch devices.
+
+2011-06-21  Martin Rösch  <roscmar@gmail.com>
+
+	* cdl/i2c_stm32.cdl:
+	* include/i2c_stm32.h:
+	* src/i2c_stm32.c:
+	New package -- STM32 Cortex M3 I2C driver package
+
+//===========================================================================
+// ####GPLCOPYRIGHTBEGIN####                                                
+// -------------------------------------------                              
+// This file is part of eCos, the Embedded Configurable Operating System.   
+// Copyright (C) 2011 Free Software Foundation, Inc.
+//
+// This program is free software; you can redistribute it and/or modify     
+// it under the terms of the GNU General Public License as published by     
+// the Free Software Foundation; either version 2 or (at your option) any   
+// later version.                                                           
+//
+// This program is distributed in the hope that it will be useful, but      
+// WITHOUT ANY WARRANTY; without even the implied warranty of               
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU        
+// General Public License for more details.                                 
+//
+// You should have received a copy of the GNU General Public License        
+// along with this program; if not, write to the                            
+// Free Software Foundation, Inc., 51 Franklin Street,                      
+// Fifth Floor, Boston, MA  02110-1301, USA.                                
+// -------------------------------------------                              
+// ####GPLCOPYRIGHTEND####                                                  
+//===========================================================================
