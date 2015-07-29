@@ -691,7 +691,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 
     cdl_component CYGHWR_HAL_STM32_I2C2_REMAP {
         display       "Remap I2C bus 2 pins"
-	flavor	      bool
+        flavor        bool
         default_value 0
 
         description   "Remap I2C bus 2 to alternate set of pins."
@@ -741,26 +741,165 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 	    }
     }
 
-    cdl_option CYGHWR_HAL_STM32_SPI1_REMAP {
+    cdl_component CYGHWR_HAL_STM32_SPI1_REMAP {
         display       "Remap SPI bus 1 pins"
         active_if     CYGHWR_HAL_CORTEXM_STM32_CONNECTIVITY
+        flavor        bool
         default_value 0
 
         description   "Remap SPI bus 1 to alternate set of pins.
-                       This will usually be set by the platform
-                       HAL to reflect the configuration of the hardware."
+		       This option is only available on connectivity line
+                       devices."
+
+		cdl_option CYGHWR_HAL_STM32_SPI1_PIN_MOSI {
+			display       "MOSI pin"
+			active_if     (CYGHWR_HAL_STM32_SPI1_REMAP == 1)
+			flavor        data
+			default_value { "A, 7" }
+			legal_values  { "A, 7" "B, 5" }
+
+			description   "This option specifies the pin of MOSI."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI1_PIN_MISO {
+			display       "MISO pin"
+			active_if     (CYGHWR_HAL_STM32_SPI1_REMAP == 1)
+			flavor        data
+			default_value { "A, 6" }
+			legal_values  { "A, 6" "B, 4" }
+
+			description   "This option specifies the pin of MISO."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI1_PIN_SCK {
+			display       "SCK pin"
+			active_if     (CYGHWR_HAL_STM32_SPI1_REMAP == 1)
+			flavor        data
+			default_value { "A, 5" }
+			legal_values  { "A, 5" "B, 3" }
+
+			description   "This option specifies the pin of SCK."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI1_PUPD {
+			display       "PUPD out resistor"
+			active_if     (CYGHWR_HAL_STM32_SPI1_REMAP == 1)
+			flavor        data
+			default_value { "NONE" }
+			legal_values  { "NONE" "PULLUP" "PULLDOWN" }
+
+			description   "This option specifies the PUPD mode."
+		}
     }
 
-    cdl_option CYGHWR_HAL_STM32_SPI3_REMAP {
+    cdl_component CYGHWR_HAL_STM32_SPI2_REMAP {
+        display       "Remap SPI bus 2 pins"
+        active_if     CYGHWR_HAL_CORTEXM_STM32_CONNECTIVITY
+        flavor        bool
+        default_value 0
+
+        description   "Remap SPI bus 2 to alternate set of pins.
+		       This option is only available on connectivity line
+                       devices."
+
+		cdl_option CYGHWR_HAL_STM32_SPI2_PIN_MOSI {
+			display       "MOSI pin"
+			active_if     (CYGHWR_HAL_STM32_SPI2_REMAP == 1)
+			flavor        data
+			default_value { "B, 15" }
+			legal_values  { "B, 15" "C, 3" "I, 3" }
+
+			description   "This option specifies the pin of MOSI."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI2_PIN_MISO {
+			display       "MISO pin"
+			active_if     (CYGHWR_HAL_STM32_SPI2_REMAP == 1)
+			flavor        data
+			default_value { "B, 14" }
+			legal_values  { "B, 14" "C, 2" "I, 2" }
+
+			description   "This option specifies the pin of MISO."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI2_PIN_SCK {
+			display       "SCK pin"
+			active_if     (CYGHWR_HAL_STM32_SPI2_REMAP == 1)
+			flavor        data
+			default_value { "B, 13" }
+			legal_values  { "B, 10" "B, 13" "D, 3" "I, 1" }
+
+			description   "This option specifies the pin of SCK."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI2_PUPD {
+			display       "PUPD out resistor"
+			active_if     (CYGHWR_HAL_STM32_SPI2_REMAP == 1)
+			flavor        data
+			default_value { "NONE" }
+			legal_values  { "NONE" "PULLUP" "PULLDOWN" }
+
+			description   "This option specifies the PUPD mode."
+		}
+    }
+
+    cdl_component CYGHWR_HAL_STM32_SPI3_REMAP {
         display       "Remap SPI bus 3 pins"
         active_if     CYGHWR_HAL_CORTEXM_STM32_CONNECTIVITY
+        flavor        bool
         default_value 0
 
         description   "Remap SPI bus 3 to alternate set of pins.
-                       This will usually be set by the platform
-                       HAL to reflect the configuration of the hardware.
                        This option is only available on connectivity line
                        devices."
+
+		cdl_option CYGHWR_HAL_STM32_SPI3_PIN_MOSI {
+			display       "MOSI pin"
+			active_if     (CYGHWR_HAL_STM32_SPI3_REMAP == 1)
+			flavor        data
+			default_value { "B, 5" }
+			legal_values  { "B, 5" "C, 12" "D, 6" }
+
+			description   "This option specifies the pin of MOSI."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI3_PIN_MISO {
+			display       "MISO pin"
+			active_if     (CYGHWR_HAL_STM32_SPI3_REMAP == 1)
+			flavor        data
+			default_value { "B, 4" }
+			legal_values  { "B, 4" "C, 11" }
+
+			description   "This option specifies the pin of MISO."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI3_PIN_SCK {
+			display       "SCK pin"
+			active_if     (CYGHWR_HAL_STM32_SPI3_REMAP == 1)
+			flavor        data
+			default_value { "B, 3" }
+			legal_values  { "B, 3" "C, 10" }
+
+			description   "This option specifies the pin of SCK."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI3_PUPD {
+			display       "PUPD out resistor"
+			active_if     (CYGHWR_HAL_STM32_SPI3_REMAP == 1)
+			flavor        data
+			default_value { "NONE" }
+			legal_values  { "NONE" "PULLUP" "PULLDOWN" }
+
+			description   "This option specifies the PUPD mode."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI3_MOSI_DAF {
+			display       "MOSI AF register"
+			active_if     ( CYGHWR_HAL_STM32_SPI3_REMAP == 1)
+			calculated    { CYGHWR_HAL_STM32_SPI3_PIN_MOSI == "D, 6" ? 1 : 0 }
+
+			description   "This option specifies AF register for MOSI."
+		}
     }
 
     cdl_option CYGFUN_HAL_CORTEXM_STM32_PROFILE_TIMER {

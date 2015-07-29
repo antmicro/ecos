@@ -54,14 +54,21 @@
 #include <pkgconf/hal.h>
 #include <pkgconf/hal_cortexm_stm32_stm32f4discovery.h>
 
+// --------------------------------------------------------------------------
+// Macros for remap
+#define stm32_spi_altfn_in( port_pin, af )	    CYGHWR_HAL_STM32_PIN_ALTFN_IN( port_pin, af, NA, PULLUP )
+#define stm32_spi_altfn_out( port_pin, af, pupd )    CYGHWR_HAL_STM32_PIN_ALTFN_OUT( port_pin, af, PUSHPULL, pupd, SPEED_SPI )
+
+// Definitions of pins in SPI buses
+
 #ifndef CYGHWR_HAL_STM32_SPI1_REMAP
 #define CYGHWR_HAL_STM32_SPI1_SCK               CYGHWR_HAL_STM32_PIN_ALTFN_OUT( A,  5, 5, PUSHPULL, PULLDOWN, SPEED_SPI )
 #define CYGHWR_HAL_STM32_SPI1_MISO              CYGHWR_HAL_STM32_PIN_ALTFN_IN(  A,  6, 5, NA,       PULLUP )
 #define CYGHWR_HAL_STM32_SPI1_MOSI              CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  5, 5, PUSHPULL, PULLDOWN, SPEED_SPI )
 #else
-#define CYGHWR_HAL_STM32_SPI1_SCK               CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  3, 5, PUSHPULL, NONE, SPEED_SPI )
-#define CYGHWR_HAL_STM32_SPI1_MISO              CYGHWR_HAL_STM32_PIN_ALTFN_IN(  B,  4, 5, NA,       PULLUP )
-#define CYGHWR_HAL_STM32_SPI1_MOSI              CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  5, 5, PUSHPULL, NONE, SPEED_SPI )
+#define CYGHWR_HAL_STM32_SPI1_SCK               stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI1_PIN_SCK, 5, CYGHWR_HAL_STM32_SPI1_PUPD)
+#define CYGHWR_HAL_STM32_SPI1_MISO              stm32_spi_altfn_in( CYGHWR_HAL_STM32_SPI1_PIN_MISO, 5 )
+#define CYGHWR_HAL_STM32_SPI1_MOSI              stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI1_PIN_MOSI, 5, CYGHWR_HAL_STM32_SPI1_PUPD )
 #endif
 #define CYGHWR_HAL_STM32_SPI1_REMAP_CONFIG      0
 
@@ -73,9 +80,9 @@
 #define CYGHWR_HAL_STM32_SPI2_MISO              CYGHWR_HAL_STM32_PIN_ALTFN_IN(  B,  14, 5, NA,       PULLUP )
 #define CYGHWR_HAL_STM32_SPI2_MOSI              CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  15, 5, PUSHPULL, NONE, SPEED_SPI )
 #else
-#define CYGHWR_HAL_STM32_SPI2_SCK               CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  13, 5, PUSHPULL, NONE, SPEED_SPI )
-#define CYGHWR_HAL_STM32_SPI2_MISO              CYGHWR_HAL_STM32_PIN_ALTFN_IN(  B,  14, 5, NA,       PULLUP )
-#define CYGHWR_HAL_STM32_SPI2_MOSI              CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  15, 5, PUSHPULL, NONE, SPEED_SPI )
+#define CYGHWR_HAL_STM32_SPI2_SCK               stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI2_PIN_SCK, 5, CYGHWR_HAL_STM32_SPI2_PUPD)
+#define CYGHWR_HAL_STM32_SPI2_MISO              stm32_spi_altfn_in( CYGHWR_HAL_STM32_SPI2_PIN_MISO, 5 )
+#define CYGHWR_HAL_STM32_SPI2_MOSI              stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI2_PIN_MOSI, 5, CYGHWR_HAL_STM32_SPI2_PUPD )
 #endif
 #define CYGHWR_HAL_STM32_SPI2_REMAP_CONFIG      0
 
@@ -87,10 +94,14 @@
 #define CYGHWR_HAL_STM32_SPI3_MISO              CYGHWR_HAL_STM32_PIN_ALTFN_IN(  B,  4, 6, NA,       PULLUP )
 #define CYGHWR_HAL_STM32_SPI3_MOSI              CYGHWR_HAL_STM32_PIN_ALTFN_OUT( B,  5, 6, PUSHPULL, NONE, SPEED_SPI )
 #else
-#define CYGHWR_HAL_STM32_SPI3_SCK               CYGHWR_HAL_STM32_PIN_ALTFN_OUT( C, 10, 6, PUSHPULL, NONE, SPEED_SPI )
-#define CYGHWR_HAL_STM32_SPI3_MISO              CYGHWR_HAL_STM32_PIN_ALTFN_IN(  C, 11, 6, NA,       PULLUP )
-#define CYGHWR_HAL_STM32_SPI3_MOSI              CYGHWR_HAL_STM32_PIN_ALTFN_OUT( C, 12, 6, PUSHPULL, NONE, SPEED_SPI )
-#endif
+#ifdef CYGHWR_HAL_STM32_SPI3_MOSI_DAF //when defined then MOSI is set on (D, 6)
+#define CYGHWR_HAL_STM32_SPI3_MOSI              stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI3_PIN_MOSI, 5, CYGHWR_HAL_STM32_SPI3_PUPD )
+#else
+#define CYGHWR_HAL_STM32_SPI3_MOSI              stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI3_PIN_MOSI, 6, CYGHWR_HAL_STM32_SPI3_PUPD )
+#endif // CYGHWR_HAL_STM32_SPI3_MOSI_DAF
+#define CYGHWR_HAL_STM32_SPI3_SCK               stm32_spi_altfn_out( CYGHWR_HAL_STM32_SPI3_PIN_SCK, 6, CYGHWR_HAL_STM32_SPI3_PUPD)
+#define CYGHWR_HAL_STM32_SPI3_MISO              stm32_spi_altfn_in( CYGHWR_HAL_STM32_SPI3_PIN_MISO, 6 )
+#endif // CYGHWR_HAL_STM32_SPI3_REMAP
 #define CYGHWR_HAL_STM32_SPI3_REMAP_CONFIG      0
 
 #define CYGHWR_HAL_STM32_SPI3_DMA_TX            CYGHWR_HAL_STM32_DMA( 1, 5, 0, M2P )
