@@ -380,33 +380,285 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
         description "The platform has a socket on UART5."
     }
 
-    cdl_option CYGHWR_HAL_STM32_UART0_REMAP {
+    cdl_component CYGHWR_HAL_STM32_UART0_REMAP {
         display       "Remap UART0 (USART1) pins"
+	flavor	      bool
         default_value 0
 
         description   "Remap UART0 (USART1) to alternate set of pins.
                        This will usually be set by the platform
                        HAL to reflect the configuration of the hardware."
+
+	cdl_option CYGHWR_HAL_STM32_UART0_PIN_TX {
+	    display       "TX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART0_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 9" }
+	    legal_values  { "A, 9" "B, 6" }
+
+	    description   "This option specifies the pin of TX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART0_PIN_RX {
+	    display       "RX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART0_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 10" }
+	    legal_values  { "A, 10" "B, 7" }
+
+	    description   "This option specifies the pin of RX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART0_PIN_CTS {
+	    display       "CTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART0_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 11" }
+	    legal_values  { "A, 11" }
+
+	    description   "This option specifies the pin of CTS serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART0_PIN_RTS {
+	    display       "RTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART0_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 12" }
+	    legal_values  { "A, 12" }
+
+	    description   "This option specifies the pin of RTS serial device."
+	}
     }
 
-    cdl_option CYGHWR_HAL_STM32_UART1_REMAP {
+    cdl_component CYGHWR_HAL_STM32_UART1_REMAP {
         display       "Remap UART1 (USART2) pins"
+	flavor	      bool
         default_value 0
 
         description   "Remap UART1 (USART2) to alternate set of pins.
                        This will usually be set by the platform
                        HAL to reflect the configuration of the hardware."
+
+	cdl_option CYGHWR_HAL_STM32_UART1_PIN_TX {
+	    display       "TX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART1_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 2" }
+	    legal_values  { "A, 2" "D, 5" }
+
+	    description   "This option specifies the pin of TX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART1_PIN_RX {
+	    display       "RX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART1_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 3" }
+	    legal_values  { "A, 3" "D, 6" }
+
+	    description   "This option specifies the pin of RX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART1_PIN_CTS {
+	    display       "CTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART1_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 0" }
+	    legal_values  { "A, 0" "D, 3" }
+
+	    description   "This option specifies the pin of CTS serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART1_PIN_RTS {
+	    display       "RTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART1_REMAP == 1)
+	    flavor        data
+	    default_value { "A, 1" }
+	    legal_values  { "A, 1" "D, 4" }
+
+	    description   "This option specifies the pin of RTS serial device."
+	}
     }
 
+    # CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1 left for 
+    # backward compatibility with familiy F1
+    # New remap was added with _N suffix in contradiction to
+    # other REMAPs
     cdl_option CYGHWR_HAL_STM32_UART2_REMAP {
         display       "Remap UART2 (USART3) pins"
-        flavor        data
+	active_if     { CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1 }
+	flavor	      data
         default_value { "NONE" }
         legal_values  { "NONE" "PARTIAL" "FULL" }
 
         description   "Remap UART2 (USART3) to alternate set of pins.
                        This will usually be set by the platform
                        HAL to reflect the configuration of the hardware."
+    }
+
+    cdl_component CYGHWR_HAL_STM32_UART2_REMAP_N {
+        display       "Remap UART2 (USART3) pins"
+	active_if     { !CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1 }
+	flavor	      bool
+        default_value 0
+
+        description   "Remap UART2 (USART3) to alternate set of pins.
+                       This will usually be set by the platform
+                       HAL to reflect the configuration of the hardware."
+
+	cdl_option CYGHWR_HAL_STM32_UART2_PIN_TX {
+	    display       "TX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART2_REMAP_N == 1)
+	    flavor        data
+	    default_value { "B, 10" }
+	    legal_values  { "B, 10" "D, 8" "C, 10" }
+
+	    description   "This option specifies the pin of TX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART2_PIN_RX {
+	    display       "RX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART2_REMAP_N == 1)
+	    flavor        data
+	    default_value { "B, 11" }
+	    legal_values  { "B, 11" "D, 9" "C, 11" }
+
+	    description   "This option specifies the pin of RX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART2_PIN_CTS {
+	    display       "CTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART2_REMAP_N == 1)
+	    flavor        data
+	    default_value { "B, 13" }
+	    legal_values  { "B, 13" "D, 11" }
+
+	    description   "This option specifies the pin of CTS serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART2_PIN_RTS {
+	    display       "RTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART2_REMAP_N == 1)
+	    flavor        data
+	    default_value { "B, 14" }
+	    legal_values  { "B, 14" "D, 12" }
+
+	    description   "This option specifies the pin of RTS serial device."
+	}
+    }
+
+    cdl_component CYGHWR_HAL_STM32_UART3_REMAP {
+        display       "Remap UART3 (UART4) pins"
+	flavor	      bool
+        default_value 0
+
+        description   "Remap UART3 (UART4) to alternate set of pins.
+                       This will usually be set by the platform
+                       HAL to reflect the configuration of the hardware."
+
+	cdl_option CYGHWR_HAL_STM32_UART3_PIN_TX {
+	    display       "TX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART3_REMAP == 1)
+	    flavor        data
+	    requires	  { CYGHWR_HAL_STM32_UART1_PIN_CTS != CYGHWR_HAL_STM32_UART3_PIN_TX }
+	    requires	  { CYGHWR_HAL_STM32_UART2_PIN_TX  != CYGHWR_HAL_STM32_UART3_PIN_TX }
+	    default_value { "A, 0" }
+	    legal_values  { "A, 0" "C, 10" }
+
+	    description   "This option specifies the pin of TX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART3_PIN_RX {
+	    display       "RX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART3_REMAP == 1)
+	    flavor        data
+	    requires	  { CYGHWR_HAL_STM32_UART1_PIN_RTS != CYGHWR_HAL_STM32_UART3_PIN_RX }
+	    requires	  { CYGHWR_HAL_STM32_UART2_PIN_RX  != CYGHWR_HAL_STM32_UART3_PIN_RX }
+	    default_value { "A, 1" }
+	    legal_values  { "A, 1" "C, 11" }
+
+	    description   "This option specifies the pin of RX serial device."
+	}
+    }
+
+    cdl_component CYGHWR_HAL_STM32_UART4_REMAP {
+        display       "Remap UART4 (UART5) pins"
+	flavor	      bool
+        default_value 0
+
+        description   "Remap UART4 (UART5) to alternate set of pins.
+                       This will usually be set by the platform
+                       HAL to reflect the configuration of the hardware."
+
+	cdl_option CYGHWR_HAL_STM32_UART4_PIN_TX {
+	    display       "TX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART4_REMAP == 1)
+	    flavor        data
+	    default_value { "C, 12" }
+	    legal_values  { "C, 12" }
+
+	    description   "This option specifies the pin of TX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART4_PIN_RX {
+	    display       "RX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART4_REMAP == 1)
+	    flavor        data
+	    default_value { "D, 2" }
+	    legal_values  { "D, 2" }
+
+	    description   "This option specifies the pin of RX serial device."
+	}
+    }
+
+    cdl_component CYGHWR_HAL_STM32_UART5_REMAP {
+        display       "Remap UART5 (USART6) pins"
+	flavor	      bool
+        default_value 0
+
+        description   "Remap UART5 (USART6) to alternate set of pins.
+                       This will usually be set by the platform
+                       HAL to reflect the configuration of the hardware."
+
+	cdl_option CYGHWR_HAL_STM32_UART5_PIN_TX {
+	    display       "TX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART5_REMAP == 1)
+	    flavor        data
+	    default_value { "C, 6" }
+	    legal_values  { "C, 6" "G, 14" }
+
+	    description   "This option specifies the pin of TX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART5_PIN_RX {
+	    display       "RX pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART5_REMAP == 1)
+	    flavor        data
+	    default_value { "C, 7" }
+	    legal_values  { "C, 7" "G, 9" }
+
+	    description   "This option specifies the pin of RX serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART5_PIN_CTS {
+	    display       "CTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART5_REMAP == 1)
+	    flavor        data
+	    default_value { "G, 13" }
+	    legal_values  { "G, 13" "G, 15" }
+
+	    description   "This option specifies the pin of CTS serial device."
+	}
+
+	cdl_option CYGHWR_HAL_STM32_UART5_PIN_RTS {
+	    display       "RTS pin"
+	    active_if	  (CYGHWR_HAL_STM32_UART5_REMAP == 1)
+	    flavor        data
+	    default_value { "G, 8" }
+	    legal_values  { "G, 8" "G, 12" }
+
+	    description   "This option specifies the pin of RTS serial device."
+	}
     }
 
     cdl_option CYGHWR_HAL_STM32_I2C1_REMAP {
