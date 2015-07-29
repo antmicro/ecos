@@ -480,7 +480,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 	}
     }
 
-    # CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1 left for 
+    # CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1 left for
     # backward compatibility with familiy F1
     # New remap was added with _N suffix in contradiction to
     # other REMAPs
@@ -661,13 +661,84 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 	}
     }
 
-    cdl_option CYGHWR_HAL_STM32_I2C1_REMAP {
+    cdl_component CYGHWR_HAL_STM32_I2C1_REMAP {
         display       "Remap I2C bus 1 pins"
+        flavor        bool
         default_value 0
 
-        description   "Remap I2C bus 1 to alternate set of pins.
-                       This will usually be set by the platform
-                       HAL to reflect the configuration of the hardware."
+        description   "Remap I2C bus 1 to alternate set of pins."
+
+	    cdl_option CYGHWR_HAL_STM32_I2C1_SDA {
+		display		"SDA"
+		active_if	(CYGHWR_HAL_STM32_I2C1_REMAP == 1)
+		flavor		data
+		default_value	{ "B, 9" }
+		legal_values	{ "B, 9" "B, 7" }
+		description "
+		    This option specifies the SDA pin."
+	    }
+
+	    cdl_option CYGHWR_HAL_STM32_I2C1_SCL {
+		display		"SCL"
+		active_if	(CYGHWR_HAL_STM32_I2C1_REMAP == 1)
+		flavor		data
+		default_value	{ "B, 8" }
+		legal_values	{ "B, 8" "B, 6" }
+		description "
+		    This option specifies the SCL pin."
+	    }
+    }
+
+    cdl_component CYGHWR_HAL_STM32_I2C2_REMAP {
+        display       "Remap I2C bus 2 pins"
+	flavor	      bool
+        default_value 0
+
+        description   "Remap I2C bus 2 to alternate set of pins."
+
+	    cdl_option CYGHWR_HAL_STM32_I2C2_SDA {
+		display		"SDA"
+		active_if	(CYGHWR_HAL_STM32_I2C2_REMAP == 1)
+		flavor		data
+		default_value	{ "B, 11" }
+		legal_values	{ "B, 11" "F, 0" "H, 5" }
+		description	"This option specifies the SDA pin."
+	    }
+
+	    cdl_option CYGHWR_HAL_STM32_I2C2_SCL {
+		display		"SCL"
+		active_if	(CYGHWR_HAL_STM32_I2C2_REMAP == 1)
+		flavor		data
+		default_value	{ "B, 10" }
+		legal_values	{ "B, 10" "F, 1" "H, 4" }
+		description	"This option specifies the SCL pin."
+	    }
+    }
+
+    cdl_component CYGHWR_HAL_STM32_I2C3_REMAP {
+        display       "Remap I2C bus 3 pins"
+	flavor	      bool
+        default_value 0
+
+        description   "Remap I2C bus 3 to alternate set of pins."
+
+	    cdl_option CYGHWR_HAL_STM32_I2C3_SDA {
+		display		"SDA"
+		active_if	(CYGHWR_HAL_STM32_I2C3_REMAP == 1)
+		flavor		data
+		default_value	{ "C, 9" }
+		legal_values	{ "C, 9" "H, 8" }
+		description	"This option specifies the SDA pin."
+	    }
+
+	    cdl_option CYGHWR_HAL_STM32_I2C3_SCL {
+		display		"SCL"
+		active_if	(CYGHWR_HAL_STM32_I2C3_REMAP == 1)
+		flavor		data
+		default_value	{ "A, 8" }
+		legal_values	{ "A, 8" "H, 7" }
+		description	"This option specifies the SCL pin."
+	    }
     }
 
     cdl_option CYGHWR_HAL_STM32_SPI1_REMAP {

@@ -102,6 +102,12 @@ CYG_STM32_I2C_BUS(i2c_bus3, CYGHWR_HAL_STM32_I2C3,
 #define I2C_MS_EV8 (((CYGHWR_HAL_STM32_I2C_SR2_MSL | CYGHWR_HAL_STM32_I2C_SR2_BUSY | CYGHWR_HAL_STM32_I2C_SR2_TRA)<< 16) | CYGHWR_HAL_STM32_I2C_SR1_TxE | CYGHWR_HAL_STM32_I2C_SR1_BTF)
 #define I2C_MS_EV8_2 (((CYGHWR_HAL_STM32_I2C_SR2_MSL | CYGHWR_HAL_STM32_I2C_SR2_BUSY | CYGHWR_HAL_STM32_I2C_SR2_TRA)<< 16) | CYGHWR_HAL_STM32_I2C_SR1_TxE | CYGHWR_HAL_STM32_I2C_SR1_BTF)
 
+
+//--------------------------------------------------------------------------
+// I2C macros for remap pins
+#define stm32_i2c_scl( port_pin ) CYGHWR_HAL_STM32_GPIO( port_pin , ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ)
+#define stm32_i2c_sda( port_pin ) CYGHWR_HAL_STM32_GPIO( port_pin , ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ)
+
 //--------------------------------------------------------------------------
 // Poll I2C status registers (SR2, SR1) until they are equal to a given event
 // mask or until timeout.
@@ -900,12 +906,10 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         pinspec_sda = CYGHWR_HAL_STM32_GPIO(B, 7, OUT_50MHZ, ALT_OPENDRAIN);
 #endif
 #elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
-#ifdef CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_REMAP
-	pinspec_scl = CYGHWR_HAL_STM32_GPIO(B, 8, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
-	pinspec_sda = CYGHWR_HAL_STM32_GPIO(B, 7, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
+#ifdef CYGHWR_HAL_STM32_I2C1_REMAP
+	pinspec_scl = stm32_i2c_scl( CYGHWR_HAL_STM32_I2C1_SCL );
+	pinspec_sda = stm32_i2c_sda( CYGHWR_HAL_STM32_I2C1_SDA );
 #else
-//XXX
-//	pinspec_scl = CYGHWR_HAL_STM32_GPIO(B, 6, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 	pinspec_scl = CYGHWR_HAL_STM32_GPIO(B, 8, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 	pinspec_sda = CYGHWR_HAL_STM32_GPIO(B, 9, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 #endif
@@ -947,7 +951,7 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         HAL_WRITE_UINT32 (base + CYGHWR_HAL_STM32_RCC_APB1ENR, rcc);
 #if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
         HAL_READ_UINT32 (base + CYGHWR_HAL_STM32_RCC_APB2ENR, rcc);
-        rcc |= BIT_(CYGHWR_HAL_STM32_RCC_APB2ENR_IOPB);        
+        rcc |= BIT_(CYGHWR_HAL_STM32_RCC_APB2ENR_IOPB);
         rcc |= BIT_(CYGHWR_HAL_STM32_RCC_APB2ENR_AFIO);
         HAL_WRITE_UINT32 (base + CYGHWR_HAL_STM32_RCC_APB2ENR, rcc);
 #elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
@@ -979,8 +983,13 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         pinspec_scl = CYGHWR_HAL_STM32_GPIO(B, 10, OUT_50MHZ, ALT_OPENDRAIN);
         pinspec_sda = CYGHWR_HAL_STM32_GPIO(B, 11, OUT_50MHZ, ALT_OPENDRAIN);
 #elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+#ifdef CYGHWR_HAL_STM32_I2C2_REMAP
+	pinspec_scl = stm32_i2c_scl( CYGHWR_HAL_STM32_I2C2_SCL );
+	pinspec_sda = stm32_i2c_sda( CYGHWR_HAL_STM32_I2C2_SDA );
+#else
 	pinspec_scl = CYGHWR_HAL_STM32_GPIO(B, 10, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 	pinspec_sda = CYGHWR_HAL_STM32_GPIO(B, 11, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
+#endif
 #endif
 
 #ifdef CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_POLL
@@ -1047,10 +1056,9 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
 #ifdef CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS3_ADDRESS
         bus_addr = CYGNUM_DEVS_I2C_CORTEXM_STM32_BUS3_ADDRESS;
 #endif
-#if defined (CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS3_REMAP)
-    pinspec_scl = CYGHWR_HAL_STM32_GPIO(A, 8, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
-    pinspec_sda = CYGHWR_HAL_STM32_GPIO(C, 9, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
-
+#ifdef CYGHWR_HAL_STM32_I2C3_REMAP
+    pinspec_scl = stm32_i2c_scl( CYGHWR_HAL_STM32_I2C3_SCL );
+    pinspec_sda = stm32_i2c_sda( CYGHWR_HAL_STM32_I2C3_SDA );
 #else
     pinspec_scl = CYGHWR_HAL_STM32_GPIO(H, 7, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
     pinspec_sda = CYGHWR_HAL_STM32_GPIO(H, 8, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
