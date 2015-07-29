@@ -7329,6 +7329,8 @@ target stm32f4discovery {
                 CYGPKG_DEVS_I2C_CORTEXM_STM32
                 CYGPKG_IO_SPI
                 CYGPKG_DEVS_SPI_CORTEXM_STM32
+                CYGPKG_IO_ADC
+                CYGPKG_DEVS_ADC_CORTEXM_STM32
         }
         description "The stm32f4discovery target provides the packages needed
         to run eCos on the STMicroelectronics STM32F4-Discovery board."
