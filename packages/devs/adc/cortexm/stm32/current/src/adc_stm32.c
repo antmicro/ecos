@@ -68,7 +68,7 @@
 # include <cyg/infra/diag.h>
 # define adc_diag( __fmt, ... ) diag_printf("ADC: %30s[%4d]: " __fmt, __FUNCTION__, __LINE__, ## __VA_ARGS__ );
 #else
-# define adc_diag( __fmt, ... ) 
+# define adc_diag( __fmt, ... )
 #endif
 
 
@@ -80,6 +80,9 @@ typedef struct stm32_adc_setup {
     CYG_ADDRESS         dma_base;       // DMA registers base address
     cyg_vector_t        dma_int_vector; // DMA interrupt vector
     cyg_priority_t      dma_int_pri;    // DMA interrupt priority
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    cyg_uint8           dma_stream;     // DMA stream to use
+#endif
     cyg_uint8           dma_channel;    // DMA channel to use
     CYG_ADDRESS         tim_base;       // Timer registers base address
     const cyg_uint32    *pins;          // ADC associated GPIO pins
@@ -178,25 +181,25 @@ stm32_adc_init(struct cyg_devtab_entry *tab)
     cyg_adc_channel *chan = (cyg_adc_channel *) tab->priv;
     cyg_adc_device *device = chan->device;
     stm32_adc_info *info = device->dev_priv;
-    
+
     adc_diag("Initializing device\n");
-    
+
     // Initialize ADC clock
     if (!initialized) {
         stm32_adc_init_clock();
         initialized = true;
     }
-    
+
     // Keep reference to channel
     info->chan[chan->channel] = chan;
 
     if (!info->dma_int_handle) {
         // Initialize ADC device
         stm32_adc_init_device(device);
-        
+
         // Set default rate
         stm32_adc_set_rate(chan, chan->device->config.rate);
-        
+
         // Initialize DMA interrupt
         cyg_drv_interrupt_create(info->setup->dma_int_vector,
                                  info->setup->dma_int_pri,
@@ -208,10 +211,10 @@ stm32_adc_init(struct cyg_devtab_entry *tab)
         cyg_drv_interrupt_attach(info->dma_int_handle);
         cyg_drv_interrupt_unmask(info->setup->dma_int_vector);
     }
-    
+
     // Initialize generic parts of ADC device
     cyg_adc_device_init(device);
-    
+
     return true;
 }
 
@@ -231,22 +234,31 @@ stm32_adc_lookup(struct cyg_devtab_entry **tab,
     cyg_uint32 cr;
 
     adc_diag("Opening device\n");
-    
+
     // Configure the input pin, if available
     if (info->setup->pins[chan->channel] != CYGHWR_HAL_STM32_GPIO_NONE)
         CYGHWR_HAL_STM32_GPIO_SET(info->setup->pins[chan->channel]);
-    
+
     // Activate temperature and VREF if necessary
+
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     if (chan->channel >= 16) {
         HAL_READ_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
         cr |= CYGHWR_HAL_STM32_ADC_CR2_TSVREFE;
         HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     }
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    if (chan->channel >= 16) {
+        HAL_READ_UINT32(CYGHWR_HAL_STM32_ADC_COMMON + CYGHWR_HAL_STM32_ADC_CCR, cr);
+        cr |= CYGHWR_HAL_STM32_ADC_CCR_TSVREFE | CYGHWR_HAL_STM32_ADC_CCR_VBATE;
+        HAL_WRITE_UINT32(CYGHWR_HAL_STM32_ADC_COMMON + CYGHWR_HAL_STM32_ADC_CCR, cr);
+    }
+#endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1
 
     // Initialize generic parts of the channel
     cyg_adc_channel_init(chan);
 
-    // The generic ADC manual says: When a channel is first looked up or 
+    // The generic ADC manual says: When a channel is first looked up or
     // opened, then it is automatically enabled and samples start to
     // accumulate - so we start the channel now
     chan->enabled = true;
@@ -266,7 +278,7 @@ stm32_adc_enable(cyg_adc_channel *chan)
     stm32_adc_info *info = chan->device->dev_priv;
     cyg_uint32 cr;
     cyg_bool start;
-    
+
     adc_diag("Enabling channel\n");
 
     start = !info->chan_mask;
@@ -274,7 +286,7 @@ stm32_adc_enable(cyg_adc_channel *chan)
     // Update the scanning sequence
     info->chan_mask |= (1 << chan->channel);
     stm32_adc_update_sequence(chan->device);
-    
+
     // Start scanning when first channel was activated
     if (start) {
         // Enable timer
@@ -295,13 +307,13 @@ stm32_adc_disable(cyg_adc_channel *chan)
 {
     stm32_adc_info *info = chan->device->dev_priv;
     cyg_uint32 cr;
-    
+
     adc_diag("Disabling channel\n");
-    
+
     // Update scanning sequence
     info->chan_mask &= ~(1 << chan->channel);
     stm32_adc_update_sequence(chan->device);
-    
+
     // Stop scanning when no channel is active
     if (!info->chan_mask) {
         // Disable timer
@@ -327,22 +339,22 @@ stm32_adc_set_rate( cyg_adc_channel *chan, cyg_uint32 rate)
     cyg_uint32 clock;
     cyg_uint32 period, prescaler;
     cyg_uint32 cr;
-    
+
     adc_diag("Setting rate to %d\n", rate);
 
     device->config.rate = rate;
-    
+
     clock = hal_stm32_timer_clock(info->setup->tim_base);
-    
+
     period = clock / rate;
     prescaler = (period / 0x10000) + 1;
     period = period / prescaler;
-    
+
     HAL_WRITE_UINT32(info->setup->tim_base + CYGHWR_HAL_STM32_TIM_PSC,
                      prescaler - 1);
     HAL_WRITE_UINT32(info->setup->tim_base + CYGHWR_HAL_STM32_TIM_ARR,
                      period - 1);
-    
+
     // Reinitialize timer
     cr = CYGHWR_HAL_STM32_TIM_EGR_UG;
     HAL_WRITE_UINT32(info->setup->tim_base + CYGHWR_HAL_STM32_TIM_EGR, cr);
@@ -363,11 +375,18 @@ stm32_dma_isr(cyg_vector_t vector, cyg_addrword_t data)
     cyg_adc_channel **chan = info->chan;
     cyg_uint32 isr;
     cyg_uint32 res = CYG_ISR_HANDLED;
+    cyg_uint8 dma_line; // depending on family it's channel or stream
 
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     HAL_READ_UINT32(info->setup->dma_base + CYGHWR_HAL_STM32_DMA_ISR, isr);
-    if (!(isr & CYGHWR_HAL_STM32_DMA_ISR_MASK(info->setup->dma_channel)))
+    dma_line = info->setup->dma_channel;
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    HAL_READ_UINT32(info->setup->dma_base + CYGHWR_HAL_STM32_DMA_LISR, isr);
+    dma_line = info->setup->dma_stream;
+#endif
+    if (!(isr & CYGHWR_HAL_STM32_DMA_ISR_MASK(dma_line)))
         return 0;
-    
+
     while (chan_active) {
         if (chan_active & 0x1)
             res |= cyg_adc_receive_sample(*chan, *sample++ & 0xfff);
@@ -375,11 +394,16 @@ stm32_dma_isr(cyg_vector_t vector, cyg_addrword_t data)
         chan++;
     }
 
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     HAL_WRITE_UINT32(info->setup->dma_base + CYGHWR_HAL_STM32_DMA_IFCR,
                      CYGHWR_HAL_STM32_DMA_IFCR_MASK(info->setup->dma_channel));
-    
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    HAL_WRITE_UINT32(info->setup->dma_base + CYGHWR_HAL_STM32_DMA_LIFCR,
+                     CYGHWR_HAL_STM32_DMA_IFCR_MASK(info->setup->dma_stream));
+#endif
+
     cyg_drv_interrupt_acknowledge(vector);
-    
+
     return res;
 }
 
@@ -396,7 +420,7 @@ stm32_dma_dsr(cyg_vector_t vector, cyg_ucount32 count, cyg_addrword_t data)
     stm32_adc_info *info = (stm32_adc_info *) device->dev_priv;
     cyg_uint32 chan_active = info->chan_mask;
     cyg_adc_channel **chan = info->chan;
-    
+
     while (chan_active) {
         if (chan_active & 0x1)
             if ((*chan)->wakeup)
@@ -412,11 +436,10 @@ stm32_dma_dsr(cyg_vector_t vector, cyg_ucount32 count, cyg_addrword_t data)
 static void
 stm32_adc_init_clock(void)
 {
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     CYG_ADDRESS rcc = CYGHWR_HAL_STM32_RCC;
     cyg_uint32 cfgr;
-    
-    adc_diag("Initializing ADC system clock\n");
-    
+
     HAL_READ_UINT32(rcc + CYGHWR_HAL_STM32_RCC_CFGR, cfgr);
     cfgr &= ~CYGHWR_HAL_STM32_RCC_CFGR_ADCPRE_XXX;
 
@@ -435,6 +458,31 @@ stm32_adc_init_clock(void)
 #endif
 
     HAL_WRITE_UINT32(rcc + CYGHWR_HAL_STM32_RCC_CFGR, cfgr);
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    CYG_ADDRESS adc_comm = CYGHWR_HAL_STM32_ADC_COMMON;
+    cyg_uint32 cfgr;
+
+    HAL_READ_UINT32(adc_comm + CYGHWR_HAL_STM32_ADC_CCR, cfgr);
+    cfgr &= ~CYGHWR_HAL_STM32_ADC_CCR_ADCPRE_XXX;
+
+#if CYGNUM_DEVS_ADC_CORTEXM_STM32_CLOCK_DIV == 2
+    cfgr |= CYGHWR_HAL_STM32_ADC_CCR_ADCPRE_2;
+    adc_clock = hal_stm32_pclk2 / 2;
+#elif CYGNUM_DEVS_ADC_CORTEXM_STM32_CLOCK_DIV == 4
+    cfgr |= CYGHWR_HAL_STM32_ADC_CCR_ADCPRE_4;
+    adc_clock = hal_stm32_pclk2 / 4;
+#elif CYGNUM_DEVS_ADC_CORTEXM_STM32_CLOCK_DIV == 6
+    cfgr |= CYGHWR_HAL_STM32_ADC_CCR_ADCPRE_6;
+    adc_clock = hal_stm32_pclk2 / 6;
+#elif CYGNUM_DEVS_ADC_CORTEXM_STM32_CLOCK_DIV == 8
+    cfgr |= CYGHWR_HAL_STM32_ADC_CCR_ADCPRE_8;
+    adc_clock = hal_stm32_pclk2 / 8;
+#endif
+
+    HAL_WRITE_UINT32(adc_comm + CYGHWR_HAL_STM32_ADC_CCR, cfgr);
+#endif
+    adc_diag("Initialized ADC clock to %d[Hz]\n", adc_clock);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -449,41 +497,58 @@ stm32_adc_init_device(cyg_adc_device *device)
     cyg_uint32 cycles;
     cyg_uint32 smpr;
     int i;
+    cyg_uint8 dma_line; // depending on family it's channel or stream
 
-    static const cyg_uint32 cycles_table[] = 
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
+    static const cyg_uint32 cycles_table[] =
         { 15, 75, 135, 285, 415, 555, 715, 2395 };
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    static const cyg_uint32 cycles_table[] =
+        { 3, 15, 28, 56, 84, 112, 144, 480 };
+#endif
 
     CYGHWR_HAL_STM32_CLOCK_ENABLE( info->setup->adc_clkena );
     CYGHWR_HAL_STM32_CLOCK_ENABLE( info->setup->tim_clkena );
 
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     // Make sure ADC is powered on
     cr = CYGHWR_HAL_STM32_ADC_CR2_ADON;
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
-    
+
     // Reset calibration
     cr |= CYGHWR_HAL_STM32_ADC_CR2_RSTCAL;
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     do {
         HAL_READ_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     } while (cr & CYGHWR_HAL_STM32_ADC_CR2_RSTCAL);
-    
+
     // Do calibration
     cr |= CYGHWR_HAL_STM32_ADC_CR2_CAL;
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     do {
         HAL_READ_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     } while (cr & CYGHWR_HAL_STM32_ADC_CR2_CAL);
-    
-    // Power off ADC 
+
+    // Power off ADC
     cr &= ~CYGHWR_HAL_STM32_ADC_CR2_ADON;
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    // Make sure ADC is powered off - high performance family doesn't support
+    // calibration process
+    cr = 0;
+#endif
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
-    
+
     // Enable external triggering and DMA
     cr |= CYGHWR_HAL_STM32_ADC_CR2_DMA |
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
           CYGHWR_HAL_STM32_ADC_CR2_EXTTRIG |
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+          CYGHWR_HAL_STM32_ADC_CR2_DDS |
+          CYGHWR_HAL_STM32_ADC_CR2_EXTEN(CYGHWR_HAL_STM32_ADC_EXTEN_EDGE_RISE) |
+#endif
           CYGHWR_HAL_STM32_ADC_CR2_EXTSEL(info->setup->extsel);
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
-    
+
     // Enable scanning
     cr = CYGHWR_HAL_STM32_ADC_CR1_SCAN;
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR1, cr);
@@ -505,33 +570,49 @@ stm32_adc_init_device(cyg_adc_device *device)
     else
       CYGHWR_HAL_STM32_CLOCK_ENABLE( CYGHWR_HAL_STM32_DMA2_CLOCK );
 
-    HAL_WRITE_UINT32(info->setup->dma_base + 
-                     CYGHWR_HAL_STM32_DMA_CPAR(info->setup->dma_channel),
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
+    dma_line = info->setup->dma_channel;
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    dma_line = info->setup->dma_stream;
+#endif
+
+    HAL_WRITE_UINT32(info->setup->dma_base +
+                     CYGHWR_HAL_STM32_DMA_CPAR(dma_line),
                      info->setup->adc_base + CYGHWR_HAL_STM32_ADC_DR);
     HAL_WRITE_UINT32(info->setup->dma_base +
-                     CYGHWR_HAL_STM32_DMA_CMAR(info->setup->dma_channel),
+                     CYGHWR_HAL_STM32_DMA_CMAR(dma_line),
                      (CYG_ADDRESS) info->dma_buf);
     HAL_WRITE_UINT32(info->setup->dma_base +
-                     CYGHWR_HAL_STM32_DMA_CNDTR(info->setup->dma_channel),
+                     CYGHWR_HAL_STM32_DMA_CNDTR(dma_line),
                      0);
     HAL_WRITE_UINT32(info->setup->dma_base +
-                     CYGHWR_HAL_STM32_DMA_CCR(info->setup->dma_channel),
+                     CYGHWR_HAL_STM32_DMA_CCR(dma_line),
                      CYGHWR_HAL_STM32_DMA_CCR_TCIE |
                      CYGHWR_HAL_STM32_DMA_CCR_TEIE |
                      CYGHWR_HAL_STM32_DMA_CCR_CIRC |
                      CYGHWR_HAL_STM32_DMA_CCR_MINC |
                      CYGHWR_HAL_STM32_DMA_CCR_PSIZE16 |
-                     CYGHWR_HAL_STM32_DMA_CCR_MSIZE16);
+                     CYGHWR_HAL_STM32_DMA_CCR_MSIZE16
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+                     | CYGHWR_HAL_STM32_DMA_CCR_CHSEL(info->setup->dma_channel)
+#endif
+                     );
 
+    adc_diag("ADC clock is %dHz\n", adc_clock);
     // Compute duration of a single cycle in pico-seconds
     tmp = 1000000000000LL / adc_clock;
     // Compute tenths of cycles for target sample time
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     tmp = (info->setup->sample_time * 1000000 * 10) / tmp;
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    // cycles_table isn't multiplayed by 10
+    tmp = (info->setup->sample_time * 1000000) / tmp;
+#endif
     cycles = tmp;
-    
+
     adc_diag("Setting ADC sample time to %d us (%d.%d cycles)\n",
              info->setup->sample_time, cycles / 10, cycles % 10);
-    
+
     // Find best matching SMPR value
     if (cycles > cycles_table[7]) {
         adc_diag("ADC sample time too long\n");
@@ -541,11 +622,11 @@ stm32_adc_init_device(cyg_adc_device *device)
             if (cycles > cycles_table[smpr])
                 break;
     }
-    
+
     // Expand SMPR value to all channels
     for (i = 0; i < 10; i++)
         smpr |= smpr << 3;
-    
+
     // Set sampling time
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_SMPR1, smpr);
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_SMPR2, smpr);
@@ -567,26 +648,33 @@ stm32_adc_update_sequence(cyg_adc_device *device)
     cyg_uint32 sqr1 = 0;
     cyg_uint32 sqr2 = 0;
     cyg_uint32 sqr3 = 0;
-    
+    cyg_uint8 dma_line; // depending on family it's channel or stream
+
     adc_diag("Updating regular group\n");
-    
+
     // Disable ADC
     HAL_READ_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     cr &= ~CYGHWR_HAL_STM32_ADC_CR2_ADON;
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
 
+#if defined(CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
+    dma_line = info->setup->dma_channel;
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    dma_line = info->setup->dma_stream;
+#endif
+
     // Disable DMA
     HAL_READ_UINT32(info->setup->dma_base +
-                    CYGHWR_HAL_STM32_DMA_CCR(info->setup->dma_channel), cr);
+                    CYGHWR_HAL_STM32_DMA_CCR(dma_line), cr);
     cr &= ~CYGHWR_HAL_STM32_DMA_CCR_EN;
     HAL_WRITE_UINT32(info->setup->dma_base +
-                     CYGHWR_HAL_STM32_DMA_CCR(info->setup->dma_channel), cr);
+                     CYGHWR_HAL_STM32_DMA_CCR(dma_line), cr);
 
     // Initialize scanning sequence (regular group)
     for (i = 0; i < 18; i++) {
         if (!(info->chan_mask & (1 << i)))
             continue;
-        
+
         if (count < 6) {
             sqr3 |= CYGHWR_HAL_STM32_ADC_SQRx_SQ(count, i);
         } else if (count < 12) {
@@ -598,29 +686,30 @@ stm32_adc_update_sequence(cyg_adc_device *device)
         }
         count++;
     }
-    
-    sqr1 |= CYGHWR_HAL_STM32_ADC_SQR1_L(count - 1);
-    
+
+    if (count > 0)
+        sqr1 |= CYGHWR_HAL_STM32_ADC_SQR1_L(count - 1);
+
     adc_diag("sqr1: %p sqr2: %p sqr3: %p\n",
              (void *) sqr1, (void *) sqr2, (void *) sqr3);
-    
+
     // Write sequence registers
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_SQR1, sqr1);
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_SQR2, sqr2);
     HAL_WRITE_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_SQR3, sqr3);
-    
+
     // Update DMA
     HAL_WRITE_UINT32(info->setup->dma_base +
-                     CYGHWR_HAL_STM32_DMA_CNDTR(info->setup->dma_channel),
+                     CYGHWR_HAL_STM32_DMA_CNDTR(dma_line),
                      count);
-    
+
     // Enable DMA
     HAL_READ_UINT32(info->setup->dma_base +
-                    CYGHWR_HAL_STM32_DMA_CCR(info->setup->dma_channel), cr);
+                    CYGHWR_HAL_STM32_DMA_CCR(dma_line), cr);
     cr |= CYGHWR_HAL_STM32_DMA_CCR_EN;
     HAL_WRITE_UINT32(info->setup->dma_base +
-                     CYGHWR_HAL_STM32_DMA_CCR(info->setup->dma_channel), cr);
-    
+                     CYGHWR_HAL_STM32_DMA_CCR(dma_line), cr);
+
     // Enable ADC
     HAL_READ_UINT32(info->setup->adc_base + CYGHWR_HAL_STM32_ADC_CR2, cr);
     cr |= CYGHWR_HAL_STM32_ADC_CR2_ADON;

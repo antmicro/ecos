@@ -74,16 +74,36 @@ static const cyg_uint32 stm32_adc_pins1[] = {
 // ADC setup
 static const stm32_adc_setup stm32_adc_setup1 = {
     .adc_base       = CYGHWR_HAL_STM32_ADC1,
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     .dma_base       = CYGHWR_HAL_STM32_DMA1,
     .dma_int_vector = CYGNUM_HAL_INTERRUPT_DMA1_CH1,
     .dma_int_pri    = CYGNUM_DEVS_ADC_CORTEXM_STM32_ADC1_DMA_INT_PRI,
     .dma_channel    = 1,
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    .dma_base       = CYGHWR_HAL_STM32_DMA2,
+    .dma_int_vector = CYGNUM_HAL_INTERRUPT_DMA2_STR0,
+    .dma_stream     = 0,
+    .dma_channel    = 0,
+#endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1
+    .dma_int_pri    = CYGNUM_DEVS_ADC_CORTEXM_STM32_ADC1_DMA_INT_PRI,
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     .tim_base       = CYGHWR_HAL_STM32_TIM3,
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    .tim_base       = CYGHWR_HAL_STM32_TIM2,
+#endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1
     .pins           = stm32_adc_pins1,
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     .extsel         = 4,
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    .extsel         = 6,
+#endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1
     .sample_time    = CYGNUM_DEVS_ADC_CORTEXM_STM32_ADC1_SAMPLE_TIME,
     .adc_clkena     = CYGHWR_HAL_STM32_ADC1_CLOCK,
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1)
     .tim_clkena     = CYGHWR_HAL_STM32_TIM3_CLOCK,
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+    .tim_clkena     = CYGHWR_HAL_STM32_TIM2_CLOCK,
+#endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F1
 };
 
 // ADC DMA buffer
