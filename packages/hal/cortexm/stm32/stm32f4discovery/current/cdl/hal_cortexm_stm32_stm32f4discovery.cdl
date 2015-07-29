@@ -177,8 +177,9 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
      cdl_option CYGNUM_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL {
          display          "Diagnostic serial port"
          active_if        CYGPRI_HAL_VIRTUAL_VECTOR_CONSOLE_CHANNEL_CONFIGURABLE
-         flavor data
-         calculated       0
+         flavor           data
+         default_value    0
+         legal_values     { 0 to 5 }
          description      "
             The STM32F4-Discovery board has one serial port enabled. This option
             informs the rest of the system which port will be used for
