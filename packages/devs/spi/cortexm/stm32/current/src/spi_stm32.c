@@ -103,7 +103,8 @@ static void stm32_dma_rx_callback( hal_stm32_dma_stream *stream, cyg_uint32 coun
 
 #if (defined (CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS1) && (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS1_BBUF_SIZE > 0)) || \
   (defined (CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS2) && (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS2_BBUF_SIZE > 0)) || \
-  (defined (CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS3) && (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS3_BBUF_SIZE > 0))
+  (defined (CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS3) && (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS3_BBUF_SIZE > 0)) || \
+  (defined (CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS5) && (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_BBUF_SIZE > 0))
 static cyg_uint16 dma_tx_null __attribute__((section (".sram"))) = 0xFFFF;
 static cyg_uint16 dma_rx_null __attribute__((section (".sram"))) = 0xFFFF;
 
@@ -324,6 +325,61 @@ cyg_spi_cortexm_stm32_bus_t cyg_spi_stm32_bus3 = {
   .dma_rx_stream.desc                 = CYGHWR_HAL_STM32_SPI3_DMA_RX,
   .dma_rx_stream.callback             = stm32_dma_rx_callback,
   .dma_rx_stream.data                 = (CYG_ADDRWORD)&cyg_spi_stm32_bus3,
+
+
+};
+#endif
+
+#ifdef CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS5
+static const cyg_uint32 bus5_cs_gpio_list[] = { CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS5_CS_GPIOS };
+static const cyg_uint32 bus5_spi_gpio_list[] = { CYGHWR_HAL_STM32_SPI5_SCK,
+                                                 CYGHWR_HAL_STM32_SPI5_MISO,
+                                                 CYGHWR_HAL_STM32_SPI5_MOSI };
+
+#if (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_BBUF_SIZE > 0)
+static cyg_uint8 bus5_tx_bbuf [CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_BBUF_SIZE]
+  __attribute__((aligned (2), section (".sram"))) = { 0 };
+static cyg_uint8 bus5_rx_bbuf [CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_BBUF_SIZE]
+  __attribute__((aligned (2), section (".sram"))) = { 0 };
+#endif
+
+static const cyg_spi_cortexm_stm32_bus_setup_t bus5_setup = {
+  .apb_freq                         = &hal_stm32_pclk1,
+  .spi_reg_base                     = CYGHWR_HAL_STM32_SPI5,
+  .spi_enable                       = CYGHWR_HAL_STM32_SPI5_CLOCK,
+  .cs_gpio_num                      = sizeof (bus5_cs_gpio_list)/sizeof(cyg_uint32),
+  .cs_gpio_list                     = bus5_cs_gpio_list,
+  .spi_gpio_list                    = bus5_spi_gpio_list,
+  .spi_gpio_remap                   = CYGHWR_HAL_STM32_SPI5_REMAP_CONFIG,
+  .dma_tx_intr_pri                  = CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_TXINTR_PRI,
+  .dma_rx_intr_pri                  = CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_RXINTR_PRI,
+
+#if (CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_BBUF_SIZE > 0)
+  .bbuf_size                        = CYGNUM_DEVS_SPI_CORTEXM_STM32_BUS5_BBUF_SIZE,
+  .bbuf_tx                          = bus5_tx_bbuf,
+  .bbuf_rx                          = bus5_rx_bbuf,
+#else
+  .bbuf_size                        = 0,
+#endif
+};
+
+cyg_spi_cortexm_stm32_bus_t cyg_spi_stm32_bus5 = {
+  .spi_bus.spi_transaction_begin    = stm32_transaction_begin,
+  .spi_bus.spi_transaction_transfer = stm32_transaction_transfer,
+  .spi_bus.spi_transaction_tick     = stm32_transaction_tick,
+  .spi_bus.spi_transaction_end      = stm32_transaction_end,
+  .spi_bus.spi_get_config           = stm32_get_config,
+  .spi_bus.spi_set_config           = stm32_set_config,
+  .setup                            = &bus5_setup,
+  .cs_up                            = false,
+
+  .dma_tx_stream.desc                 = CYGHWR_HAL_STM32_SPI5_DMA_TX,
+  .dma_tx_stream.callback             = stm32_dma_tx_callback,
+  .dma_tx_stream.data                 = (CYG_ADDRWORD)&cyg_spi_stm32_bus5,
+
+  .dma_rx_stream.desc                 = CYGHWR_HAL_STM32_SPI5_DMA_RX,
+  .dma_rx_stream.callback             = stm32_dma_rx_callback,
+  .dma_rx_stream.data                 = (CYG_ADDRWORD)&cyg_spi_stm32_bus5,
 
 
 };
@@ -573,6 +629,10 @@ stm32_spi_init(void)
 
 #ifdef CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS3
   stm32_spi_bus_setup (&cyg_spi_stm32_bus3);
+#endif
+
+#ifdef CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS5
+  stm32_spi_bus_setup (&cyg_spi_stm32_bus5);
 #endif
 }
 

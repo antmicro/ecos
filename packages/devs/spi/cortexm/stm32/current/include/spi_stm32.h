@@ -178,5 +178,9 @@ externC cyg_spi_cortexm_stm32_bus_t cyg_spi_stm32_bus2;
 externC cyg_spi_cortexm_stm32_bus_t cyg_spi_stm32_bus3;
 #endif
 
+#ifdef CYGHWR_DEVS_SPI_CORTEXM_STM32_BUS5
+externC cyg_spi_cortexm_stm32_bus_t cyg_spi_stm32_bus5;
+#endif
+
 //=============================================================================
 #endif // CYGONCE_DEVS_SPI_CORTEXM_STM32_H
