@@ -902,6 +902,57 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 		}
     }
 
+    cdl_component CYGHWR_HAL_STM32_SPI5_REMAP {
+        display       "Remap SPI bus 5 pins"
+        active_if     CYGHWR_HAL_CORTEXM_STM32_CONNECTIVITY
+        flavor        bool
+        default_value 0
+
+        description   "Remap SPI bus 5 to alternate set of pins.
+                       This option is only available on connectivity line
+                       devices."
+
+		cdl_option CYGHWR_HAL_STM32_SPI5_PIN_MOSI {
+			display       "MOSI pin"
+			active_if     (CYGHWR_HAL_STM32_SPI5_REMAP == 1)
+			flavor        data
+			default_value { "F, 9" }
+			legal_values  { "F, 9" "F, 11" }
+
+			description   "This option specifies the pin of MOSI."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI5_PIN_MISO {
+			display       "MISO pin"
+			active_if     (CYGHWR_HAL_STM32_SPI5_REMAP == 1)
+			flavor        data
+			default_value { "F, 8" }
+			legal_values  { "F, 8" "H, 7" }
+
+			description   "This option specifies the pin of MISO."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI5_PIN_SCK {
+			display       "SCK pin"
+			active_if     (CYGHWR_HAL_STM32_SPI5_REMAP == 1)
+			flavor        data
+			default_value { "F, 7" }
+			legal_values  { "F, 7" "H, 6" }
+
+			description   "This option specifies the pin of SCK."
+		}
+
+		cdl_option CYGHWR_HAL_STM32_SPI5_PUPD {
+			display       "PUPD out resistor"
+			active_if     (CYGHWR_HAL_STM32_SPI5_REMAP == 1)
+			flavor        data
+			default_value { "NONE" }
+			legal_values  { "NONE" "PULLUP" "PULLDOWN" }
+
+			description   "This option specifies the PUPD mode."
+		}
+    }
+
     cdl_option CYGFUN_HAL_CORTEXM_STM32_PROFILE_TIMER {
         display       "Use TIM2 for gprof profiling"
         active_if     CYGPKG_PROFILE_GPROF
