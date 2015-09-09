@@ -807,7 +807,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 			active_if     (CYGHWR_HAL_STM32_SPI2_REMAP == 1)
 			flavor        data
 			default_value { "B, 15" }
-			legal_values  { "B, 15" "C, 3" "I, 3" }
+			legal_values  { (CYGHWR_HAL_CORTEXM == "M7") ? "C, 1" : "" "B, 15" "C, 3" "I, 3" }
 
 			description   "This option specifies the pin of MOSI."
 		}
@@ -827,7 +827,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 			active_if     (CYGHWR_HAL_STM32_SPI2_REMAP == 1)
 			flavor        data
 			default_value { "B, 13" }
-			legal_values  { "B, 10" "B, 13" "D, 3" "I, 1" }
+			legal_values  { (CYGHWR_HAL_CORTEXM == "M7") ? "A, 9" : "" "B, 10" "B, 13" "D, 3" "I, 1" }
 
 			description   "This option specifies the pin of SCK."
 		}
