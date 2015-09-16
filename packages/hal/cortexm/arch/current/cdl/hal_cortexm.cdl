@@ -185,6 +185,16 @@ cdl_package CYGPKG_HAL_CORTEXM {
                 This option determines the number of breakpoints supported by the HAL."
     }
 
+    cdl_option HAL_IDLE_THREAD_ACTION_ENABLE {
+            display       "Wait for interrupts in idle thread"
+            flavor        bool
+            default_value 1
+            description   "
+                Disable this option in order to freely communicate with
+                processor, especially to load application. It should be
+                enabled in final projects."
+    }
+
     cdl_component CYGBLD_ARCH_CPUFLAGS {
         display      "Architecture related build flags"
         flavor data

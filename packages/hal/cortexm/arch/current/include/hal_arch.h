@@ -334,7 +334,11 @@ __externC void hal_longjmp(hal_jmp_buf env, int val);
 // doesn't define anything.
 
 #ifndef HAL_IDLE_THREAD_ACTION
+#ifdef HAL_IDLE_THREAD_ACTION_ENABLE
 #define HAL_IDLE_THREAD_ACTION(__count) __asm__ volatile ( "wfi\n" )
+#else
+#define HAL_IDLE_THREAD_ACTION(__count)
+#endif //HAL_IDLE_THREAD_ACTION_ENABLE
 #endif
 
 //==========================================================================
