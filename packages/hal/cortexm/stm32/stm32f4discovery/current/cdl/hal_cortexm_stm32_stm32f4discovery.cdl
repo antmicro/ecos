@@ -52,13 +52,8 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F4DISCOVERY {
     parent        CYGPKG_HAL_CORTEXM_STM32
 
     requires      { CYGHWR_HAL_CORTEXM == "M4" }
-    requires      { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F4" &&
-                    CYGHWR_HAL_CORTEXM_STM32_F4 == "F407VG" }
-    #requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_SOURCE == "HSE" }
-    #requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_PREDIV == 8 }
-    #requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLL_MUL == 336 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F4" }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_SYSCLK_DIV == 2 }
-    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLLQ_DIV == 7 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_HCLK_DIV == 1 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK1_DIV == 4 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK2_DIV == 2 }
