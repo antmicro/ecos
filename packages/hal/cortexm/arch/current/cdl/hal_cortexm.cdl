@@ -219,7 +219,8 @@ cdl_package CYGPKG_HAL_CORTEXM {
             flavor     data
             no_define
 
-            calculated { (CYGHWR_HAL_CORTEXM != "M4") ? "-mcpu=cortex-m4" : "no_exclude" }
+            #temporary hack when using -mcpu=cortex-m4 flag in stm32f7 target (compiler issue)
+            calculated { (CYGHWR_HAL_CORTEXM != "M4") ? "no_exclude" : "no_exclude" }
         }
 
         cdl_component CYGBLD_ARCH_CPUFLAG_FLOAT_ABI {
