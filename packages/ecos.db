@@ -7260,6 +7260,16 @@ package CYGPKG_DEVS_I2C_CORTEXM_STM32 {
               I2C peripherals in STM32 processors."
 }
 
+package CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32 {
+  alias   { "Watchdog driver for the stm32 chip" devices_watchdog_stm32 device_watchdog_stm32 }
+  directory devs/watchdog/cortexm/stm32
+  script          watchdog_stm32.cdl
+  hardware
+        description "
+           This package provides a watchdog driver implementation for the
+           stm32 chip."
+}
+
 target stm3210e_eval {
         alias { "ST STM3210E EVAL board" stm3210e }
         packages { CYGPKG_HAL_CORTEXM
@@ -7331,6 +7341,7 @@ target stm32f4discovery {
                 CYGPKG_DEVS_SPI_CORTEXM_STM32
                 CYGPKG_IO_ADC
                 CYGPKG_DEVS_ADC_CORTEXM_STM32
+                CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32
         }
         description "The stm32f4discovery target provides the packages needed
         to run eCos on the STMicroelectronics STM32F4-Discovery board."

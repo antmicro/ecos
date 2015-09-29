@@ -1,0 +1,166 @@
+# ====================================================================    
+#
+#      watchdog_stm32.cdl
+#
+#      eCos watchdog for the stm32 driver configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System. 
+## Copyright (C) 2012 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under
+## the terms of the GNU General Public License as published by the Free  
+## Software Foundation; either version 2 or (at your option) any later
+## version.
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+## for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with eCos; if not, write to the Free Software Foundation, Inc.,
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## As a special exception, if other files instantiate templates or use
+## macros or inline functions from this file, or you compile this file
+## and link it with other works to produce a work based on this file,
+## this file does not by itself cause the resulting work to be covered by
+## the GNU General Public License. However the source code for this file
+## must still be made available in accordance with section (3) of the GNU
+## General Public License v2.
+##
+## This exception does not invalidate any other reasons why a work based
+## on this file might be covered by the GNU General Public License.
+## -------------------------------------------
+## ####ECOSGPLCOPYRIGHTEND####
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      Ilija Stanislevik
+# Contributors:
+# Date:           2012-12-28
+#
+#####DESCRIPTIONEND####
+#
+# ====================================================================
+
+cdl_package CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32 {
+    parent        CYGPKG_IO_WATCHDOG
+    active_if     CYGPKG_IO_WATCHDOG
+    display       "STM32 IWDG watchdog driver"
+    requires      CYGPKG_HAL_CORTEXM_STM32
+    hardware
+    compile       watchdog_stm32.cxx
+    implements    CYGINT_WATCHDOG_HW_IMPLEMENTATIONS
+    implements    CYGINT_WATCHDOG_RESETS_ON_TIMEOUT
+    active_if     CYGIMP_WATCHDOG_HARDWARE
+    description   "
+        Device driver for STM32's Independent Watchdog (IWDG). Once started
+        in application software, IWDG will reset the MCU upon expiration of
+        timeout. Therefore, application must reset the IWDG before the end of
+        the timeout. IWDG mechanism gives no possibility to install service
+        routine instead of MCU reset.
+        "
+
+    cdl_option CYGIMP_WATCHDOG_HARDWARE {
+        parent        CYGPKG_IO_WATCHDOG_IMPLEMENTATION
+        display       "Hardware watchdog"
+        default_value 1
+        implements    CYGINT_WATCHDOG_IMPLEMENTATIONS
+    }
+
+    cdl_option CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_PRESCALER {
+        display       "Prescaler divider value"
+        flavor        data
+        legal_values  {4 8 16 32 64 128 256}
+        default_value 256
+        description   "
+            This parameter controls the clock of watchdog counter.
+            Input to the prescaler is (nominally) 40kHz LSI oscilator of stm32.
+            CAUTION: LSI frequency can exact anything from 30kHz to 60kHz,
+            depending on the chip. Calibrate the LSI if a more accurate timing is
+            required.
+            "
+    }
+
+    cdl_option CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_MIN_WD_TIMEOUT_US {
+        display       "Smallest possible watchdog timeout, us"
+        flavor        data
+        calculated    CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_PRESCALER * 25
+        description   "
+            Smallest possible watchdog timeout in microseconds for 40kHz LSI
+            clock.
+            "
+    }
+
+    cdl_option CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_MAX_WD_TIMEOUT_US {
+        display     "Largest possible watchdog timeout, us"
+        flavor      data
+        calculated  CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_MIN_WD_TIMEOUT_US * 4096
+        description "
+            Largest possible watchdog timeout in microseconds for 40kHz LSI
+            clock.
+            "
+    }
+
+    cdl_option CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_RELOAD {
+        display        "Watchdog reload value"
+        flavor         data
+        legal_values   { 0 to 4095 }
+        default_value  4095
+        description    "
+            If not reset, watchdog will count
+            CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_RELOAD+1 prescaled clock periods
+            before resetting the MCU.
+            "
+    }
+
+    cdl_option CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_WD_TIMEOUT_US {
+        display     "Watchdog timeout, us"
+        flavor      data
+        calculated  CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_MIN_WD_TIMEOUT_US \
+                        * ( CYGNUM_DEVS_WATCHDOG_CORTEXM_STM32_RELOAD + 1 )
+        description "
+            Watchdog timeout in microseconds for 40kHz LSI clock.
+            "
+    }
+
+    cdl_component CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32_OPTIONS {
+        display     "STM32 watchdog build options"
+        flavor      none
+        description "
+            Package specific build options including control over
+            compiler flags used only in building this package,
+            and details of which tests are built.
+            "
+
+        cdl_option CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32_CFLAGS_ADD {
+            display       "Additional compiler flags"
+            flavor        data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the watchdog device. These flags are used in
+                addition to the set of global flags.
+                "
+        }
+
+        cdl_option CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32_CFLAGS_REMOVE {
+            display       "Suppressed compiler flags"
+            flavor        data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building the watchdog device. These flags are removed from
+                the set of global flags if present.
+                "
+        }
+    }
+}
+
+# EOF watchdog_stm32.cdl
