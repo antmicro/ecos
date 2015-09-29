@@ -87,7 +87,7 @@ cdl_package CYGPKG_DEVS_FLASH_STM32 {
         display         "Program/erase parallelism"
         flavor          data
         legal_values    { 8 16 32 64 }
-        active_if       { ((CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F2") || (CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F4")) }
+        active_if       { ((CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F2") || (CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F4")) || (CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F7") }
         default_value   32
         description     "
             The Flash interface of the STM32 F2 and F4 families can program or erase

@@ -194,10 +194,18 @@ static int stm32_flash_hw_program( volatile STM32_TYPE* addr, const STM32_TYPE *
       defined(CYGHWR_HAL_CORTEXM_STM32_F407ZE) || \
       defined(CYGHWR_HAL_CORTEXM_STM32_F417IE) || \
       defined(CYGHWR_HAL_CORTEXM_STM32_F417VE) || \
-      defined(CYGHWR_HAL_CORTEXM_STM32_F417ZE)
+      defined(CYGHWR_HAL_CORTEXM_STM32_F417ZE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F745IE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F745VE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F745ZE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746BE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746IE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746NE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746VE) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746ZE)
 // 512K
 #define STM32_FLASH_SIZE              (512*1024)
-#define xxxSTM32_FLASH_BLOCK_INFO        { { { 16*1024, 4 } , { 64*1024, 1 }, { 128*1024, 3 } } }   // guesswork at present - documentation is elusive
+#define STM32_FLASH_BLOCK_INFO        { { { 16*1024, 4 } , { 64*1024, 1 }, { 128*1024, 3 } } }   // guesswork at present - documentation is elusive
 #define STM32_FLASH_NUM_BLOCK_INFOS   3
 
 #elif defined(CYGHWR_HAL_CORTEXM_STM32_F205RF) || \
@@ -225,8 +233,20 @@ static int stm32_flash_hw_program( volatile STM32_TYPE* addr, const STM32_TYPE *
       defined(CYGHWR_HAL_CORTEXM_STM32_F407ZG) || \
       defined(CYGHWR_HAL_CORTEXM_STM32_F417IG) || \
       defined(CYGHWR_HAL_CORTEXM_STM32_F417VG) || \
-      defined(CYGHWR_HAL_CORTEXM_STM32_F417ZG)
-
+      defined(CYGHWR_HAL_CORTEXM_STM32_F417ZG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F745IG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F745VG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F745ZG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746BG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746IG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746NG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746VG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F746ZG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F756BG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F756IG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F756NG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F756VG) || \
+      defined(CYGHWR_HAL_CORTEXM_STM32_F756ZG)
 // 1024K
 #define STM32_FLASH_SIZE              (1024*1024)
 #define STM32_FLASH_BLOCK_INFO        { { { 16*1024, 4 } , { 64*1024, 1 }, { 128*1024, 7 } } }

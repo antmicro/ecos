@@ -178,15 +178,17 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
             display          "F7 processor family selection"
             flavor           data
             active_if        { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F7" }
-            default_value    {"F707IG"}
-	    # NOTES: Copy from STM32_F4
-            legal_values     {"F705RG" "F705VG" "F705ZG"
-                              "F715RG" "F715VG" "F715ZG"
-                              "F707IG" "F707VG" "F707ZG"
-                              "F707IE" "F707VE" "F707ZE"
-                              "F717IG" "F717VG" "F717ZG"
-                              "F717IE" "F717VE" "F717ZE"
+            default_value    {"F746NG"}
+            legal_values     {
+                                "F745IG" "F745VG" "F745ZG"
+                                "F745IE" "F745VE" "F745ZE"
+                                "F746BE" "F746BG" "F746IE"
+                                "F746IG" "F746NE" "F746NG"
+                                "F746VE" "F746VG" "F746ZE"
+                                "F746ZG" "F756BG" "F756IG"
+                                "F756NG" "F756VG" "F756ZG"
                              }
+
             requires         { CYGHWR_HAL_CORTEXM_STM32 == CYGHWR_HAL_CORTEXM_STM32_F7 }
             description "
                 This option specifies which member of the STM32F7 family is
