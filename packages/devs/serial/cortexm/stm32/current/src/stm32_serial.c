@@ -557,10 +557,10 @@ stm32_serial_config_port(serial_channel *chan, cyg_serial_info_t *new_config, bo
 
 #ifdef CYGOPT_IO_SERIAL_FLOW_CONTROL_HW
     // Handle RTS by hand but leave CTS to be handled by the UART hardware
-     if ( (new_config->flags & CYGNUM_SERIAL_FLOW_RTSCTS_TX) && stm32_chan->cts_pin != CYGHWR_HAL_STM32_GPIO_NONE )
-     {
-         cr3 |= CYGHWR_HAL_STM32_UART_CR3_CTSE;
-     }
+    if ( (new_config->flags & CYGNUM_SERIAL_FLOW_RTSCTS_TX) && stm32_chan->cts_pin != CYGHWR_HAL_STM32_GPIO_NONE )
+    {
+        cr3 |= CYGHWR_HAL_STM32_UART_CR3_CTSE;
+    }
 #endif
 
     if(1)
@@ -636,20 +636,19 @@ stm32_serial_putc_interrupt(serial_channel *chan, unsigned char c)
     const CYG_ADDRWORD base = stm32_chan->base;
     cyg_uint32 status;
 
-    #ifdef CYGHWR_HAL_CORTEXM_M7
+#ifdef CYGHWR_HAL_CORTEXM_M7
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, status );
-    #else
+#else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, status );
-    #endif
+#endif
 
     if (status & CYGHWR_HAL_STM32_UART_SR_TXE)
     {
-	#ifdef CYGHWR_HAL_CORTEXM_M7
-	//HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_SR_TXE);
-	HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c );
-	#else
+#ifdef CYGHWR_HAL_CORTEXM_M7
+        HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c );
+#else
         HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
-	#endif
+#endif
         return true;
     }
 
@@ -665,19 +664,19 @@ stm32_serial_putc_polled(serial_channel *chan, unsigned char c)
     const CYG_ADDRWORD base = stm32_chan->base;
     cyg_uint32 status;
 
-     do {
-	#ifdef CYGHWR_HAL_CORTEXM_M7
-	 HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, status );
-	#else
-         HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, status );
-	#endif
-     } while ((status & CYGHWR_HAL_STM32_UART_SR_TXE) == 0);
+    do {
+#ifdef CYGHWR_HAL_CORTEXM_M7
+        HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, status );
+#else
+        HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, status );
+#endif
+    } while ((status & CYGHWR_HAL_STM32_UART_SR_TXE) == 0);
 
-    #ifdef CYGHWR_HAL_CORTEXM_M7
-     HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c /* '?'*/);
-    #else
-     HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
-    #endif
+#ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_TDR, c /* '?'*/);
+#else
+    HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c );
+#endif
 
     return true;
 }
@@ -693,11 +692,12 @@ stm32_serial_getc_interrupt(serial_channel *chan)
     CYG_WORD32 c;
 
     // Read data
-    #ifdef CYGHWR_HAL_CORTEXM_M7
+#ifdef CYGHWR_HAL_CORTEXM_M7
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
-    #else
+#else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c);
-    #endif
+#endif
+
     return (unsigned char) (c&0xFF);
 }
 
@@ -712,18 +712,18 @@ stm32_serial_getc_polled(serial_channel *chan)
     cyg_uint32 c;
 
     do {
-	#ifdef CYGHWR_HAL_CORTEXM_M7
-	HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, stat );
-	#else
+#ifdef CYGHWR_HAL_CORTEXM_M7
+    	HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_ISR, stat );
+#else
         HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_SR, stat );
-	#endif
+#endif
     } while ((stat & CYGHWR_HAL_STM32_UART_SR_RXNE) == 0);
 
-    #ifdef CYGHWR_HAL_CORTEXM_M7
+#ifdef CYGHWR_HAL_CORTEXM_M7
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
-    #else
+#else
     HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c);
-    #endif
+#endif
 
     return (unsigned char) (c&0xFF);
 }
@@ -876,11 +876,11 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
     cyg_uint32 ret = CYG_ISR_HANDLED;
     cyg_drv_interrupt_acknowledge(vector);
 
-    #ifdef CYGHWR_HAL_CORTEXM_M7
+#ifdef CYGHWR_HAL_CORTEXM_M7
     HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
-    #else
+#else
     HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_SR, stat);
-    #endif
+#endif
 
     if( stat & CYGHWR_HAL_STM32_UART_SR_RXNE )
     {
@@ -892,11 +892,11 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
 
             if( next == STM32_RXBUFSIZE ) next = 0;
 
-	    #ifdef CYGHWR_HAL_CORTEXM_M7
-	    HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
-	    #else
+#ifdef CYGHWR_HAL_CORTEXM_M7
+	        HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_RDR, c);
+#else
             HAL_READ_UINT32( base + CYGHWR_HAL_STM32_UART_DR, c);
-	    #endif
+#endif
 
             if( next != stm32_chan->buf_tail )
             {
@@ -909,12 +909,11 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
                 // TODO: deal with buffer overflow
             }
 
-	    #ifdef CYGHWR_HAL_CORTEXM_M7
-	    HAL_WRITE_UINT32(base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_SR_RXNE);
-	    HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
-	    #else
+#ifdef CYGHWR_HAL_CORTEXM_M7
+            HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
+#else
             HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_SR, stat);
-	    #endif
+#endif
         }
     }
     else if( stat & CYGHWR_HAL_STM32_UART_SR_TXE )
@@ -928,17 +927,21 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
     }
 
 
+#ifdef CYGHWR_HAL_CORTEXM_M7
+    if( stat & CYGHWR_HAL_STM32_UART_ISR_CTS )
+    {
+        HAL_WRITE_UINT32(base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_ICR_CTSCF);
+        HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
+    }
+#else
     if( stat & CYGHWR_HAL_STM32_UART_SR_CTS )
     {
         // Clear CTS status if we see it.
         stat &= ~CYGHWR_HAL_STM32_UART_SR_CTS;
 
-	#ifdef CYGHWR_HAL_CORTEXM_M7
-	HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_ICR, CYGHWR_HAL_STM32_UART_SR_CTS);
-	#else
         HAL_WRITE_UINT32( base + CYGHWR_HAL_STM32_UART_SR, stat );
-	#endif
     }
+#endif
 
     if( stat & (CYGHWR_HAL_STM32_UART_SR_FE|CYGHWR_HAL_STM32_UART_SR_NE|CYGHWR_HAL_STM32_UART_SR_ORE) )
     {
@@ -971,11 +974,11 @@ stm32_serial_DSR(cyg_vector_t vector, cyg_ucount32 count, cyg_addrword_t data)
         (chan->callbacks->rcv_char)(chan, c);
     }
 
-    #ifdef CYGHWR_HAL_CORTEXM_M7
+#ifdef CYGHWR_HAL_CORTEXM_M7
     HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, stat);
-    #else
+#else
     HAL_READ_UINT32(base + CYGHWR_HAL_STM32_UART_SR, stat);
-    #endif
+#endif
 
     if( stm32_chan->tx_active && stat & CYGHWR_HAL_STM32_UART_SR_TXE )
     {

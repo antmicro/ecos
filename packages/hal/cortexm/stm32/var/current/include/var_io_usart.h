@@ -60,15 +60,17 @@
 // UARTs
 
 #ifdef CYGHWR_HAL_CORTEXM_M7
+#define CYGHWR_HAL_STM32_UART_CR1               0x00
+#define CYGHWR_HAL_STM32_UART_CR2               0x04
+#define CYGHWR_HAL_STM32_UART_CR3               0x08
+#define CYGHWR_HAL_STM32_UART_BRR               0x0C
+#define CYGHWR_HAL_STM32_UART_GTPR              0x10
+#define CYGHWR_HAL_STM32_UART_RTOR              0x14
+#define CYGHWR_HAL_STM32_UART_RQR               0x18
 #define CYGHWR_HAL_STM32_UART_ISR               0x1C
 #define CYGHWR_HAL_STM32_UART_ICR               0x20
 #define CYGHWR_HAL_STM32_UART_RDR               0x24
 #define CYGHWR_HAL_STM32_UART_TDR               0x28
-#define CYGHWR_HAL_STM32_UART_BRR               0x0c
-#define CYGHWR_HAL_STM32_UART_CR1               0x00
-#define CYGHWR_HAL_STM32_UART_CR2               0x04
-#define CYGHWR_HAL_STM32_UART_CR3               0x08
-#define CYGHWR_HAL_STM32_UART_GTPR              0x10
 
 #else // CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_SR                0x00
@@ -80,7 +82,7 @@
 #define CYGHWR_HAL_STM32_UART_GTPR              0x18
 #endif //else CYGHWR_HAL_CORTEXM_M7
 
-// SR Bits
+// SR/ISR Bits
 
 #define CYGHWR_HAL_STM32_UART_SR_PE             BIT_(0)
 #define CYGHWR_HAL_STM32_UART_SR_FE             BIT_(1)
@@ -92,7 +94,36 @@
 #define CYGHWR_HAL_STM32_UART_SR_TC             BIT_(6)
 #define CYGHWR_HAL_STM32_UART_SR_TXE            BIT_(7)
 #define CYGHWR_HAL_STM32_UART_SR_LBD            BIT_(8)
+#ifndef CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_SR_CTS            BIT_(9)
+#else
+#define CYGHWR_HAL_STM32_UART_ISR_CTSIF         BIT_(9)
+#define CYGHWR_HAL_STM32_UART_ISR_CTS           BIT_(10)
+#define CYGHWR_HAL_STM32_UART_ISR_RTOF          BIT_(11)
+#define CYGHWR_HAL_STM32_UART_ISR_EOBF          BIT_(12)
+#define CYGHWR_HAL_STM32_UART_ISR_ABRE          BIT_(14)
+#define CYGHWR_HAL_STM32_UART_ISR_ABRF          BIT_(15)
+#define CYGHWR_HAL_STM32_UART_ISR_BUSY          BIT_(16)
+#define CYGHWR_HAL_STM32_UART_ISR_CMF           BIT_(17)
+#define CYGHWR_HAL_STM32_UART_ISR_SBKF          BIT_(18)
+#define CYGHWR_HAL_STM32_UART_ISR_TEACK         BIT_(21)
+#endif
+
+
+#ifdef CYGHWR_HAL_CORTEXM_M7
+// ICR Bits (only STM32F7)
+#define CYGHWR_HAL_STM32_UART_ICR_PECF          BIT_(0)
+#define CYGHWR_HAL_STM32_UART_ICR_FECF          BIT_(1)
+#define CYGHWR_HAL_STM32_UART_ICR_NCF           BIT_(2)
+#define CYGHWR_HAL_STM32_UART_ICR_ORECF         BIT_(3)
+#define CYGHWR_HAL_STM32_UART_ICR_IDLECF        BIT_(4)
+#define CYGHWR_HAL_STM32_UART_ICR_TCCF          BIT_(6)
+#define CYGHWR_HAL_STM32_UART_ICR_LBDCF         BIT_(8)
+#define CYGHWR_HAL_STM32_UART_ICR_CTSCF         BIT_(9)
+#define CYGHWR_HAL_STM32_UART_ICR_RTOCF         BIT_(11)
+#define CYGHWR_HAL_STM32_UART_ICR_EOBCF         BIT_(12)
+#define CYGHWR_HAL_STM32_UART_ICR_CMCF          BIT_(17)
+#endif
 
 // BRR bits
 
@@ -107,8 +138,7 @@
 // CR1 bits
 
 #ifdef CYGHWR_HAL_CORTEXM_M7
-// #define CYGHWR_HAL_STM32_UART_CR1_SBK           BIT_(0)
-// #define CYGHWR_HAL_STM32_UART_CR1_RWU           BIT_(1)
+#define CYGHWR_HAL_STM32_UART_CR1_UE            BIT_(0)
 #define CYGHWR_HAL_STM32_UART_CR1_RE            BIT_(2)
 #define CYGHWR_HAL_STM32_UART_CR1_TE            BIT_(3)
 #define CYGHWR_HAL_STM32_UART_CR1_IDLEIE        BIT_(4)
@@ -122,10 +152,12 @@
 #define CYGHWR_HAL_STM32_UART_CR1_WAKE          BIT_(11)
 #define CYGHWR_HAL_STM32_UART_CR1_M_8           0
 #define CYGHWR_HAL_STM32_UART_CR1_M_9           BIT_(12)
-#define CYGHWR_HAL_STM32_UART_CR1_UE            BIT_(0)
-#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+#define CYGHWR_HAL_STM32_UART_CR1_MME           BIT_(13)
+#define CYGHWR_HAL_STM32_UART_CR1_CMIE          BIT_(14)
 #define CYGHWR_HAL_STM32_UART_CR1_OVER8         BIT_(15)
-#endif
+#define CYGHWR_HAL_STM32_UART_CR1_RTOIE         BIT_(26)
+#define CYGHWR_HAL_STM32_UART_CR1_EOBIE         BIT_(27)
+#define CYGHWR_HAL_STM32_UART_CR1_M1            BIT_(28)
 #else // CYGHWR_HAL_CORTEXM_M7
 #define CYGHWR_HAL_STM32_UART_CR1_SBK           BIT_(0)
 #define CYGHWR_HAL_STM32_UART_CR1_RWU           BIT_(1)
@@ -143,6 +175,9 @@
 #define CYGHWR_HAL_STM32_UART_CR1_M_8           0
 #define CYGHWR_HAL_STM32_UART_CR1_M_9           BIT_(12)
 #define CYGHWR_HAL_STM32_UART_CR1_UE            BIT_(13)
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+#define CYGHWR_HAL_STM32_UART_CR1_OVER8         BIT_(15)
+#endif
 #endif // else CYGHWR_HAL_CORTEXM_M7
 
 // CR2 bits
