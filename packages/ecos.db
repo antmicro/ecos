@@ -7260,6 +7260,16 @@ package CYGPKG_DEVS_I2C_CORTEXM_STM32 {
               I2C peripherals in STM32 processors."
 }
 
+package CYGPKG_DEVS_I2C_CORTEXM_STM32F7 {
+  alias   { "STM32 I2C driver" i2c_stm32 }
+  hardware
+  directory devs/i2c/cortexm/stm32f7
+  script    i2c_stm32.cdl
+  description "
+              This package provides a generic I2C device driver for the on-chip
+              I2C peripherals in STM32F7 processors."
+}
+
 package CYGPKG_DEVS_WATCHDOG_CORTEXM_STM32 {
   alias   { "Watchdog driver for the stm32 chip" devices_watchdog_stm32 device_watchdog_stm32 }
   directory devs/watchdog/cortexm/stm32
@@ -7356,7 +7366,7 @@ target stm32f7discovery {
                 CYGPKG_DEVS_FLASH_STM32
                 CYGPKG_IO_SERIAL_CORTEXM_STM32
                 CYGPKG_IO_I2C
-                CYGPKG_DEVS_I2C_CORTEXM_STM32
+                CYGPKG_DEVS_I2C_CORTEXM_STM32F7
                 CYGPKG_IO_SPI
                 CYGPKG_DEVS_SPI_CORTEXM_STM32
         }

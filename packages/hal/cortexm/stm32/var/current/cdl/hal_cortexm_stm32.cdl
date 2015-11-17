@@ -743,6 +743,32 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32 {
 	    }
     }
 
+    cdl_component CYGHWR_HAL_STM32_I2C4_REMAP {
+      display       "Remap I2C bus 4 pins"
+      flavor	      bool
+      default_value 0
+      active_if     CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7
+      description   "Remap I2C bus 4 to alternate set of pins."
+
+        cdl_option CYGHWR_HAL_STM32_I2C4_SDA {
+          display		"SDA"
+          active_if	(CYGHWR_HAL_STM32_I2C4_REMAP == 1)
+          flavor		data
+          default_value	{ "D, 13" }
+          legal_values	{ "D, 13" "F, 15" "H, 12" }
+          description	"This option specifies the SDA pin."
+        }
+
+        cdl_option CYGHWR_HAL_STM32_I2C4_SCL {
+          display		"SCL"
+          active_if	(CYGHWR_HAL_STM32_I2C4_REMAP == 1)
+          flavor		data
+          default_value	{ "D, 12" }
+          legal_values	{ "D, 12" "F, 14" "H, 11" }
+          description	"This option specifies the SCL pin."
+        }
+      }
+
     cdl_component CYGHWR_HAL_STM32_SPI1_REMAP {
         display       "Remap SPI bus 1 pins"
         active_if     CYGHWR_HAL_CORTEXM_STM32_CONNECTIVITY

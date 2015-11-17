@@ -85,7 +85,10 @@
 #define CYGHWR_HAL_STM32_USB_CAN_SRAM   0x40006000
 #elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
 #define CYGHWR_HAL_STM32_I2C3           0x40005C00
-#endif
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7)
+#define CYGHWR_HAL_STM32_I2C4           0x40006000
+#endif /* CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7 */
+#endif /* CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE */
 #define CYGHWR_HAL_STM32_BXCAN1         0x40006400
 #if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
 #define CYGHWR_HAL_STM32_BXCAN2         0x40006800
@@ -1403,7 +1406,7 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 
 //=============================================================================
 // I2C busses
-
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4)
 #define CYGHWR_HAL_STM32_I2C_CR1                0x00
 #define CYGHWR_HAL_STM32_I2C_CR2                0x04
 #define CYGHWR_HAL_STM32_I2C_OAR1               0x08
@@ -1505,7 +1508,125 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 
 #define CYGHWR_HAL_STM32_I2C1_CLOCK             CYGHWR_HAL_STM32_CLOCK( APB1, I2C1 )
 #define CYGHWR_HAL_STM32_I2C2_CLOCK             CYGHWR_HAL_STM32_CLOCK( APB1, I2C2 )
+#elif defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7)
+#define CYGHWR_HAL_STM32_I2C_CR1                  0x00
+#define CYGHWR_HAL_STM32_I2C_CR2                  0x04
+#define CYGHWR_HAL_STM32_I2C_OAR1                 0x08
+#define CYGHWR_HAL_STM32_I2C_OAR2                 0x0C
+#define CYGHWR_HAL_STM32_I2C_TIMINGR              0x10
+#define CYGHWR_HAL_STM32_I2C_TIMEOUTR             0x14
+#define CYGHWR_HAL_STM32_I2C_ISR                  0x18
+#define CYGHWR_HAL_STM32_I2C_ICR                  0x1C
+#define CYGHWR_HAL_STM32_I2C_PECR                 0x20
+#define CYGHWR_HAL_STM32_I2C_RXDR                 0x24
+#define CYGHWR_HAL_STM32_I2C_TXDR                 0x28
+/*******************  Bit definition for I2C_CR1 register  *******************/
+#define CYGHWR_HAL_STM32_I2C_CR1_PE               0x00000001   /*!< Peripheral enable                   */
+#define CYGHWR_HAL_STM32_I2C_CR1_TXIE             0x00000002   /*!< TX interrupt enable                 */
+#define CYGHWR_HAL_STM32_I2C_CR1_RXIE             0x00000004   /*!< RX interrupt enable                 */
+#define CYGHWR_HAL_STM32_I2C_CR1_ADDRIE           0x00000008   /*!< Address match interrupt enable      */
+#define CYGHWR_HAL_STM32_I2C_CR1_NACKIE           0x00000010   /*!< NACK received interrupt enable      */
+#define CYGHWR_HAL_STM32_I2C_CR1_STOPIE           0x00000020   /*!< STOP detection interrupt enable     */
+#define CYGHWR_HAL_STM32_I2C_CR1_TCIE             0x00000040   /*!< Transfer complete interrupt enable  */
+#define CYGHWR_HAL_STM32_I2C_CR1_ERRIE            0x00000080   /*!< Errors interrupt enable             */
+#define CYGHWR_HAL_STM32_I2C_CR1_DFN              0x00000F00   /*!< Digital noise filter                */
+#define CYGHWR_HAL_STM32_I2C_CR1_ANFOFF           0x00001000   /*!< Analog noise filter OFF             */
+#define CYGHWR_HAL_STM32_I2C_CR1_SWRST            0x00002000   /*!< Software reset                      */
+#define CYGHWR_HAL_STM32_I2C_CR1_TXDMAEN          0x00004000   /*!< DMA transmission requests enable    */
+#define CYGHWR_HAL_STM32_I2C_CR1_RXDMAEN          0x00008000   /*!< DMA reception requests enable       */
+#define CYGHWR_HAL_STM32_I2C_CR1_SBC              0x00010000   /*!< Slave byte control                  */
+#define CYGHWR_HAL_STM32_I2C_CR1_NOSTRETCH        0x00020000   /*!< Clock stretching disable            */
+#define CYGHWR_HAL_STM32_I2C_CR1_WUPEN            0x00040000   /*!< Wakeup from STOP enable             */
+#define CYGHWR_HAL_STM32_I2C_CR1_GCEN             0x00080000   /*!< General call enable                 */
+#define CYGHWR_HAL_STM32_I2C_CR1_SMBHEN           0x00100000   /*!< SMBus host address enable           */
+#define CYGHWR_HAL_STM32_I2C_CR1_SMBDEN           0x00200000   /*!< SMBus device default address enable */
+#define CYGHWR_HAL_STM32_I2C_CR1_ALERTEN          0x00400000   /*!< SMBus alert enable                  */
+#define CYGHWR_HAL_STM32_I2C_CR1_PECEN            0x00800000   /*!< PEC enable                          */
 
+/******************  Bit definition for I2C_CR2 register  ********************/
+#define CYGHWR_HAL_STM32_I2C_CR2_SADD             0x000003FF   /*!< Slave address (master mode)                             */
+#define CYGHWR_HAL_STM32_I2C_CR2_RD_WRN           0x00000400   /*!< Transfer direction (master mode)                        */
+#define CYGHWR_HAL_STM32_I2C_CR2_ADD10            0x00000800   /*!< 10-bit addressing mode (master mode)                    */
+#define CYGHWR_HAL_STM32_I2C_CR2_HEAD10R          0x00001000   /*!< 10-bit address header only read direction (master mode) */
+#define CYGHWR_HAL_STM32_I2C_CR2_START            0x00002000   /*!< START generation                                        */
+#define CYGHWR_HAL_STM32_I2C_CR2_STOP             0x00004000   /*!< STOP generation (master mode)                           */
+#define CYGHWR_HAL_STM32_I2C_CR2_NACK             0x00008000   /*!< NACK generation (slave mode)                            */
+#define CYGHWR_HAL_STM32_I2C_CR2_NBYTES           0x00FF0000   /*!< Number of bytes                                         */
+#define CYGHWR_HAL_STM32_I2C_CR2_RELOAD           0x01000000   /*!< NBYTES reload mode                                      */
+#define CYGHWR_HAL_STM32_I2C_CR2_AUTOEND          0x02000000   /*!< Automatic end mode (master mode)                        */
+#define CYGHWR_HAL_STM32_I2C_CR2_PECBYTE          0x04000000   /*!< Packet error checking byte                              */
+
+/*******************  Bit definition for I2C_OAR1 register  ******************/
+#define CYGHWR_HAL_STM32_I2C_OAR1_OA1             0x000003FF   /*!< Interface own address 1   */
+#define CYGHWR_HAL_STM32_I2C_OAR1_OA1MODE         0x00000400   /*!< Own address 1 10-bit mode */
+#define CYGHWR_HAL_STM32_I2C_OAR1_OA1EN           0x00008000   /*!< Own address 1 enable      */
+
+/*******************  Bit definition for I2C_OAR2 register  ******************/
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2             0x000000FE   /*!< Interface own address 2 */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MSK          0x00000700   /*!< Own address 2 masks     */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2NOMASK       0x00000000   /*!< No mask */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK01       0x00000100   /*!< OA2[1] is masked, Only OA2[7:2] are compared */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK02       0x00000200   /*!< OA2[2:1] is masked, Only OA2[7:3] are compared */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK03       0x00000300   /*!< OA2[3:1] is masked, Only OA2[7:4] are compared */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK04       0x00000400   /*!< OA2[4:1] is masked, Only OA2[7:5] are compared */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK05       0x00000500   /*!< OA2[5:1] is masked, Only OA2[7:6] are compared */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK06       0x00000600   /*!< OA2[6:1] is masked, Only OA2[7] are compared */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2MASK07       0x00000700   /*!< OA2[7:1] is masked, No comparison is done */
+#define CYGHWR_HAL_STM32_I2C_OAR2_OA2EN           0x00008000   /*!< Own address 2 enable    */
+
+/*******************  Bit definition for I2C_TIMINGR register *******************/
+#define CYGHWR_HAL_STM32_I2C_TIMINGR_SCLL         0x000000FF   /*!< SCL low period (master mode)  */
+#define CYGHWR_HAL_STM32_I2C_TIMINGR_SCLH         0x0000FF00   /*!< SCL high period (master mode) */
+#define CYGHWR_HAL_STM32_I2C_TIMINGR_SDADEL       0x000F0000   /*!< Data hold time                */
+#define CYGHWR_HAL_STM32_I2C_TIMINGR_SCLDEL       0x00F00000   /*!< Data setup time               */
+#define CYGHWR_HAL_STM32_I2C_TIMINGR_PRESC        0xF0000000   /*!< Timings prescaler             */
+
+/******************* Bit definition for I2C_TIMEOUTR register *******************/
+#define CYGHWR_HAL_STM32_I2C_TIMEOUTR_TIMEOUTA    0x00000FFF   /*!< Bus timeout A                 */
+#define CYGHWR_HAL_STM32_I2C_TIMEOUTR_TIDLE       0x00001000   /*!< Idle clock timeout detection  */
+#define CYGHWR_HAL_STM32_I2C_TIMEOUTR_TIMOUTEN    0x00008000   /*!< Clock timeout enable          */
+#define CYGHWR_HAL_STM32_I2C_TIMEOUTR_TIMEOUTB    0x0FFF0000   /*!< Bus timeout B                 */
+#define CYGHWR_HAL_STM32_I2C_TIMEOUTR_TEXTEN      0x80000000   /*!< Extended clock timeout enable */
+
+/******************  Bit definition for I2C_ISR register  *********************/
+#define CYGHWR_HAL_STM32_I2C_ISR_TXE              0x00000001   /*!< Transmit data register empty    */
+#define CYGHWR_HAL_STM32_I2C_ISR_TXIS             0x00000002   /*!< Transmit interrupt status       */
+#define CYGHWR_HAL_STM32_I2C_ISR_RXNE             0x00000004   /*!< Receive data register not empty */
+#define CYGHWR_HAL_STM32_I2C_ISR_ADDR             0x00000008   /*!< Address matched (slave mode)    */
+#define CYGHWR_HAL_STM32_I2C_ISR_NACKF            0x00000010   /*!< NACK received flag              */
+#define CYGHWR_HAL_STM32_I2C_ISR_STOPF            0x00000020   /*!< STOP detection flag             */
+#define CYGHWR_HAL_STM32_I2C_ISR_TC               0x00000040   /*!< Transfer complete (master mode) */
+#define CYGHWR_HAL_STM32_I2C_ISR_TCR              0x00000080   /*!< Transfer complete reload        */
+#define CYGHWR_HAL_STM32_I2C_ISR_BERR             0x00000100   /*!< Bus error                       */
+#define CYGHWR_HAL_STM32_I2C_ISR_ARLO             0x00000200   /*!< Arbitration lost                */
+#define CYGHWR_HAL_STM32_I2C_ISR_OVR              0x00000400   /*!< Overrun/Underrun                */
+#define CYGHWR_HAL_STM32_I2C_ISR_PECERR           0x00000800   /*!< PEC error in reception          */
+#define CYGHWR_HAL_STM32_I2C_ISR_TIMEOUT          0x00001000   /*!< Timeout or Tlow detection flag  */
+#define CYGHWR_HAL_STM32_I2C_ISR_ALERT            0x00002000   /*!< SMBus alert                     */
+#define CYGHWR_HAL_STM32_I2C_ISR_BUSY             0x00008000   /*!< Bus busy                        */
+#define CYGHWR_HAL_STM32_I2C_ISR_DIR              0x00010000   /*!< Transfer direction (slave mode) */
+#define CYGHWR_HAL_STM32_I2C_ISR_ADDCODE          0x00FE0000   /*!< Address match code (slave mode) */
+
+/******************  Bit definition for I2C_ICR register  *********************/
+#define CYGHWR_HAL_STM32_I2C_ICR_ADDRCF           0x00000008   /*!< Address matched clear flag      */
+#define CYGHWR_HAL_STM32_I2C_ICR_NACKCF           0x00000010   /*!< NACK clear flag                 */
+#define CYGHWR_HAL_STM32_I2C_ICR_STOPCF           0x00000020   /*!< STOP detection clear flag       */
+#define CYGHWR_HAL_STM32_I2C_ICR_BERRCF           0x00000100   /*!< Bus error clear flag            */
+#define CYGHWR_HAL_STM32_I2C_ICR_ARLOCF           0x00000200   /*!< Arbitration lost clear flag     */
+#define CYGHWR_HAL_STM32_I2C_ICR_OVRCF            0x00000400   /*!< Overrun/Underrun clear flag     */
+#define CYGHWR_HAL_STM32_I2C_ICR_PECCF            0x00000800   /*!< PAC error clear flag            */
+#define CYGHWR_HAL_STM32_I2C_ICR_TIMOUTCF         0x00001000   /*!< Timeout clear flag              */
+#define CYGHWR_HAL_STM32_I2C_ICR_ALERTCF          0x00002000   /*!< Alert clear flag                */
+
+/******************  Bit definition for I2C_PECR register  *********************/
+#define CYGHWR_HAL_STM32_I2C_PECR_PEC             0x000000FF   /*!< PEC register        */
+
+/******************  Bit definition for I2C_RXDR register  *********************/
+#define CYGHWR_HAL_STM32_I2C_RXDR_RXDATA          0x000000FF   /*!< 8-bit receive data  */
+
+/******************  Bit definition for I2C_TXDR register  *********************/
+#define CYGHWR_HAL_STM32_I2C_TXDR_TXDATA          0x000000FF   /*!< 8-bit transmit data */
+#endif /* defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7) */
 
 //=============================================================================
 // USB interface register definitions.
