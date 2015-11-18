@@ -48,7 +48,7 @@
 //####DESCRIPTIONEND####
 //==========================================================================
 
-#include <pkgconf/devs_i2c_cortexm_stm32.h>
+#include <pkgconf/devs_i2c_cortexm_stm32f7.h>
 #include <cyg/io/i2c.h>
 #include <cyg/infra/cyg_type.h>
 #include <cyg/hal/drv_api.h>

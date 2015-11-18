@@ -49,7 +49,7 @@
 //==========================================================================
 
 #include <pkgconf/system.h>
-#include <pkgconf/devs_i2c_cortexm_stm32.h>
+#include <pkgconf/devs_i2c_cortexm_stm32f7.h>
 
 #include <cyg/infra/cyg_type.h>
 #include <cyg/infra/cyg_ass.h>
