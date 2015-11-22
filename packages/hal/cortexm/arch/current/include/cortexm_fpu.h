@@ -67,7 +67,7 @@
 #  define CYGSEM_HAL_DEBUG_FPU
 # endif
 
-# ifdef CYGINT_HAL_FPV4_SP_D16
+# if defined(CYGINT_HAL_FPV4_SP_D16) || defined(CYGINT_HAL_FPV5_SP_D16)
 #  include <cyg/hal/fpv4_sp_d16.h>
 # else
 #  error "Unknown FPU unit!"

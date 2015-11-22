@@ -201,7 +201,9 @@ cdl_package CYGPKG_HAL_CORTEXM {
         no_define
 
         calculated { CYGHWR_HAL_CORTEXM == "M3" ? " -mcpu=cortex-m3" :
-                     CYGHWR_HAL_CORTEXM_FPU     ? " -mcpu=cortex-m4" : " " }
+                     CYGHWR_HAL_CORTEXM == "M4" ? " -mcpu=cortex-m4" :
+                     CYGHWR_HAL_CORTEXM == "M7" ? " -mcpu=cortex-m7" : " "
+        }
 
         description "This component defines flags that code generation dependent on specific
             CPU type or CPU features."
@@ -211,7 +213,7 @@ cdl_package CYGPKG_HAL_CORTEXM {
             flavor     data
             no_define
 
-            calculated { CYGHWR_HAL_CORTEXM_FPU ? "-mcpu=cortex-m3" : "no_exclude" }
+            calculated { (CYGHWR_HAL_CORTEXM != "M3") ? "-mcpu=cortex-m3" : "no_exclude" }
         }
 
         cdl_option CYGBLD_ARCH_CPUFLAGX_M4 {
@@ -219,8 +221,15 @@ cdl_package CYGPKG_HAL_CORTEXM {
             flavor     data
             no_define
 
-            #temporary hack when using -mcpu=cortex-m4 flag in stm32f7 target (compiler issue)
-            calculated { (CYGHWR_HAL_CORTEXM != "M4") ? "no_exclude" : "no_exclude" }
+            calculated { (CYGHWR_HAL_CORTEXM != "M4") ? "-mcpu=cortex-m4" : "no_exclude" }
+        }
+
+        cdl_option CYGBLD_ARCH_CPUFLAGX_M7 {
+            display    "Exclude Cortex-M7 build flag"
+            flavor     data
+            no_define
+
+            calculated { (CYGHWR_HAL_CORTEXM != "M7") ? "-mcpu=cortex-m7" : "no_exclude" }
         }
 
         cdl_component CYGBLD_ARCH_CPUFLAG_FLOAT_ABI {
@@ -253,7 +262,7 @@ cdl_package CYGPKG_HAL_CORTEXM {
                     display    "Exclude FPv4-SP-D16 flag"
                     flavor     data
                     no_define
-                    calculated { CYGHWR_HAL_FPV4_SP_D16 ? "do_not_exclude" : "-mfpu=fpv4-sp-d16" }
+                    calculated { CYGHWR_HAL_FPV4_SP_D16 ? "no_exclude" : "-mfpu=fpv4-sp-d16" }
                 }
             }
 
@@ -267,7 +276,7 @@ cdl_package CYGPKG_HAL_CORTEXM {
                     display    "Exclude FPv5-SP-D16 flag"
                     flavor     data
                     no_define
-                    calculated { CYGHWR_HAL_FPV5_SP_D16 ? "do_not_exclude" : "-mfpu=fpv5-sp-d16" }
+                    calculated { CYGHWR_HAL_FPV5_SP_D16 ? "no_exclude" : "-mfpu=fpv5-sp-d16" }
                 }
             }
         }
@@ -279,17 +288,27 @@ cdl_package CYGPKG_HAL_CORTEXM {
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI)      &&
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT) &&
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV4SPD16)      &&
-
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV5SPD16)      &&
             is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
             is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
-            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M7)             &&
-            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)
-
-            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
-            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
-            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M7)              &&
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)        &&
             is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FPV5SPD16)
         }
+
+        requires {
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M3)             &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M4)             &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M7)             &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI)      &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT) &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV4SPD16)      &&
+            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV5SPD16)      &&
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)        &&
+            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FPV5SPD16)
+        }
+
     }
 }
 

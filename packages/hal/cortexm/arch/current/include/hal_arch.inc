@@ -51,7 +51,7 @@
 
 #ifdef CYGHWR_HAL_CORTEXM_FPU
 
-# ifdef CYGINT_HAL_FPV4_SP_D16
+#if defined(CYGINT_HAL_FPV4_SP_D16) || defined(CYGINT_HAL_FPV5_SP_D16)
 
 //============================================================================
 // LAZY context switching scheme keeps FPU disabled for the threads that
