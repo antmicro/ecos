@@ -125,7 +125,7 @@ cdl_package CYGPKG_HAL_CORTEXM {
         calculated     { !CYGHWR_HAL_CORTEXM_FPU ? "SOFT" :
                           "HARD: " . CYGHWR_HAL_CORTEXM_FPU_SWITCH }
         no_define
-        active_if      { CYGHWR_HAL_CORTEXM == "M4" }
+        active_if      { CYGHWR_HAL_CORTEXM == "M4" || CYGHWR_HAL_CORTEXM == "M7" }
         description    "
             Floating point arithmetics can be executed in software or,
             on devices with floating point unit - FPU, in hardware.
@@ -256,29 +256,39 @@ cdl_package CYGPKG_HAL_CORTEXM {
                     calculated { CYGHWR_HAL_FPV4_SP_D16 ? "do_not_exclude" : "-mfpu=fpv4-sp-d16" }
                 }
             }
+
+            cdl_component CYGBLD_ARCH_CPUFLAG_FPV5SPD16 {
+                display    "FPv5-SP-D16 flags"
+                flavor     data
+                no_define
+                calculated { CYGHWR_HAL_FPV5_SP_D16 ? " -mfpu=fpv5-sp-d16" : "" }
+
+                cdl_option CYGBLD_ARCH_CPUFLAGX_FPV5SPD16 {
+                    display    "Exclude FPv5-SP-D16 flag"
+                    flavor     data
+                    no_define
+                    calculated { CYGHWR_HAL_FPV5_SP_D16 ? "do_not_exclude" : "-mfpu=fpv5-sp-d16" }
+                }
+            }
         }
 
         requires {
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M3)             &&
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M4)             &&
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M7)             &&
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI)      &&
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT) &&
             !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV4SPD16)      &&
 
             is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
             is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
+            !is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M7)             &&
             is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)
-        }
-        requires {
-            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M3)             &&
-            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_M4)             &&
-            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FLOAT_ABI)      &&
-            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_HARDSOFT_FLOAT) &&
-            !is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGX_FPV4SPD16)      &&
 
-            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
-            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
-            is_substr(CYGBLD_GLOBAL_LDFLAGS, CYGBLD_ARCH_CPUFLAG_FPV4SPD16)
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGS)                 &&
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FLOAT_ABI)        &&
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAGX_M7)              &&
+            is_substr(CYGBLD_GLOBAL_CFLAGS, CYGBLD_ARCH_CPUFLAG_FPV5SPD16)
         }
     }
 }

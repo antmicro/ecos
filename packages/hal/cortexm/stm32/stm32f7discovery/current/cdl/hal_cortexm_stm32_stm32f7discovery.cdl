@@ -80,7 +80,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY {
     # use UART4 at PC10,11 for diagnostic I/O (named UART3 in the STM32 variant HAL)
     implements CYGINT_HAL_STM32_UART0
 
-    implements CYGINT_HAL_FPV4_SP_D16
+    implements CYGINT_HAL_FPV5_SP_D16
 
     cdl_component CYG_HAL_STARTUP {
         display       "Startup type"

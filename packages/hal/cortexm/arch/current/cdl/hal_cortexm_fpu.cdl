@@ -58,6 +58,12 @@
             implements CYGINT_HAL_CORTEXM_FPU
         }
 
+        cdl_interface CYGINT_HAL_FPV5_SP_D16 {
+            display   "FPU is FPv5-SP-D16"
+            flavor     bool
+            implements CYGINT_HAL_CORTEXM_FPU
+        }
+
         cdl_interface CYGINT_HAL_CORTEXM_FPU {
             display  "FPU present."
             flavor   data
@@ -116,8 +122,8 @@
 
         cdl_option CYGHWR_HAL_FPV4_SP_D16 {
             flavor bool
-            active_if { CYGINT_HAL_FPV4_SP_D16 }
-            calculated { CYGINT_HAL_FPV4_SP_D16 && CYGHWR_HAL_CORTEXM_FPU }
+            active_if { CYGINT_HAL_FPV4_SP_D16 && CYGHWR_HAL_CORTEXM == "M4" }
+            calculated { CYGINT_HAL_FPV4_SP_D16 && CYGHWR_HAL_CORTEXM_FPU && CYGHWR_HAL_CORTEXM == "M4" }
             display     "FPv4-SP-D16"
             no_define
             compile     fpv4_sp_d16.c
@@ -131,6 +137,26 @@
                 point unit with 16 double precision / 32 single precision
                 registers. It is found on Cortex-M4F and Cortex-R5 cores."
         }
+
+        cdl_option CYGHWR_HAL_FPV5_SP_D16 {
+            flavor bool
+            active_if { CYGINT_HAL_FPV5_SP_D16 && CYGHWR_HAL_CORTEXM == "M7" }
+            calculated { CYGINT_HAL_FPV5_SP_D16 && CYGHWR_HAL_CORTEXM_FPU && CYGHWR_HAL_CORTEXM == "M7" }
+            display     "FPv5-SP-D16"
+            no_define
+            compile     fpv4_sp_d16.c
+
+            define_proc {
+                puts $::cdl_system_header "#define CYGBLD_HAL_LIBM_H <cyg/hal/fpv4_sp_d16_libm.h>"
+            }
+
+            description "
+                FPv4-SP-D16 is ARMv7 architecture single precision floating
+                point unit with 16 double precision / 32 single precision
+                registers. It is found on Cortex-M4F and Cortex-R5 cores."
+        }
+
+
     #}
 
 # EOF hal_cortexm_fpu.cdl
