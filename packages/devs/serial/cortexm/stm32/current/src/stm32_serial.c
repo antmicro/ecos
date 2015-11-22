@@ -948,6 +948,13 @@ stm32_serial_ISR(cyg_vector_t vector, cyg_addrword_t data)
         // TODO: Handle hardware errors
     }
 
+    // clear stat
+    #ifdef CYGHWR_HAL_CORTEXM_M7
+    HAL_WRITE_UINT32(base + CYGHWR_HAL_STM32_UART_ISR, 0);
+    HAL_WRITE_UINT32(base + CYGHWR_HAL_STM32_UART_ICR, 0xFFFFFFFF);
+    #endif
+
+
     return ret;
 }
 
