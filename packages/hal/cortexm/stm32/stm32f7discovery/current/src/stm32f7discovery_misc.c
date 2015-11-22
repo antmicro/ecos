@@ -85,9 +85,18 @@ __externC void hal_system_init( void )
     HAL_WRITE_UINT32(base+CYGHWR_HAL_STM32_RCC_AHB1ENR,
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_CCMDATARAMEN) |
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOA) |
-                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOC) |
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOB) |
-                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOD) );
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOC) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOD) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOE) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOF) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOG) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOH) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOI) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOJ) |
+                     BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOK));
+
+//    hal_stm32_clock_enable(CYGHWR_HAL_STM32_CLOCK(APB2, SYSCFG));
 
     // Set unused lines on enabled GPIO ports to input with pull down
 
