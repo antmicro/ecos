@@ -54,6 +54,7 @@ cdl_package CYGPKG_HAL_CORTEXM_STM32_STM32F7DISCOVERY {
     requires      { CYGHWR_HAL_CORTEXM == "M7" }
     requires      { CYGHWR_HAL_CORTEXM_STM32_FAMILY == "F7" }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_SYSCLK_DIV == 2 }
+    requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PLLQ_DIV == 7 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_HCLK_DIV == 1 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK1_DIV == 4 }
     requires      { CYGHWR_HAL_CORTEXM_STM32_CLOCK_PCLK2_DIV == 2 }

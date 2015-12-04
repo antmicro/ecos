@@ -468,7 +468,12 @@ static void stm32_spi_bus_setup
 
   // Set up SPI default configuration.
   reg_addr = stm32_bus->setup->spi_reg_base + CYGHWR_HAL_STM32_SPI_CR2;
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7)
   reg_data = CYGHWR_HAL_STM32_SPI_CR2_TXDMAEN | CYGHWR_HAL_STM32_SPI_CR2_RXDMAEN;
+  reg_data |= CYGHWR_HAL_STM32_SPI_CR2_FRXTH | CYGHWR_HAL_STM32_SPI_CR2_DS(7);
+#else
+  reg_data = CYGHWR_HAL_STM32_SPI_CR2_TXDMAEN | CYGHWR_HAL_STM32_SPI_CR2_RXDMAEN;
+#endif
   HAL_WRITE_UINT32 (reg_addr, reg_data);
 
   // Initialise the synchronisation primitivies.

@@ -96,7 +96,7 @@ __externC void hal_system_init( void )
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOJ) |
                      BIT_(CYGHWR_HAL_STM32_RCC_AHB1ENR_GPIOK));
 
-//    hal_stm32_clock_enable(CYGHWR_HAL_STM32_CLOCK(APB2, SYSCFG));
+    hal_stm32_clock_enable(CYGHWR_HAL_STM32_CLOCK(APB2, SYSCFG));
 
     // Set unused lines on enabled GPIO ports to input with pull down
 

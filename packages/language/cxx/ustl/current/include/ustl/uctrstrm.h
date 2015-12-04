@@ -89,7 +89,7 @@ template <typename Container>
 inline size_t nr_container_stream_size (const Container& v)
 {
     typedef typename Container::const_iterator vciter_t;
-    //typedef typename iterator_traits<vciter_t>::value_type value_type;
+    typedef typename iterator_traits<vciter_t>::value_type value_type;
     if (!v.size())
 	return (0);
     size_t s = 0, dvs;
@@ -112,7 +112,7 @@ template <typename Container>
 istream& container_read (istream& is, Container& v)
 {
     typedef typename Container::value_type value_type;
-    //typedef typename Container::iterator iterator;
+    typedef typename Container::iterator iterator;
     typedef typename Container::written_size_type written_size_type;
     written_size_type n = 0;
     is >> n;

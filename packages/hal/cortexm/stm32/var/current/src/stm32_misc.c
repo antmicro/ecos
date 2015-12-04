@@ -68,6 +68,9 @@
 #include <cyg/profile/profile.h>        // __profile_hit()
 #endif
 
+//XXX: workaround for the non eCos compiler
+void* __attribute__ ((weak)) _impure_ptr;
+
 //==========================================================================
 // Clock Initialization values
 

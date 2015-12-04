@@ -178,6 +178,14 @@
 //=============================================================================
 // Device signature and ID registers
 
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7)
+#define CYGHWR_HAL_STM32_DEV_U_ID               0x1FF0F420
+#define CYGHWR_HAL_STM32_DEV_F_ID               0x1FF0F442
+#else
+#define CYGHWR_HAL_STM32_DEV_U_ID               0x1FFF7A10
+#define CYGHWR_HAL_STM32_DEV_F_ID               0x1FFF7A22
+#endif
+
 #define CYGHWR_HAL_STM32_DEV_SIG                0x1FFFF7E0
 #define CYGHWR_HAL_STM32_DEV_SIG_RSIZE(__s)     (((__s)>>16)&0xFFFF)
 #define CYGHWR_HAL_STM32_DEV_SIG_FSIZE(__s)     ((__s)&0xFFFF)
@@ -462,6 +470,7 @@
 #endif // CYGHWR_HAL_CORTEXM_STM32_FAMILY_F4
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_DMA1       (21)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_DMA2       (22)
+#define CYGHWR_HAL_STM32_RCC_AHB1ENR_DMA2D      (23)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_ETHMAC     (25)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_ETHMACTX   (26)
 #define CYGHWR_HAL_STM32_RCC_AHB1ENR_ETHMACRX   (27)
@@ -518,6 +527,7 @@
 #define CYGHWR_HAL_STM32_RCC_APB2ENR_TIM10      (17)
 #define CYGHWR_HAL_STM32_RCC_APB2ENR_TIM11      (18)
 #define CYGHWR_HAL_STM32_RCC_APB2ENR_SPI5       (20)
+#define CYGHWR_HAL_STM32_RCC_APB2ENR_LTDC       (26)
 
 #endif
 
@@ -1369,6 +1379,13 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 #define CYGHWR_HAL_STM32_SPI_CR2_ERRIE          BIT_(5)
 #define CYGHWR_HAL_STM32_SPI_CR2_RXNEIE         BIT_(6)
 #define CYGHWR_HAL_STM32_SPI_CR2_TXEIE          BIT_(7)
+
+#if defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_HIPERFORMANCE)
+#define CYGHWR_HAL_STM32_SPI_CR2_DS(__x)        VALUE_(8,(__x))
+#define CYGHWR_HAL_STM32_SPI_CR2_FRXTH          BIT_(12)
+#define CYGHWR_HAL_STM32_SPI_CR2_LDMA_RX        BIT_(13)
+#define CYGHWR_HAL_STM32_SPI_CR2_LDMA_TX        BIT_(14)
+#endif
 
 #define CYGHWR_HAL_STM32_SPI_SR_RXNE            BIT_(0)
 #define CYGHWR_HAL_STM32_SPI_SR_TXE             BIT_(1)
