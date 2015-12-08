@@ -174,6 +174,7 @@
 #define CYGHWR_HAL_STM32_RNG            0x50060800
 #endif
 #define CYGHWR_HAL_STM32_FSMC           0xA0000000
+#define CYGHWR_HAL_STM32_FMC            0xA0000000
 
 //=============================================================================
 // Device signature and ID registers
