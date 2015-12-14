@@ -53,32 +53,20 @@
 #include <cyg/infra/cyg_type.h>
 #include <cyg/hal/drv_api.h>
 
-typedef enum
-{
-  I2C_STATE_IDLE = 0,
-  I2C_STATE_BUSY
-}  i2c_bus_state;
-
 //--------------------------------------------------------------------------
 // Single I2C bus sepecififc data
 typedef struct cyg_stm32_i2c_extra {
     cyg_uint32       i2c_base;               // Bus register base address
-
     cyg_uint8        i2c_addr;               // Slave address
+    cyg_uint32       i2c_txtotal;            // Bytes in acutal transfer
+    cyg_uint32       i2c_rxtotal;            // Bytes actually to receive
     cyg_uint32       i2c_txleft;             // Bytes left to send
     cyg_uint32       i2c_rxleft;             // Bytes left to receive
     const cyg_uint8* i2c_txbuf;              // Reception buffer
     cyg_uint8*       i2c_rxbuf;              // Transmission buffer
     cyg_bool         i2c_rxnak;              // Flag for NACK generation
     cyg_bool         i2c_stop;               // Flag for stop generation
-    i2c_bus_state    i2c_state;              // state of the bus
-    cyg_uint32       i2c_status;             // SR2 in high, SR1 in low word
     cyg_uint32       i2c_delay;
-#if CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL > 1
-    cyg_uint8        i2c_evlog[32];
-    cyg_uint32       i2c_evlogidx;
-#endif
-
     cyg_drv_mutex_t  i2c_lock;                // For synchronizing between DSR and foreground
     cyg_drv_cond_t   i2c_wait;                // For synchronizing between DSR and foreground
     cyg_vector_t     i2c_ev_vec;              // Event vector
@@ -106,7 +94,6 @@ externC void        cyg_stm32_i2c_stop(const cyg_i2c_device*);
   i2c_rxleft   :  0,                                       \
   i2c_txbuf    :  NULL,                                    \
   i2c_rxbuf    :  NULL,                                    \
-  i2c_status   :  0                                        \
   };                                                       \
   CYG_I2C_BUS(_name_,                                      \
               &cyg_stm32_i2c_init,                         \
