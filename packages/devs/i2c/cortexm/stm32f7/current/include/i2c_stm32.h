@@ -41,10 +41,11 @@
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):     Martin Rösch <roscmar@gmail.com>
-// Contributors:  
-// Date:          2010-10-28
-// Description:   I2C bus driver for STM32
+// Author(s):    Antmicro LTd <contact@antmicro.com>
+// Contributors:
+// Date:         2015-12-15
+// Description:  I2C bus driver for STM32F7
+//
 //####DESCRIPTIONEND####
 //==========================================================================
 
@@ -66,13 +67,17 @@ typedef struct cyg_stm32_i2c_extra {
     cyg_uint8*       i2c_rxbuf;              // Transmission buffer
     cyg_bool         i2c_rxnak;              // Flag for NACK generation
     cyg_bool         i2c_stop;               // Flag for stop generation
-    cyg_uint32       i2c_delay;
     cyg_drv_mutex_t  i2c_lock;                // For synchronizing between DSR and foreground
     cyg_drv_cond_t   i2c_wait;                // For synchronizing between DSR and foreground
+    cyg_uint32       i2c_periph_clock;        // Clock definition for bus, used to enable/disable peripheral clock
+    cyg_uint32       i2c_periph_reset;        // Reset bit number for peripheral
+    cyg_uint32       i2c_bus_mode;            // Bus mode: poll or interrupt
     cyg_vector_t     i2c_ev_vec;              // Event vector
+    cyg_priority_t   i2c_ev_priority;         // Event interrupt priority
     cyg_handle_t     i2c_ev_interrupt_handle; // For initializing the interrupt
     cyg_interrupt    i2c_ev_interrupt_data;
     cyg_vector_t     i2c_err_vec;             // Error vector
+    cyg_priority_t   i2c_err_priority;        // Error interrupt priority
     cyg_handle_t     i2c_err_interrupt_handle;
     cyg_interrupt    i2c_err_interrupt_data;
 } cyg_stm32_i2c_extra;
@@ -84,17 +89,30 @@ externC void        cyg_stm32_i2c_stop(const cyg_i2c_device*);
 
 //--------------------------------------------------------------------------
 // I2C bus declaration macros
-# define CYG_STM32_I2C_BUS(_name_, _base_,                 \
-                           _ev_int_vec_, _err_int_vec_)    \
-  static cyg_stm32_i2c_extra _name_ ## _extra = {          \
-  i2c_base     : _base_,                                   \
-  i2c_ev_vec   : _ev_int_vec_,                             \
-  i2c_err_vec  : _err_int_vec_,                            \
-  i2c_txleft   :  0,                                       \
-  i2c_rxleft   :  0,                                       \
-  i2c_txbuf    :  NULL,                                    \
-  i2c_rxbuf    :  NULL,                                    \
-  };                                                       \
+#define CYG_STM32_I2C_BUS(                                 \
+    _name_,                                                \
+    _base_,                                                \
+    _ev_int_vec_,                                          \
+    _ev_priority_,                                         \
+    _err_int_vec_,                                         \
+    _err_priority_,                                        \
+    _periph_clock_,                                        \
+    _periph_reset_,                                        \
+    _bus_mode_)                                            \
+    static cyg_stm32_i2c_extra _name_ ## _extra = {        \
+        i2c_base        : _base_,                          \
+        i2c_ev_vec      : _ev_int_vec_,                    \
+        i2c_ev_priority : _ev_priority_,                   \
+        i2c_err_vec     : _err_int_vec_,                   \
+        i2c_err_priority: _err_priority_,                  \
+        i2c_txleft      :  0,                              \
+        i2c_rxleft      :  0,                              \
+        i2c_txbuf       :  NULL,                           \
+        i2c_rxbuf       :  NULL,                           \
+        i2c_periph_clock: _periph_clock_,                  \
+        i2c_periph_reset: _periph_reset_,                  \
+        i2c_bus_mode    : _bus_mode_,                      \
+    };                                                     \
   CYG_I2C_BUS(_name_,                                      \
               &cyg_stm32_i2c_init,                         \
               NULL,                                        \

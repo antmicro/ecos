@@ -39,10 +39,10 @@
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Martin Rösch <roscmar@gmail.com>
+// Author(s):    Antmicro LTd <contact@antmicro.com>
 // Contributors:
-// Date:         2010-10-28
-// Description:  I2C bus driver for STM32
+// Date:         2015-12-15
+// Description:  I2C bus driver for STM32F7
 //
 //####DESCRIPTIONEND####
 //
@@ -61,16 +61,24 @@
 #include <cyg/hal/hal_intr.h>
 #include <cyg/hal/drv_api.h>
 
+/* Define constants for Bus Mode from CDL */
+#define POLL        0
+#define INTERRUPT   1
+
+/* Define constants for Debug level from CDL */
+#define NONE        0
+#define ERROR       1
+#define DEBUG       2
+
 //--------------------------------------------------------------------------
 // Diagnostic support
-#if defined(CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL_ERROR) || \
-    defined(CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL_DEBUG)
+#if (CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL != NONE)
 #define error_printf(args...) diag_printf(args)
 #else
 #define error_printf(args...)
 #endif
 
-#if defined(CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL_DEBUG)
+#if (CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL == DEBUG)
 #define debug_printf(args...) diag_printf(args)
 #else
 #define debug_printf(args...)
@@ -79,23 +87,51 @@
 //--------------------------------------------------------------------------
 // I2C bus instances
 #ifdef CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS1
-CYG_STM32_I2C_BUS(i2c_bus1, CYGHWR_HAL_STM32_I2C1,
-        CYGNUM_HAL_INTERRUPT_I2C1_EV, CYGNUM_HAL_INTERRUPT_I2C1_EE);
+CYG_STM32_I2C_BUS(i2c_bus1,
+                  CYGHWR_HAL_STM32_I2C1,
+                  CYGNUM_HAL_INTERRUPT_I2C1_EV,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT_EV_PRI,
+                  CYGNUM_HAL_INTERRUPT_I2C1_EE,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT_EE_PRI,
+                  CYGHWR_HAL_STM32_I2C1_CLOCK,
+                  CYGHWR_HAL_STM32_RCC_APB1ENR_I2C1,
+                  CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_MODE);
 #endif
 
 #ifdef CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS2
-CYG_STM32_I2C_BUS(i2c_bus2, CYGHWR_HAL_STM32_I2C2,
-        CYGNUM_HAL_INTERRUPT_I2C2_EV, CYGNUM_HAL_INTERRUPT_I2C2_EE);
+CYG_STM32_I2C_BUS(i2c_bus2,
+                  CYGHWR_HAL_STM32_I2C2,
+                  CYGNUM_HAL_INTERRUPT_I2C2_EV,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT_EV_PRI,
+                  CYGNUM_HAL_INTERRUPT_I2C2_EE,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT_EE_PRI,
+                  CYGHWR_HAL_STM32_I2C2_CLOCK,
+                  CYGHWR_HAL_STM32_RCC_APB1ENR_I2C2,
+                  CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS2_MODE);
 #endif
 
 #ifdef CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS3
-CYG_STM32_I2C_BUS(i2c_bus3, CYGHWR_HAL_STM32_I2C3,
-        CYGNUM_HAL_INTERRUPT_I2C3_EV, CYGNUM_HAL_INTERRUPT_I2C3_ER);
+CYG_STM32_I2C_BUS(i2c_bus3,
+                  CYGHWR_HAL_STM32_I2C3,
+                  CYGNUM_HAL_INTERRUPT_I2C3_EV,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT_EV_PRI,
+                  CYGNUM_HAL_INTERRUPT_I2C3_ER,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT_EE_PRI,
+                  CYGHWR_HAL_STM32_I2C3_CLOCK,
+                  CYGHWR_HAL_STM32_RCC_APB1ENR_I2C3,
+                  CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS3_MODE);
 #endif
 
 #ifdef CYGHWR_DEVS_I2C_CORTEXM_STM32_BUS4
-CYG_STM32_I2C_BUS(i2c_bus4, CYGHWR_HAL_STM32_I2C4,
-        CYGNUM_HAL_INTERRUPT_I2C4_EV, CYGNUM_HAL_INTERRUPT_I2C4_ER);
+CYG_STM32_I2C_BUS(i2c_bus4,
+                  CYGHWR_HAL_STM32_I2C4,
+                  CYGNUM_HAL_INTERRUPT_I2C4_EV,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS4_MODE_INT_EV_PRI,
+                  CYGNUM_HAL_INTERRUPT_I2C4_ER,
+                  CYGINT_DEVS_I2C_CORTEXM_STM32_BUS4_MODE_INT_EE_PRI,
+                  CYGHWR_HAL_STM32_I2C4_CLOCK,
+                  CYGHWR_HAL_STM32_RCC_APB1ENR_I2C4,
+                  CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS4_MODE);
 #endif
 
 //--------------------------------------------------------------------------
@@ -104,9 +140,9 @@ CYG_STM32_I2C_BUS(i2c_bus4, CYGHWR_HAL_STM32_I2C4,
 #define stm32_i2c_sda( port_pin ) CYGHWR_HAL_STM32_GPIO( port_pin , ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ)
 
 //--------------------------------------------------------------------------
-static void I2C_TransferConfig(CYG_ADDRESS base, cyg_uint16 addr, cyg_uint8 size, cyg_uint32 mode, cyg_uint32 request);
+static void I2C_TransferConfig(cyg_uint32 base, cyg_uint16 addr, cyg_uint8 size, cyg_uint32 mode, cyg_uint32 request);
 //--------------------------------------------------------------------------
-static cyg_bool i2c_wait_for_flag_set(CYG_ADDRESS addr, cyg_uint32 flag_mask)
+static cyg_bool i2c_wait_for_flag_set(cyg_uint32 addr, cyg_uint32 flag_mask)
 {
     volatile cyg_uint32 reg = 0, tmo = 0;
     do {
@@ -114,16 +150,16 @@ static cyg_bool i2c_wait_for_flag_set(CYG_ADDRESS addr, cyg_uint32 flag_mask)
         tmo++;
         if(tmo >= 0x00FFFFFF)
         {
-            error_printf("I2C: %s(%u) (%p) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, (void*)addr, reg, flag_mask);
+            error_printf("I2C: %s(%u) (0x%08x) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, addr, reg, flag_mask);
             return false;
         }
     }while((reg & flag_mask) == 0);
 
-    debug_printf("I2C: %s(%u) (%p) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, (void*)addr, reg, flag_mask);
+    debug_printf("I2C: %s(%u) (0x%08x) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, addr, reg, flag_mask);
     return true;
 }
 
-static cyg_bool i2c_wait_for_flag_reset(CYG_ADDRESS addr, cyg_uint32 flag_mask)
+static cyg_bool i2c_wait_for_flag_reset(cyg_uint32 addr, cyg_uint32 flag_mask)
 {
     volatile cyg_uint32 reg = 0, tmo = 0;
     do {
@@ -131,12 +167,12 @@ static cyg_bool i2c_wait_for_flag_reset(CYG_ADDRESS addr, cyg_uint32 flag_mask)
         tmo++;
         if(tmo >= 0x000FFFFF)
         {
-            error_printf("I2C: %s(%u) (%p) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, (void*)addr, reg, flag_mask);
+            error_printf("I2C: %s(%u) (0x%08x) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, addr, reg, flag_mask);
             return false;
         }
     }while((reg & flag_mask) != 0);
 
-    debug_printf("I2C: %s(%u) (%p) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, (void*)addr, reg, flag_mask);
+    debug_printf("I2C: %s(%u) (0x%08x) = 0x%08x (mask 0x%08x)\r\n", __FUNCTION__, __LINE__, addr, reg, flag_mask);
     return true;
 }
 
@@ -384,7 +420,7 @@ cyg_uint32 cyg_stm32_i2c_tx_int(const cyg_i2c_device *dev,
 {
     cyg_stm32_i2c_extra* extra = (cyg_stm32_i2c_extra*)dev->i2c_bus->i2c_extra;
     cyg_uint32 reg, request;
-    error_printf("I2C (%p): tx int started!\n", extra->i2c_base);
+    error_printf("I2C (0x%08x): tx int started!\n", extra->i2c_base);
 
     if((tx_data == NULL) || (count == 0)) {
         error_printf("No data to send!!\n");
@@ -456,7 +492,7 @@ cyg_uint32 cyg_stm32_i2c_tx_int(const cyg_i2c_device *dev,
     extra->i2c_txtotal = 0;
     extra->i2c_txbuf = NULL;
 
-    error_printf("I2C (%p): tx int finished!\n", extra->i2c_base);
+    error_printf("I2C (0x%08x): tx int finished!\n", extra->i2c_base);
     return count - extra->i2c_rxleft;
 }
 
@@ -472,7 +508,7 @@ cyg_uint32 cyg_stm32_i2c_rx_int(const cyg_i2c_device *dev,
     cyg_stm32_i2c_extra* extra = (cyg_stm32_i2c_extra*)dev->i2c_bus->i2c_extra;
     extra->i2c_addr  = (dev->i2c_address << 1) | 1;
     cyg_uint32 reg, request;
-    error_printf("I2C (%p): rx int started!\n", extra->i2c_base);
+    error_printf("I2C (0x%08x): rx int started!\n", extra->i2c_base);
 
     if((rx_data == NULL) || (count == 0)) {
         error_printf("No data to receive!!\n");
@@ -537,7 +573,7 @@ cyg_uint32 cyg_stm32_i2c_rx_int(const cyg_i2c_device *dev,
 
     extra->i2c_addr  = 0;
 
-    error_printf("I2C (%p): rx int finished!\n", extra->i2c_base);
+    error_printf("I2C (0x%08x): rx int finished!\n", extra->i2c_base);
     return count - extra->i2c_rxleft;
 }
 
@@ -825,6 +861,7 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
     reg &= ~(CYGHWR_HAL_STM32_I2C_CR1_PE);
     HAL_WRITE_UINT32(extra->i2c_base + CYGHWR_HAL_STM32_I2C_CR1, reg);
 
+    // TODO: move pins definition into extra struct
     if(extra->i2c_base == CYGHWR_HAL_STM32_I2C1)
     {
 #ifdef CYGHWR_HAL_STM32_I2C1_REMAP
@@ -834,46 +871,6 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         pinspec_scl = CYGHWR_HAL_STM32_GPIO(H, 7, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
         pinspec_sda = CYGHWR_HAL_STM32_GPIO(H, 8, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 #endif
-
-#ifdef CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_POLL
-        bus->i2c_tx_fn = &cyg_stm32_i2c_tx_poll;
-        bus->i2c_rx_fn = &cyg_stm32_i2c_rx_poll;
-#else
-        // Initialize i2c event interrupt
-        cyg_drv_interrupt_create(extra->i2c_ev_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT_EV_PRI,
-                (cyg_addrword_t) extra,
-                &stm32_i2c_ev_isr,
-                &stm32_i2c_ev_dsr,
-                &(extra->i2c_ev_interrupt_handle),
-                &(extra->i2c_ev_interrupt_data));
-        cyg_drv_interrupt_attach(extra->i2c_ev_interrupt_handle);
-
-        // Initialize i2c error interrupt
-        cyg_drv_interrupt_create(extra->i2c_err_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS1_MODE_INT_EE_PRI,
-                (cyg_addrword_t) extra,
-                &stm32_i2c_err_isr,
-                &stm32_i2c_err_dsr,
-                &(extra->i2c_err_interrupt_handle),
-                &(extra->i2c_err_interrupt_data));
-        cyg_drv_interrupt_attach(extra->i2c_err_interrupt_handle);
-        // register functions
-        bus->i2c_tx_fn = &cyg_stm32_i2c_tx_int;
-        bus->i2c_rx_fn = &cyg_stm32_i2c_rx_int;
-#endif
-        // Enable peripheral clock
-        // TODO: add clock definition to extra and use enable it in more general way
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C1);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-
-        // Reset peripheral
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C1);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg &= ~BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C1);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
     }
     else if(extra->i2c_base == CYGHWR_HAL_STM32_I2C2)
     {
@@ -884,46 +881,6 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         pinspec_scl = CYGHWR_HAL_STM32_GPIO(B, 10, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
         pinspec_sda = CYGHWR_HAL_STM32_GPIO(B, 11, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 #endif
-
-#ifdef CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_POLL
-        bus->i2c_tx_fn = &cyg_stm32_i2c_tx_poll;
-        bus->i2c_rx_fn = &cyg_stm32_i2c_rx_poll;
-#else
-        // Initialize i2c event interrupt
-        cyg_drv_interrupt_create(extra->i2c_ev_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT_EV_PRI,
-                (cyg_addrword_t) extra,
-                &stm32_i2c_ev_isr,
-                &stm32_i2c_ev_dsr,
-                &(extra->i2c_ev_interrupt_handle),
-                &(extra->i2c_ev_interrupt_data));
-        cyg_drv_interrupt_attach(extra->i2c_ev_interrupt_handle);
-
-        // Initialize i2c error interrupt
-        cyg_drv_interrupt_create(extra->i2c_err_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS2_MODE_INT_EE_PRI,
-                (cyg_addrword_t) extra,
-                &stm32_i2c_err_isr,
-                &stm32_i2c_err_dsr,
-                &(extra->i2c_err_interrupt_handle),
-                &(extra->i2c_err_interrupt_data));
-        cyg_drv_interrupt_attach(extra->i2c_err_interrupt_handle);
-        // register functions
-        bus->i2c_tx_fn = &cyg_stm32_i2c_tx_int;
-        bus->i2c_rx_fn = &cyg_stm32_i2c_rx_int;
-#endif
-        // Enable peripheral clock
-        // TODO: add clock definition to extra and use enable it in more general way
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C2);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-
-        // Reset peripheral
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C2);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg &= ~BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C2);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
     }
     else if(extra->i2c_base == CYGHWR_HAL_STM32_I2C3)
     {
@@ -934,46 +891,6 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         pinspec_scl = CYGHWR_HAL_STM32_GPIO(H, 7, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
         pinspec_sda = CYGHWR_HAL_STM32_GPIO(H, 8, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 #endif
-
-#ifdef CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_POLL
-        bus->i2c_tx_fn = &cyg_stm32_i2c_tx_poll;
-        bus->i2c_rx_fn = &cyg_stm32_i2c_rx_poll;
-#else
-        // Initialize i2c event interrupt
-        cyg_drv_interrupt_create(extra->i2c_ev_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT_EV_PRI,
-                (cyg_addrword_t) extra,
-                &stm32_i2c_ev_isr,
-                &stm32_i2c_ev_dsr,
-                &(extra->i2c_ev_interrupt_handle),
-                &(extra->i2c_ev_interrupt_data));
-        cyg_drv_interrupt_attach(extra->i2c_ev_interrupt_handle);
-
-        // Initialize i2c error interrupt
-        cyg_drv_interrupt_create(extra->i2c_err_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS3_MODE_INT_EE_PRI,
-                (cyg_addrword_t) extra,
-                &stm32_i2c_err_isr,
-                &stm32_i2c_err_dsr,
-                &(extra->i2c_err_interrupt_handle),
-                &(extra->i2c_err_interrupt_data));
-        cyg_drv_interrupt_attach(extra->i2c_err_interrupt_handle);
-        // register functions
-        bus->i2c_tx_fn = &cyg_stm32_i2c_tx_int;
-        bus->i2c_rx_fn = &cyg_stm32_i2c_rx_int;
-#endif
-        // Enable peripheral clock
-        // TODO: add clock definition to extra and use enable it in more general way
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C3);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-
-        // Reset peripheral
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C3);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg &= ~BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C3);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
     }
     else if(extra->i2c_base == CYGHWR_HAL_STM32_I2C4)
     {
@@ -984,14 +901,17 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         pinspec_scl = CYGHWR_HAL_STM32_GPIO(D, 12, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
         pinspec_sda = CYGHWR_HAL_STM32_GPIO(D, 13, ALTFN, 4, OPENDRAIN, PULLUP, 50MHZ);
 #endif
+    }
 
-#ifdef CYGSEM_DEVS_I2C_CORTEXM_STM32_BUS4_MODE_POLL
+    /* Configure driver depending on bus mode */
+    if(extra->i2c_bus_mode == POLL) {
         bus->i2c_tx_fn = &cyg_stm32_i2c_tx_poll;
         bus->i2c_rx_fn = &cyg_stm32_i2c_rx_poll;
-#else
+    }
+    else {
         // Initialize i2c event interrupt
         cyg_drv_interrupt_create(extra->i2c_ev_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS4_MODE_INT_EV_PRI,
+                extra->i2c_ev_priority,
                 (cyg_addrword_t) extra,
                 &stm32_i2c_ev_isr,
                 &stm32_i2c_ev_dsr,
@@ -1001,7 +921,7 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
 
         // Initialize i2c error interrupt
         cyg_drv_interrupt_create(extra->i2c_err_vec,
-                CYGINT_DEVS_I2C_CORTEXM_STM32_BUS4_MODE_INT_EE_PRI,
+                extra->i2c_err_priority,
                 (cyg_addrword_t) extra,
                 &stm32_i2c_err_isr,
                 &stm32_i2c_err_dsr,
@@ -1011,23 +931,22 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
         // register functions
         bus->i2c_tx_fn = &cyg_stm32_i2c_tx_int;
         bus->i2c_rx_fn = &cyg_stm32_i2c_rx_int;
-#endif
-        // Enable peripheral clock
-        // TODO: add clock definition to extra and use enable it in more general way
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C4);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1ENR, reg);
-
-        // Reset peripheral
-        HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg |= BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C4);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
-        reg &= ~BIT_(CYGHWR_HAL_STM32_RCC_APB1ENR_I2C4);
-        HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
     }
 
+    /* Configure pins for peripheral */
     CYGHWR_HAL_STM32_GPIO_SET(pinspec_scl);
     CYGHWR_HAL_STM32_GPIO_SET(pinspec_sda);
+
+    /* Enable clock for peripheral */
+    hal_stm32_clock_enable(extra->i2c_periph_clock);
+    HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
+
+    /* Reset peripheral */
+    HAL_READ_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
+    reg |= BIT_(extra->i2c_periph_reset);
+    HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
+    reg &= ~BIT_(extra->i2c_periph_reset);
+    HAL_WRITE_UINT32 (CYGHWR_HAL_STM32_RCC + CYGHWR_HAL_STM32_RCC_APB1RSTR, reg);
 
     /*---------------------------- I2Cx TIMINGR Configuration ------------------*/
     /* Configure I2Cx: Frequency range */
@@ -1068,9 +987,8 @@ void cyg_stm32_i2c_init(struct cyg_i2c_bus *bus)
     cyg_drv_mutex_init(&extra->i2c_lock);
     cyg_drv_cond_init(&extra->i2c_wait, &extra->i2c_lock);
 
-#if CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL > 0
+#if (CYGPKG_DEVS_I2C_CORTEXM_STM32_DEBUG_LEVEL == DEBUG)
     debug_printf("I2C: bus @ 0x%08x\n", extra->i2c_base);
-
     HAL_READ_UINT32(extra->i2c_base + CYGHWR_HAL_STM32_I2C_CR1, reg);
     debug_printf("I2C: CR1 = 0x%08x\n", reg);
     HAL_READ_UINT32(extra->i2c_base + CYGHWR_HAL_STM32_I2C_CR2, reg);
