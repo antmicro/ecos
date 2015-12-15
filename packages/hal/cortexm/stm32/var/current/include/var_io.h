@@ -1651,6 +1651,12 @@ __externC void hal_stm32_clock_disable( cyg_uint32 desc );
 
 /******************  Bit definition for I2C_TXDR register  *********************/
 #define CYGHWR_HAL_STM32_I2C_TXDR_TXDATA          0x000000FF   /*!< 8-bit transmit data */
+
+/* Clocks definitions  */
+#define CYGHWR_HAL_STM32_I2C1_CLOCK             CYGHWR_HAL_STM32_CLOCK( APB1, I2C1 )
+#define CYGHWR_HAL_STM32_I2C2_CLOCK             CYGHWR_HAL_STM32_CLOCK( APB1, I2C2 )
+#define CYGHWR_HAL_STM32_I2C3_CLOCK             CYGHWR_HAL_STM32_CLOCK( APB1, I2C3 )
+#define CYGHWR_HAL_STM32_I2C4_CLOCK             CYGHWR_HAL_STM32_CLOCK( APB1, I2C4 )
 #endif /* defined (CYGHWR_HAL_CORTEXM_STM32_FAMILY_F7) */
 
 //=============================================================================
