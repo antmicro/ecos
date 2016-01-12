@@ -17,6 +17,9 @@ extern "C" {
 
 /************************** Constant Definitions *****************************/
 
+#define XSLR_BASE                       0xF8000000
+#define XSLR_SLCR_LOCK                  0x00000004
+#define XSLR_SLCR_UNLOCK                0x00000008
 /* SLCR registers */
 #define XSLCR_LOCK_OFFSET               0x00000004       /**< SLCR Write Protection Lock */
 #define XSLCR_UNLOCK_OFFSET             0x00000008       /**< SLCR Write Protection Unlock */
@@ -28,6 +31,7 @@ extern "C" {
 #define XSLCRGEM1_CLK_CTRL_OFFSET       0x00000144       /**< GigE 1 Ref Clock Control */
 #define XSLCRUART_CLK_CTRL_OFFSET       0x00000154       /**< UART Ref Clock Control */
 #define XSLCRUART_RST_CTRL_OFFSET       0x00000228       /**< UART Software Reset Control */
+#define XSLCR_A9_CPU_RST_CTRL_OFFSET    0x00000244       /**< CPU Reset and Clock control */
 
 /* SLCR registers lock key */
 #define XSLCR_LOCK_KEY                  0x0000767B
@@ -89,6 +93,9 @@ extern "C" {
 #define XSLCRUART_RST_CTRL_UART0_REF_RST    0x00000004
 #define XSLCRUART_RST_CTRL_UART1_CPU1X_RST  0x00000002
 #define XSLCRUART_RST_CTRL_UART0_CPU1X_RST  0x00000001
+
+#define XSLCR_A9_CPU_RST   0x01
+#define XSLCR_A9_CPU_STOP  0x10
 
 /* @} */
 

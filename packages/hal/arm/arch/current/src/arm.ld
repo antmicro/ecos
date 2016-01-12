@@ -316,10 +316,18 @@ OUTPUT_FORMAT(elf32-bigarm)
       _GOT2_START_ = ABSOLUTE (.); *(.got2) _GOT2_END_ = ABSOLUTE (.);      \
     } > _region_
 
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+#define SECTION_mmu_tables(_region_, _vma_, _lma_) \
+    .mmu_tables _vma_ : _lma_ \
+    { __mmu_tables_start = ABSOLUTE(.); \
+      FORCE_OUTPUT; *(.mmu_tables) } \
+    > _region_
+#else
 #define SECTION_mmu_tables(_region_, _vma_, _lma_) \
     .mmu_tables _vma_ : _lma_ \
     { FORCE_OUTPUT; *(.mmu_tables) } \
     > _region_
+#endif
 
 #define SECTION_sram(_region_, _vma_, _lma_) \
     .sram _vma_ : _lma_ \

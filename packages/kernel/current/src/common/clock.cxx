@@ -837,6 +837,11 @@ Cyg_RealTimeClock::Cyg_RealTimeClock()
 
     HAL_CLOCK_INITIALIZE( CYGNUM_KERNEL_COUNTERS_RTC_PERIOD );
     
+
+#if defined(CYGPKG_HAL_SMP_SUPPORT) && defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+    interrupt.set_cpu(CYGNUM_HAL_INTERRUPT_RTC, 0);
+#endif
+
     interrupt.attach();
 
     interrupt.unmask_interrupt(CYGNUM_HAL_INTERRUPT_RTC);

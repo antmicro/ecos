@@ -133,6 +133,10 @@ void cyg_scheduler_start(void) __THROW CYGBLD_ATTRIB_NORET;
 /* locked thread preemption is disabled.                  */
 void cyg_scheduler_lock(void) __THROW;
 
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+void cyg_scheduler_trylock(void) __THROW;
+#endif
+
 void cyg_scheduler_unlock(void) __THROW;
 
 /* Just like 'cyg_scheduler_lock()', but never take the lock higher than 1  */
@@ -142,6 +146,11 @@ void cyg_scheduler_safe_lock(void) __THROW;
     
 /* Read the scheduler lock value. */
 cyg_ucount32 cyg_scheduler_read_lock(void) __THROW;
+
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+/* Read the scheduler lock holder. */
+cyg_uint32 cyg_scheduler_read_lock_holder(void) __THROW;
+#endif
 
 /*---------------------------------------------------------------------------*/
 /* Thread operations */

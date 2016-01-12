@@ -275,10 +275,19 @@ hal_msbindex(int mask)
 void
 dump_frame(unsigned char *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     HAL_SavedRegisters *rp = (HAL_SavedRegisters *)frame;
     int i;
     diag_dump_buf(frame, 128);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("Registers for CPU %d:\n", cpu);
+#else
     diag_printf("Registers:\n");
+#endif
     for (i = 0;  i <= 10;  i++) {
         if ((i == 0) || (i == 6)) diag_printf("R%d: ", i);
         diag_printf("%08X ", rp->d[i]);
@@ -293,9 +302,18 @@ dump_frame(unsigned char *frame)
 void
 show_frame_in(HAL_SavedRegisters *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("[IN] CPU: %d IRQ Frame:\n", cpu);
+#else
     diag_printf("[IN] IRQ Frame:\n");
+#endif
     dump_frame((unsigned char *)frame);
     HAL_RESTORE_INTERRUPTS(old);
 }
@@ -303,9 +321,18 @@ show_frame_in(HAL_SavedRegisters *frame)
 void
 show_frame_out(HAL_SavedRegisters *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("[OUT] CPU: %d IRQ Frame:\n", cpu);
+#else
     diag_printf("[OUT] IRQ Frame:\n");
+#endif
     dump_frame((unsigned char *)frame);
     HAL_RESTORE_INTERRUPTS(old);
 }
@@ -315,36 +342,72 @@ show_frame_out(HAL_SavedRegisters *frame)
 // Debug routines
 void cyg_hal_report_undefined_instruction(HAL_SavedRegisters *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("[UNDEFINED INSTRUCTION] CPU: %d Frame:\n", cpu);
+#else
     diag_printf("[UNDEFINED INSTRUCTION] Frame:\n");
+#endif
     dump_frame((unsigned char *)frame);
     HAL_RESTORE_INTERRUPTS(old);
 }
 
 void cyg_hal_report_software_interrupt(HAL_SavedRegisters *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("[SOFTWARE INTERRUPT] CPU: %d Frame:\n", cpu);
+#else
     diag_printf("[SOFTWARE INTERRUPT] Frame:\n");
+#endif
     dump_frame((unsigned char *)frame);
     HAL_RESTORE_INTERRUPTS(old);
 }
 
 void cyg_hal_report_abort_prefetch(HAL_SavedRegisters *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("[ABORT PREFETCH] CPU: %d Frame:\n", cpu);
+#else
     diag_printf("[ABORT PREFETCH] Frame:\n");
+#endif
     dump_frame((unsigned char *)frame);    
     HAL_RESTORE_INTERRUPTS(old);
 }
 
 void cyg_hal_report_abort_data(HAL_SavedRegisters *frame)
 {
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+#endif
+
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    diag_printf("[ABORT DATA] CPU: %d Frame:\n", cpu);
+#else
     diag_printf("[ABORT DATA] Frame:\n");
+#endif
     dump_frame((unsigned char *)frame);
     HAL_RESTORE_INTERRUPTS(old);
 }
@@ -353,7 +416,13 @@ void cyg_hal_report_exception_handler_returned(HAL_SavedRegisters *frame)
 {    
     int old;
     HAL_DISABLE_INTERRUPTS(old);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    HAL_SMP_CPU_TYPE cpu;
+    cpu  = HAL_SMP_CPU_THIS();
+    diag_printf("CPU: %d Exception handler returned!\n", cpu);
+#else
     diag_printf("Exception handler returned!\n");
+#endif
     dump_frame((unsigned char *)frame);
     HAL_RESTORE_INTERRUPTS(old);
 }

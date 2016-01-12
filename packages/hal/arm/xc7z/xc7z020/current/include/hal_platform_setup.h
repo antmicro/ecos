@@ -170,6 +170,107 @@ __disable_cache:
 
 #define PLATFORM_SETUP1 _setup
 
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+        // This code adds a core to SMP. It assumes the primary core already
+        // has enabled snoop control and has entered SMP.
+        .macro _setup2
+        nop
+
+        // Disable interupts and set to SVC mode
+        mov     r0, #(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_SUPERVISOR_MODE)
+        msr     cpsr, r0
+
+        // Set SPSR
+        mov     r0, #(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_SUPERVISOR_MODE)
+        msr     spsr_cxsf, r0
+        mrs     r0, spsr
+
+        cpsie A                         @ Enable non-precise data aborts.
+
+        // Join SMP, Enable SCU broadcast.
+        mrc     p15, 0, r0, c1, c0, 1   @ Read ACTLR
+        orr     r0, r0, #0x042          @ Set bit 6, 2 and 1
+        mcr     p15, 0, r0, c1, c0, 1   @ Write ACTLR
+
+        // Disable strict align check
+    	mrc     p15, 0, r0, c1, c0, 0
+    	bic     r0, r0, #(0x1<<1)       @ Clear A bit of SCTLR
+    	mcr     p15, 0, r0, c1, c0, 0
+
+    	// Disable branch prediction
+        mrc     p15, 0, r0, c1, c0, 0                 @ Read SCTLR
+    	orr     r0, r0, #(1 << 11)                    @ Set the Z bit (bit 11)
+    	mcr     p15, 0,r0, c1, c0, 0                  @ Write SCTLR
+
+    	// Invalidate L1 I-cache
+    	mov	r1,	#0x0
+    	mcr p15, 0, r1, c7, c5, 0       @ Invalidate I-Cache
+        mcr p15, 0, r1, c7, c5, 6       @ Invalidate Branch Predictor
+        mov  r1, #0x1800
+        mcr p15, 0, r1, c1, c0, 0       @ Enable I-Cache and Branch Predictor
+        isb
+
+    	// Invalidate L1 D-cache
+        mov     r0, #0
+        mcr     p15, 2, r0, c0, c0, 0
+        mrc     p15, 1, r0, c0, c0, 0
+
+        ldr     r1, =0x7fff
+        and     r2, r1, r0, lsr #13
+
+        ldr     r1, =0x3ff
+
+        and     r3, r1, r0, lsr #3  @ NumWays - 1
+        add     r2, r2, #1          @ NumSets
+
+        and     r0, r0, #0x7
+        add     r0, r0, #4          @ SetShift
+
+        clz     r1, r3              @ WayShift
+        add     r4, r3, #1          @ NumWays
+10:     sub     r2, r2, #1          @ NumSets--
+        mov     r3, r4              @ Temp = NumWays
+20:     subs    r3, r3, #1          @ Temp--
+        mov     r5, r3, lsl r1
+        mov     r6, r2, lsl r0
+        orr     r5, r5, r6          @ Reg = (Temp<<WayShift)|(NumSets<<SetShift)
+        mcr     p15, 0, r5, c7, c6, 2
+        bgt     20b
+        cmp     r2, #0
+        bgt     10b
+        dsb
+
+        // Set MMU table address
+        ldr     r0, =__mmu_tables_start
+        mcr     p15, 0, r0, c2, c0, 0 @ TTBR0
+
+        // Set Client mode for all Domains
+        ldr     r0, =0x55555555
+        mcr     p15, 0, r0, c3, c0, 0 @ DACR
+
+        mov     r0, #1
+        mcr     p15, 0, r0, c8, c7, 0                 @ TLBIALL - Invalidate entire unified TLB
+        dsb
+
+        // Enable MMU
+        mrc     p15, 0, r0, c1, c0, 0
+        orr     r0, r0, #1
+        mcr     p15, 0, r0, c1, c0, 0
+        isb
+        dsb
+
+        // Enable I and D Caches
+        mrc     p15, 0, r0, c1, c0, 0 @ SCTLR
+        orr     r0, r0, #0x1000
+        orr     r0, r0, #0x0004
+        mcr     p15, 0, r0, c1, c0, 0 @ SCTLR
+        dsb
+        isb
+
+        .endm
+
+#define PLATFORM_SETUP2 _setup2
+#endif
 
 //-----------------------------------------------------------------------------
 // end of hal_platform_setup.h

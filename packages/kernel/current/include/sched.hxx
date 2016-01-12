@@ -117,6 +117,11 @@ public:
     // Return current value of lock
     static cyg_ucount32 get_sched_lock();
 
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+    // Return current holder of lock
+    static cyg_ucount32 get_sched_lock_holder();
+#endif
+
     // Clear need_reschedule flag
     static void clear_need_reschedule();
     
@@ -162,6 +167,11 @@ public:
 
     // claim the preemption lock
     static void             lock();         
+
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+    // claim the preemption lock
+    static void		         trylock();
+#endif
 
     // release the preemption lock and possibly reschedule
     static void             unlock();
@@ -396,6 +406,13 @@ inline cyg_ucount32 Cyg_Scheduler_Base::get_sched_lock()
 {
     return Cyg_Scheduler_SchedLock::get_sched_lock();
 }
+
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+inline cyg_ucount32 Cyg_Scheduler_Base::get_sched_lock_holder()
+{
+    return Cyg_Scheduler_SchedLock::get_sched_lock_holder();
+}
+#endif
 
 // Return current number of thread switches
 inline cyg_ucount32 Cyg_Scheduler_Base::get_thread_switches()

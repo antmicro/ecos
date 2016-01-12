@@ -94,6 +94,20 @@ cdl_package CYGPKG_HAL_ARM {
         @rm target.tmp
     }
 
+    cdl_component CYGPKG_HAL_SMP_SUPPORT {
+      display       "SMP support"
+      default_value 0
+      requires { CYGPKG_HAL_ARM_MARS_ZX3 != 0 }
+
+      cdl_option CYGPKG_HAL_SMP_CPU_MAX {
+          display       "Max number of CPUs supported"
+          flavor        data
+          active_if     { CYGPKG_HAL_SMP_SUPPORT == 1 }
+          legal_values  2
+          default_value 2
+      }
+    }
+
     cdl_interface CYGINT_HAL_ARM_THUMB_ARCH {
         display "The CPU architecture supports THUMB mode"
     }

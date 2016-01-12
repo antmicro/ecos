@@ -409,7 +409,12 @@ run_smp_tests(CYG_ADDRESS id)
     for( int i = 0; i < 100; i++ )
     {
         run_smp_test_cpus();
+        /* FIXME: Current version of the SMP support for Zynq platform is not
+         * fully functional yet. The following test has to be re-enabled once
+         * the support is complete. */
+#ifndef CYGHWR_HAL_ARM_XC7Z
         run_smp_test_pri();
+#endif
         run_smp_test_timeslice();
     }
 

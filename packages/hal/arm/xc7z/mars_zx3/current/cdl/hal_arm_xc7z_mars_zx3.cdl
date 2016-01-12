@@ -62,6 +62,12 @@ cdl_package CYGPKG_HAL_ARM_MARS_ZX3 {
 
     implements    CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9
 
+    cdl_option CYGINT_HAL_ARM_ARCH_ARM_MULTICORE {
+        display      "Variant multicore support"
+        calculated   { CYGPKG_HAL_SMP_SUPPORT }
+        description  "The Mars ZX3 supports multicore."
+    }
+
     define_proc {
         puts $::cdl_system_header "#define CYGBLD_HAL_TARGET_H   <pkgconf/hal_arm.h>"
         puts $::cdl_system_header "#define CYGBLD_HAL_VARIANT_H  <pkgconf/hal_arm_xc7z.h>"

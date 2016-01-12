@@ -48,7 +48,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):    ITR-GmbH 
-// Contributors: 
+// Contributors: Antmicro Ltd
 // Date:         2012-06-25
 // Purpose:      HAL board support
 // Description:  Implementations of HAL board interfaces
@@ -74,10 +74,33 @@
 #ifdef CYGDBG_HAL_DEBUG_GDB_BREAK_SUPPORT
 #include <cyg/hal/drv_api.h>            // HAL ISR support
 #endif
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+#include <cyg/hal/var_spinlock.h>
+#endif
 #include <cyg/hal/var_io.h>
 
 
 /************************** Functions Definitions *****************************/
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+__externC void cyg_hal_smp_init(void);
+__externC void cyg_hal_smp_cpu_start_first(void);
+
+void hal_interrupt_init_cpu(void) {
+    cyg_uint32 reg;
+    /* Init GIC priorities */
+    HAL_READ_UINT32(XC7Z_ICC_PMR_BASEADDR, reg);
+    reg |= 0xff;
+    HAL_WRITE_UINT32(XC7Z_ICC_PMR_BASEADDR, reg);
+
+    /* Disable preemption */
+    HAL_WRITE_UINT32(XC7Z_ICC_BPR_BASEADDR, 0x7);
+
+    /* Enable signaling the CPU */
+    HAL_READ_UINT32(XC7Z_ICC_ICR_BASEADDR, reg);
+    reg |= 0x3;
+    HAL_WRITE_UINT32(XC7Z_ICC_ICR_BASEADDR, reg);
+}
+#endif
 
 /****************************************************************************/
 /**
@@ -186,6 +209,29 @@ void hal_hardware_init(void)
     hal_if_init();
 
 	HAL_CLOCK_INITIALIZE(CYGNUM_HAL_RTC_PERIOD);
+
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    cyg_uint32 reg;
+    /* Disable the distributor */
+    HAL_READ_UINT32(XC7Z_ICD_DCR_BASEADDR, reg);
+    reg &= ~(0x2);
+    HAL_WRITE_UINT32(XC7Z_ICD_DCR_BASEADDR, reg);
+
+    /* Clear pending interrupts */
+    HAL_WRITE_UINT32(XC7Z_ICD_ICPR0_BASEADDR, 0xffffffff);
+    HAL_WRITE_UINT32(XC7Z_ICD_ICPR1_BASEADDR, 0xffffffff);
+    HAL_WRITE_UINT32(XC7Z_ICD_ICPR2_BASEADDR, 0xffffffff);
+
+    /* Re-enable the distributor */
+    HAL_READ_UINT32(XC7Z_ICD_DCR_BASEADDR, reg);
+    reg |= 0x2;
+    HAL_WRITE_UINT32(XC7Z_ICD_DCR_BASEADDR, reg);
+
+    /* Start the cpu */
+    cyg_hal_smp_init();
+    hal_interrupt_init_cpu();
+    cyg_hal_smp_cpu_start_first();
+#endif
 }
 
 /****************************************************************************/
@@ -390,6 +436,55 @@ void hal_interrupt_set_level(int vector, int level)
     HAL_WRITE_UINT32(XC7Z_SCUGIC_DIST_BASEADDR + XSCUGIC_PRIORITY_OFFSET_CALC(vector),
                 dwRegValue);
 }
+
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+void hal_interrupt_set_cpu_target(cyg_uint32 vector, cyg_uint32 cpu)
+{
+    cyg_uint8 *irq_target_ptr = (cyg_uint8*)XC7Z_ICD_IPTR0_BASEADDR; /* Byte accessible */
+    irq_target_ptr[vector] |= (1 << cpu);
+}
+
+void hal_spinlock_spin(spinlock_t *lock)
+{
+    hal_spinlock_lock(lock, SpinlockWaitForever);
+}
+
+cyg_bool hal_spinlock_tryspin(spinlock_t *lock)
+{
+    return hal_spinlock_trylock(lock, SpinlockWaitForever);
+}
+
+void hal_spinlock_clear(spinlock_t *lock)
+{
+	hal_spinlock_unlock(lock);
+}
+
+void hal_spinlock_init_clear(spinlock_t *lock)
+{
+    lock->owner = Unlocked;
+}
+
+void hal_spinlock_init_set(spinlock_t *lock)
+{
+    lock->owner = Locked;
+}
+
+cyg_bool hal_spinlock_try(spinlock_t *lock)
+{
+    cyg_bool retval = hal_spinlock_trylock(lock, SpinlockNoWait);
+    return retval;
+}
+
+void hal_spinlock_init(spinlock_t *lock)
+{
+    lock->owner = Unlocked;
+}
+
+cyg_bool hal_spinlock_is_locked(spinlock_t *lock)
+{
+    return (lock->owner != Unlocked);
+}
+#endif
 
 /****************************************************************************/
 /**

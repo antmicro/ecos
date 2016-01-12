@@ -249,7 +249,11 @@ PTR(start) // This is copied to 0x28 for bootup // 0x40
         // Interrupt/exception VSR pointers
         .globl  hal_vsr_table
 hal_vsr_table:
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        .rept   16
+#else
         .rept   8               
+#endif
         .long   0
         .endr
 
@@ -298,6 +302,30 @@ reset_vector:
         // Come here to reset board
 warm_reset:                 
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        // Save r0 for cores 1-3. r0 arg passed by ROM
+        // r0 is a function pointer for secondary COREs.
+        // Core 1-3 are held in reset on the first boot, 
+        // then on warm reset they will enter this code and start.
+        mov        r4, r0
+    
+        // Get CORE
+        mrc        p15,0,r2,c0,c0,5   // Read multiprocessor affinity register
+        and        r2, r2, #3         // Mask off, leaving CPU ID field
+        mov        r2, r2             // Save cpu id for later
+
+        // Check CORE
+        cmp        r2, #0
+        beq        1f                 // Keep going with CORE 0
+        bx         r4                 // For secondary COREs, jump to argument function pointer
+                                      // passed in by ROM. This will only happen if the ROM
+                                      // has setup all cores. Otherwise, secondary CPUs might
+                                      // never get here and CORE 0 may manually start CORE 1-3.
+                                      // In that case the CORE 0 code probably starts the other
+                                      // CPU at start.
+1:
+#endif
+
 #if defined(CYG_HAL_STARTUP_RAM) && \
     !defined(CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS)
         mrs     r7,cpsr                 // move back to IRQ mode
@@ -309,7 +337,11 @@ warm_reset:
         // We cannot access any LED registers until after PLATFORM_SETUP1
         LED 7
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldr     r0,=CYGHWR_HAL_VECTOR_TABLE_BASE           // move vectors
+#else
         mov     r0,#0           // move vectors
+#endif
         ldr     r1,=__exception_handlers
 #ifndef CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS
         // Wait with this if stubs are included (see further down).
@@ -352,6 +384,32 @@ start:
 
         LED 5
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        // Save r0 for cores 1-3, r0 arg passed by ROM
+        // r0 is a function pointer for secondary COREs.
+        // The assumption is the seconary CORE startup gives
+        // a value for starting the CORE. It will be a pointer
+        // to an entry for the core. This value is stored in
+        // r8 while the stacks are setup.
+        mov        r8, r0
+
+        // Get CORE
+        mrc        p15,0,r2,c0,c0,5   // Read multiprocessor affinity register
+        and        r2, r2, #3         // Mask off, leaving CORE ID field
+        mov        r9, r2             // Save CORE ID for later
+
+        // Check CORE
+        cmp        r9, #0
+        beq        1f                 // Continue on if CORE 0
+
+        PLATFORM_SETUP2               // Early stage platform initialization
+                                      // which can set DRAM size at 0x40
+                                      // see <cyg/hal/hal_platform_setup.h>
+
+        bl         20f                // Skip if CORE 1-N
+1:
+#endif
+
 #if defined(CYG_HAL_STARTUP_RAM) && \
     !defined(CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS)
 // If we get restarted, hang here to avoid corrupting memory
@@ -363,6 +421,9 @@ start:
         str     r1,[r0]
 #endif
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+20:
+#endif
         // Reset software interrupt pointer
         ldr     r0,=CYGHWR_HAL_VECTOR_TABLE_BASE           // move vectors
         ldr     r1,.__exception_handlers
@@ -405,6 +466,11 @@ start:
         str     r2,[r0,#HAL_ARM_RESET_VECTOR_ADDR]
 #  endif
 # endif
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        cmp        r9, #0
+        bne        20f                 // Skip if CORE 1-N
+#endif
+
         // Relocate [copy] data from ROM to RAM
         ldr     r3,.__rom_data_start
         ldr     r4,.__ram_data_start
@@ -420,20 +486,67 @@ start:
 2:
 #endif
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+20:
+        // Initialize interrupt/exception environments
+        ldr     r0, .__startup_stack
+        mov     r1, #CYGNUM_HAL_STARTUP_STACK_SIZE
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
         // initialize interrupt/exception environments
         ldr     sp,.__startup_stack
+#endif
+
         mov     r0,#(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_IRQ_MODE)
         msr     cpsr,r0
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldr     r0, .__interrupt_stack
+        mov     r1, #CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
         ldr     sp,.__exception_stack
+#endif
+
         mov     r0,#(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_UNDEF_MODE)
         msr     cpsr,r0
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldr     r0, .__undef_exception_stack
+        mov     r1, #128
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+
+        mov     r0,#(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_ABORT_MODE)
+        msr     cpsr,r0
+
+        ldr     r0, .__abort_exception_stack
+        mov     r1, #128
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
         ldr     sp,.__exception_stack
+#endif
+
 #ifndef CYGOPT_HAL_ARM_FIQ_DISABLE
         mov     r0,#(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_FIQ_MODE)
         msr     cpsr,r0
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldr     r0, .__fiq_stack
+        mov     r1, CYGNUM_HAL_ARM_FIQ_STACK_SIZE
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
         ldr     sp,.__fiq_stack
 #endif
         
+#endif
+
         // initialize CPSR (machine state register)
         mov     r0,#(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_SUPERVISOR_MODE)
         msr     cpsr,r0
@@ -441,6 +554,16 @@ start:
         // Note: some functions in LIBGCC1 will cause a "restore from SPSR"!!
         msr     spsr,r0
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        // Only use startup stack so that IRQs enabled by constructors don't
+        // use the interrupt stack. This is mainly an issue when the RTC
+        // starts operation.
+        ldr     r0,.__startup_stack
+        mov     r1, #CYGNUM_HAL_STARTUP_STACK_SIZE
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
         // initialize stack
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
         // use interrupt stack for system initialization since it's bigger 
@@ -449,7 +572,24 @@ start:
 #else        
         ldr     sp,.__startup_stack
 #endif        
+#endif
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+
+        // Assuming stack setup did not destroy r8 and r9
+        // Check for CORE 0 and CORE 1-N
+        cmp        r9, #0
+        beq        1f                 // Branch to CPU 0 setup
+
+        // CORE 1-N
+
+        // Run kernel + application in THUMB mode
+        THUMB_MODE(r1,10)
+
+        bx      r8                    // Branch to start address
+
+1:      // CORE 0
+#endif
         // clear BSS
         ldr     r1,.__bss_start
         ldr     r2,.__bss_end
@@ -480,7 +620,11 @@ start:
 
 #if defined(CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS) || \
     defined(CYGIMP_HAL_PROCESS_ALL_EXCEPTIONS)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldr     r0,=CYGHWR_HAL_VECTOR_TABLE_BASE
+#else
         mov     r0,#0           // move vectors
+#endif
         ldr     r1,=__exception_handlers
         ldr     r2,[r1,#0x04]   // undefined instruction
         str     r2,[r0,#0x04]
@@ -502,10 +646,18 @@ start:
         LED 1
         
         // This starts up the eCos kernel
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldr     r0,.__startup_stack
+        mov     r1, #CYGNUM_HAL_STARTUP_STACK_SIZE
+        mul     r3, r9, r1      // Offset for CPU #
+        sub     r0, r0, r3      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
         ldr     r1,=__startup_stack
         mov     sp,r1
 #endif        
+#endif    
         bl      cyg_start
 _start_hang:
         b       _start_hang
@@ -531,11 +683,14 @@ init_done:
 // Exception handlers
 // Assumption: get here from a non-user context [mode]
 //             except in case of standalone app. running in user mode
-//             (CYGOPT_HAL_ARM_WITH_USER_MODE should have been defined)
+//             (CYGOPT_HAL_ARM_WITH_USER_MODE should have been defined
+//              if in user mode, normally for RedBoot)
 //
         .code   32
 undefined_instruction:
+#if !defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
         ldr     sp,.__undef_exception_stack     // get good stack
+#endif
         stmfd   sp!,{r0-r5}                     // save some supervisor regs
         mrs     r1,spsr
         tst     r1,#CPSR_THUMB_ENABLE
@@ -548,7 +703,9 @@ undefined_instruction:
         .code   32
 software_interrupt:
         stmfd   sp!,{r8}
+#if !defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
         ldr     r8,.__undef_exception_stack     // get good stack
+#endif
         stmfd   r8!,{r0-r5}                     // save some supervisor regs
         mov     r3,r8
         ldmfd   sp!,{r8}
@@ -561,7 +718,9 @@ software_interrupt:
 
         .code   32
 abort_prefetch:
+#if !defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
         ldr     sp,.__undef_exception_stack     // get good stack
+#endif
         stmfd   sp!,{r0-r5}                     // save some supervisor regs
         sub     r0,lr,#4                        // PC at time of interrupt
         mrs     r1,spsr
@@ -571,7 +730,9 @@ abort_prefetch:
 
         .code   32
 abort_data:
+#if !defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
         ldr     sp,.__undef_exception_stack     // get good stack
+#endif
         stmfd   sp!,{r0-r5}                     // save some supervisor regs
         sub     r0,lr,#4                        // PC at time of interrupt
         mrs     r1,spsr
@@ -800,6 +961,23 @@ FIQ:
     1:
         // If FIQ interrupted other non-user mode, switch to IRQ mode and
         // fall through to IRQ handler.
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        // Use regsiters r9-r11 on because they are unique to FIQ
+        // Get cpu id
+        mrc     p15,0,r9,c0,c0,5   // Read multiprocessor affinity register
+        and     r9, r9, #3         // Mask off, leaving CPU ID field
+
+        ldr     r10, .__interrupt_stack
+        mov     r11, #CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+        mul     r9, r9, r11       // Offset for CPU #
+        sub     r9, r10, r9       // Move the sp to the CPU # position
+        mov     sp, r9            // Set the sp
+        stmdb   sp,{r8, lr}      // Save the spsr
+        mov     r8,#CPSR_IRQ_MODE|CPSR_FIQ_DISABLE|CPSR_IRQ_DISABLE
+        msr     cpsr,r8			 // switch to IRQ mode
+        ldmdb   sp, {r8, lr}     // restore the spsr
+        msr     spsr,r8
+#else
         ldr     sp,.__exception_stack   // get good stack to save lr and spsr
         stmdb   sp,{r8,lr}
         mov     r8,#CPSR_IRQ_MODE|CPSR_FIQ_DISABLE|CPSR_IRQ_DISABLE
@@ -807,15 +985,34 @@ FIQ:
         ldr     sp,.__exception_stack   // get regs saved in FIQ mode
         ldmdb	sp,{sp,lr}
         msr     spsr,sp
+#endif
 
         // now it looks like we got an IRQ instead of an FIQ except that
         // FIQ is disabled so we don't recurse.
 #endif        
 IRQ:
+#if !defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
         // Note: I use this exception stack while saving the context because
         // the current SP does not seem to be always valid in this CPU mode.
         ldr     sp,.__exception_stack   // get good stack
+#endif
         stmfd   sp!,{r0-r5}             // save some supervisor regs
+
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        // Save the IRQ stack so that if this is re-entrant it can
+        // be used later.
+
+        mrc     p15,0,r0,c0,c0,5   // Read multiprocessor affinity register
+        and     r0, r0, #3         // Mask off, leaving CPU ID field
+
+        ldr     r1,.irq_stack_at_entry  // Get the irq_stack
+        mov     r2, #4
+        mul     r2, r2, r0
+        add     r2, r1, r2              // Calc real irq_stack
+
+        str     sp,[r2]                 // Save stack
+#endif
+
         sub     r0,lr,#4                // PC at time of interrupt
         mrs     r1,spsr
         mov     r2,#CYGNUM_HAL_VECTOR_IRQ
@@ -889,6 +1086,52 @@ IRQ:
 //      mov     r0,sp
 //      bl      _show_frame_in
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        mrc     p15,0,r0,c0,c0,5        // Read multiprocessor affinity register
+        and     r0, r0, #3              // Mask off, leaving CPU ID field
+
+        ldr     r1,.irq_level           // Get the irq_level
+        mov     r2, #4
+        mul     r2, r2, r0
+        add     r2, r1, r2              // Calc real irq_level
+
+        ldr     r0,[r2]
+        add     r1,r0,#1
+        str     r1,[r2]
+        cmp     r0,#0
+        mov     r1,sp                   // save old stack pointer
+
+        beq     1f                      // if  zero, switch stacks, else get stack
+
+        // Restore the stack to the value at the time of re-entry. We are discarding
+        // the data on the stack, but it will be restored when the last IRQ exits.
+        // The actual stack repaired is the interrupt stack which we switched to
+        // on first entry.
+        mrc     p15,0,r0,c0,c0,5        // Read multiprocessor affinity register
+        and     r0, r0, #3              // Mask off, leaving CPU ID field
+
+        ldr     r2,.irq_stack_at_entry  // Get the irq_stack
+        mov     r3, #4
+        mul     r3, r3, r0
+        add     r3, r2, r3              // Calc real irq_stack
+        ldr     sp,[r3]
+        b       2f
+1:
+        // Switch the stack as this is the first entry and we are going
+        // to do the work on the interrupt stack.
+        mrc     p15,0,r0,c0,c0,5   // Read multiprocessor affinity register
+        and     r0, r0, #3         // Mask off, leaving CPU ID field
+
+        mov     r2, #CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+        mul     r2, r0, r2      // Offset for CPU #
+        ldr     r0,.__interrupt_stack
+        sub     r0, r0, r2      // Move the sp to the CPU # position
+        moveq   sp, r0          // Set the sp
+2:
+        subeq sp, sp, #24
+        stmfd sp!,{r1}
+10:
+#else
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
         // Switch to interrupt stack
         ldr     r2,.irq_level           // current number of nested interrupts
@@ -901,10 +1144,25 @@ IRQ:
         stmeqfd sp!,{r1}
 10:
 #endif
+#endif
 
         // The entire CPU state is now stashed on the stack,
         // increment the scheduler lock and handle the interrupt
 
+// What is needed is a try to lock with a spin lock that returns with fail if neccessary.
+// this way the lock can be taken if there is no holder, and gives up if neccessary.
+
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+		// Take the lock. The current lockholder MUST release the lock or there
+		// will be a deadlock.
+        .extern cyg_scheduler_lock
+        stmfd   sp!,{r0,r1,r2,r3,r4}	// Push the registers used by lock
+
+		bl		cyg_scheduler_lock
+
+		ldmfd   sp!,{r0,r1,r2,r3,r4}    // Restore things
+		b		1f
+#else
 #ifdef CYGFUN_HAL_COMMON_KERNEL_SUPPORT                 
         .extern cyg_scheduler_sched_lock
         ldr     r3,.cyg_scheduler_sched_lock
@@ -913,6 +1171,10 @@ IRQ:
         str     r4,[r3]
 #endif
 
+#endif
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+1:
+#endif
         THUMB_MODE(r3,10)
 
         mov     r0,v6
@@ -957,7 +1219,16 @@ IRQ:
 10:     ldr     r1,.hal_interrupt_data
         ldr     r1,[r1,v1,lsl #2]       // handler data
         ldr     r2,.hal_interrupt_handlers
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9)
+        mov     r3, #1024
+        sub     r3, #1
+        and     r3, v1, r3              // Mask out CPU_#
+        ldr     v3,[r2,r3,lsl #2]       // handler (indexed by vector #)
+#endif
+#else
         ldr     v3,[r2,v1,lsl #2]       // handler (indexed by vector #)
+#endif
         mov     r2,v6                   // register frame (this is necessary
                                         // for the ISR too, for ^C detection)
 
@@ -981,6 +1252,58 @@ IRQ_15A:
 
 spurious_IRQ:           
 
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        mrc     p15,0,r3,c0,c0,5         // Read multiprocessor affinity register
+        and     r3, r3, #3               // Mask off, leaving CPU ID field
+        ldr     r1,.irq_level           // Get the irq_level
+        mov     r2, #4
+        mul     r2, r2, r3
+        add     r2, r1, r2              // Calc real irq_level
+
+        ldr     r1,[r2]
+        subs    r3,r1,#1
+        str     r3,[r2]
+
+        ldr     sp,[sp]         // This should be the saved stack pointer
+
+        // Return the stack to the proper place for next time. Works because
+        // dsr has own stack. Otherwise it would have to pop off the contents.
+        mrs     r1,cpsr            // IRQ Mode
+        bic     r1,r1,#CPSR_MODE_BITS
+        orr     r1,r1,#CPSR_IRQ_MODE
+        msr     cpsr,r1
+
+        cmp     r3,#0
+        beq     1f
+
+        // Restore the stack pointer after all the work is done. If there are
+        // no bugs, the stack point should be correct. But this protects against
+        // bugs by restoring it directly.
+        mrc     p15,0,r1,c0,c0,5   // Read multiprocessor affinity register
+        and     r1, r1, #3         // Mask off, leaving CPU ID field
+
+        ldr     r2,.irq_stack_at_entry  // Get the irq_stack
+        mov     r3, #4
+        mul     r3, r3, r1
+        add     r3, r2, r3              // Calc real irq_stack
+        ldr     sp,[r3]
+        add     sp, sp, #24
+        b       2f
+1:
+        mrc     p15,0,r1,c0,c0,5   // Read multiprocessor affinity register
+        and     r1, r1, #3         // Mask off, leaving CPU ID field
+
+        mov     r2, #CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+        mul     r2, r1, r2      // Offset for CPU #
+        ldr     r1,.__interrupt_stack
+        sub     r1, r1, r2      // Move the sp to the CPU # position
+        moveq   sp, r1          // Set the sp
+2:
+        mrs     r1,cpsr           // SVC Mode
+        bic     r1,r1,#CPSR_MODE_BITS
+        orr     r1,r1,#CPSR_SUPERVISOR_MODE
+        msr     cpsr,r1
+#else
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
         // If we are returning from the last nested interrupt, move back
         // to the thread stack. interrupt_end() must be called on the
@@ -991,6 +1314,8 @@ spurious_IRQ:
         str     r1,[r2]
         ldreq   sp,[sp]         // This should be the saved stack pointer
 #endif
+#endif
+
         // The return value from the handler (in r0) will indicate whether a 
         // DSR is to be posted. Pass this together with a pointer to the
         // interrupt object we have just used to the interrupt tidy up routine.
@@ -998,8 +1323,19 @@ spurious_IRQ:
                               // don't run this for spurious interrupts!
         cmp     v1,#CYGNUM_HAL_INTERRUPT_NONE
         beq     17f
+
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9)
+        mov     r2, #1024
+        sub     r2, #1
+        and     r2, v1, r2              // Mask out CPU_#
+        ldr     r1,.hal_interrupt_objects
+        ldr     r1,[r1,r2,lsl #2]
+#endif
+#else
         ldr     r1,.hal_interrupt_objects
         ldr     r1,[r1,v1,lsl #2]
+#endif
         mov     r2,v6           // register frame
 
         THUMB_MODE(r3,10)
@@ -1019,17 +1355,41 @@ spurious_IRQ:
 // Execute pending DSRs the interrupt stack
 // Note: this can only be called from code running on a thread stack
 FUNC_START_ARM(hal_interrupt_stack_call_pending_DSRs, r1)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        stmfd   sp!,{r4,r5,r6,lr}
+#else
         stmfd   sp!,{r4,r5,lr}
+#endif
         // Disable interrupts
         mrs     r4,cpsr                 // disable IRQ's
         orr     r2,r4,#CPSR_INTR_MASK
         bic     r5,r4,#CPSR_INTR_MASK
         msr     cpsr,r2
-        // Switch to interrupt stack
+        // Switch to interrupt/dsr stack
         mov     r3,sp                   // save old stack pointer
+
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        mrc     p15,0,r6,c0,c0,5         // Read multiprocessor affinity register
+        and     r6, r6, #3               // Mask off, leaving CPU ID field
+
+        ldr     r0,.__dsr_stack
+        mov     r2, #CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+        mul     r2, r2, r6      // Offset for CPU #
+        sub     r0, r0, r2      // Move the sp to the CPU # position
+        mov     sp, r0          // Set the sp
+#else
         ldr     sp,.__interrupt_stack
+#endif
         stmfd   sp!,{r3}                // stored at top of interrupt stack
         ldr     r2,.irq_level           // current number of nested interrupts
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9)
+        add     r1, r2, #0                  // Get the irq_level
+        mov     r2, #4
+        mul     r2, r2, r6
+        add     r2, r1, r2              // Calc real irq_level
+#endif
+#endif
         ldr     r3,[r2]
         add     r3,r3,#1                // bump nesting level
         str     r3,[r2]
@@ -1049,6 +1409,15 @@ FUNC_START_ARM(hal_interrupt_stack_call_pending_DSRs, r1)
 
         // Move back to the thread stack.
         ldr     r2,.irq_level
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        mrc     p15,0,r6,c0,c0,5         // Read multiprocessor affinity register
+        and     r6, r6, #3               // Mask off, leaving CPU ID field
+
+        add     r1, r2, #0                  // Get the irq_level
+        mov     r2, #4
+        mul     r2, r2, r6
+        add     r2, r1, r2              // Calc real irq_level
+#endif
         ldr     r3,[r2]
         sub     r3,r3,#1                // decrement nesting level
         str     r3,[r2]
@@ -1056,10 +1425,18 @@ FUNC_START_ARM(hal_interrupt_stack_call_pending_DSRs, r1)
         msr     cpsr,r4                 // restore interrupts to original state
 
 #ifdef __thumb__
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldmfd   sp!,{r4,r5,r6,lr}          // return
+#else
         ldmfd   sp!,{r4,r5,lr}          // return
+#endif
         bx      lr
 #else
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+        ldmfd   sp!,{r4,r5,r6,pc}          // return
+#else
         ldmfd   sp!,{r4,r5,pc}          // return
+#endif
 #endif // __thumb__
 #endif // CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
         
@@ -1170,8 +1547,14 @@ PTR(__GDB_stack_base)
 PTR(__GDB_stack)
 #endif
 PTR(__startup_stack)
+#if !defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
 PTR(__exception_stack)
+#endif
 PTR(__undef_exception_stack)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+PTR(__soft_exception_stack)
+PTR(__abort_exception_stack)
+#endif
 PTR(__bss_start)
 PTR(__bss_end)
 PTR(_end)
@@ -1186,9 +1569,20 @@ PTR(init_flag)
 #ifdef CYGFUN_HAL_COMMON_KERNEL_SUPPORT
 PTR(cyg_scheduler_sched_lock)
 #endif
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+#if defined(CYGFUN_HAL_COMMON_KERNEL_SUPPORT)
+PTR(cyg_scheduler_trylock)
+PTR(cyg_scheduler_read_lock_holder)
+#endif
+PTR(irq_level)
+PTR(irq_stack_at_entry)
+PTR(__interrupt_stack)
+PTR(__dsr_stack)
+#else
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_USE_INTERRUPT_STACK
 PTR(irq_level)
 PTR(__interrupt_stack)
+#endif
 #endif
 #ifdef  CYGHWR_HAL_ARM_DUMP_EXCEPTIONS
 PTR(__dump_procs)
@@ -1212,7 +1606,12 @@ _eCos_id:
 // Recompiling will not DTRT without manual intervention.
 
         .data
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_CORTEXA9)
+       .section ".data","aw"
 
+#endif
+#endif
 init_flag:
         .balign 4
         .long   0
@@ -1243,6 +1642,74 @@ hal_interrupt_objects:
         .section ".bss"
 
 // Small stacks, only used for saving information between CPU modes
+#if defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+__undef_exception_stack_base:
+        .rept   32*4*CYGPKG_HAL_SMP_CPU_MAX
+        .long   0
+        .endr
+__undef_exception_stack:
+        .rept   32*4*CYGPKG_HAL_SMP_CPU_MAX
+        .long   0
+        .endr
+__soft_exception_stack:
+        .rept   32*4*CYGPKG_HAL_SMP_CPU_MAX
+        .long   0
+        .endr
+__abort_exception_stack:
+#ifndef CYGOPT_HAL_ARM_FIQ_DISABLE
+        .balign 16
+__fiq_stack_base:
+        .rept   CYGNUM_HAL_ARM_FIQ_STACK_SIZE * CYGPKG_HAL_SMP_CPU_MAX
+        .byte   0
+        .endr
+        .balign 16
+__fiq_stack:
+#endif
+// Runtime stack used during all interrupt processing
+#ifndef CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE
+#define CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE 4096
+#endif
+        .balign 16
+        .global cyg_interrupt_stack_base
+cyg_interrupt_stack_base:
+__interrupt_stack_base:
+        .rept CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE * CYGPKG_HAL_SMP_CPU_MAX
+        .byte 0
+        .endr
+        .balign 16
+        .global cyg_interrupt_stack
+cyg_interrupt_stack:
+__interrupt_stack:
+__dsr_stack_base:
+        .rept CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE * CYGPKG_HAL_SMP_CPU_MAX
+        .byte 0
+        .endr
+        .balign 16
+__dsr_stack:
+irq_level:
+        .rept   CYGPKG_HAL_SMP_CPU_MAX
+        .long   0
+        .endr
+irq_stack_at_entry:
+        .rept   CYGPKG_HAL_SMP_CPU_MAX
+        .long   0
+        .endr
+#ifdef CYGDBG_HAL_DEBUG_GDB_INCLUDE_STUBS
+        .balign 16
+__GDB_stack_base:
+        .rept CYGNUM_HAL_COMMON_INTERRUPTS_STACK_SIZE // rather than 1k
+        .byte 0
+        .endr
+__GDB_stack:
+#endif
+        .balign 16
+__startup_stack_base:
+        .rept CYGNUM_HAL_STARTUP_STACK_SIZE * CYGPKG_HAL_SMP_CPU_MAX
+        .byte 0
+        .endr
+        .balign 16
+__startup_stack:
+#else
 __exception_stack_base: 
         .rept   32
         .long   0
@@ -1302,6 +1769,7 @@ __startup_stack_base:
         .endr
         .balign 16
 __startup_stack:
+#endif
 
 #ifdef PLATFORM_EXTRAS
 #include PLATFORM_EXTRAS

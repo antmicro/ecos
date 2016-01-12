@@ -63,6 +63,10 @@
 
 #include <cyg/kernel/sched.inl>
 
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+#include <cyg/hal/var_intr.h>
+#endif
+
 // -------------------------------------------------------------------------
 // Statics
 
@@ -338,10 +342,6 @@ interrupt_end(
     )
 {
 //    CYG_REPORT_FUNCTION();
-
-#ifdef CYGPKG_KERNEL_SMP_SUPPORT
-    Cyg_Scheduler::lock();
-#endif
     
     // Sometimes we have a NULL intr object pointer.
     cyg_vector vector = (intr!=NULL)?intr->vector:0;

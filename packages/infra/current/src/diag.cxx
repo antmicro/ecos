@@ -573,15 +573,26 @@ diag_vsnprintf(char *buf, size_t len, const char *fmt, va_list ap)
     return (info.len);
 }
 
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+__externC void cyg_scheduler_lock(void);
+__externC void cyg_scheduler_unlock(void);
+#endif
+
 int
 diag_printf(const char *fmt, ...)
 {
     va_list ap;
     int ret;
 
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    cyg_scheduler_lock();
+#endif
     va_start(ap, fmt);
     ret = _vprintf(_putc, (void **)0, fmt, ap);
     va_end(ap);
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    cyg_scheduler_unlock();
+#endif
     return (ret);
 }
 

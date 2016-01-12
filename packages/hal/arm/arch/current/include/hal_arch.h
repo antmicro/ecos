@@ -75,7 +75,11 @@
 #define CPSR_FIQ_MODE		0x11
 #define CPSR_IRQ_MODE		0x12
 #define CPSR_SUPERVISOR_MODE	0x13
+#define CPSR_MONITOR_MODE	0x16
+#define CPSR_ABORT_MODE		0x17
 #define CPSR_UNDEF_MODE		0x1B
+#define CPSR_SYSTEM_MODE	0x1F
+#define CPSR_IMPRECISE_DATA_ABORT_DISABLE 0x100
 
 // The following are not supported by every CPU, but if
 // they are, they have the following values:

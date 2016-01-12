@@ -81,6 +81,24 @@ inline void Cyg_Scheduler::lock()
     CYG_INSTRUMENT_SCHED(LOCK,get_sched_lock(),0);
 };
 
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+inline void Cyg_Scheduler::trylock()
+{
+    // We do not need to do a read-modify-write sequence here because
+    // the scheduler lock is strictly nesting. Even if we are interrupted
+    // partway through the increment, the lock will be returned to the same
+    // value before we are resumed/rescheduled.
+
+    HAL_REORDER_BARRIER();
+
+    try_sched_lock();
+
+    HAL_REORDER_BARRIER();
+
+    CYG_INSTRUMENT_SCHED(LOCK,get_sched_lock(),0);
+};
+#endif
+
 inline void Cyg_Scheduler::unlock()
 {
     // This is an inline wrapper for the real scheduler unlock function in

@@ -133,4 +133,21 @@ cdl_package CYGPKG_HAL_ARM_XC7Z {
         }
     }
 
+
+    cdl_component CYGPKG_HAL_XC7Z_ARM_SMP_SUPPORT {
+        display     "Zynq SMP Support"
+        active_if { CYGPKG_HAL_SMP_SUPPORT }
+        calculated { CYGPKG_HAL_SMP_SUPPORT }
+        compile xc7z_smp.c xc7z.S
+
+        cdl_option CYGNUM_HAL_STARTUP_STACK_SIZE {
+            display        "Starutp stack size"
+            flavor         data
+            default_value  2048
+            description "
+                Size of the startup stack used during initialization
+                 of the system."
+        }
+    }
+
 }

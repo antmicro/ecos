@@ -150,6 +150,27 @@ CYG_MACRO_START                                                 \
 }                                                               \
 CYG_MACRO_END
 
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+#define HAL_SMP_SCHEDLOCK_TRYINC( __lock, __data )              \
+CYG_MACRO_START                                                 \
+{                                                               \
+    CYG_INTERRUPT_STATE __state;                                \
+    HAL_DISABLE_INTERRUPTS(__state);                            \
+    if( __data.holder == HAL_SMP_CPU_THIS() )                   \
+        __lock++;                                               \
+    else                                                        \
+    {                                                           \
+        CYG_INSTRUMENT_SMP(LOCK_WAIT,CYG_KERNEL_CPU_THIS(),0);  \
+        if(HAL_SPINLOCK_TRYSPIN(__data.spinlock) == false) {    \
+        __data.holder = HAL_SMP_CPU_THIS();                     \
+        __lock++; }                                             \
+        CYG_INSTRUMENT_SMP(LOCK_GOT,CYG_KERNEL_CPU_THIS(),0);   \
+    }                                                           \
+    HAL_RESTORE_INTERRUPTS(__state);                            \
+}                                                               \
+CYG_MACRO_END
+#endif
+
 #define HAL_SMP_SCHEDLOCK_ZERO( __lock, __data )                                                 \
 CYG_MACRO_START                                                                                  \
 {                                                                                                \
@@ -188,7 +209,14 @@ class Cyg_SpinLock
 public:
 
     // Constructor, initialize the lock to clear
+#if defined(CYGPKG_HAL_SMP_SUPPORT) && defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+    // The ARM spinlock is a pointer type to a value that may be locked in
+    // a cache line. Rather than use double pointers, it is easier to pass
+    // lock into the macro.
+    Cyg_SpinLock() { HAL_SPINLOCK_INIT_CLEAR(lock); };
+#else
     Cyg_SpinLock() { lock = HAL_SPINLOCK_INIT_CLEAR; };
+#endif
 
     ~Cyg_SpinLock()
     {
@@ -279,6 +307,18 @@ protected:
         HAL_SMP_SCHEDLOCK_INC( sched_lock, lock_data );
     };
 
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+    // Try to increment the scheduler lock. Works like inc_sched_lock
+    // except it may fail to gain a lock of the spinlock fails. It is
+    // up to the caller to test if the was achieved.
+    static void try_sched_lock()
+    {
+    	cyg_bool result;
+        CYG_INSTRUMENT_SMP(LOCK_INC,CYG_KERNEL_CPU_THIS(),0);
+        HAL_SMP_SCHEDLOCK_TRYINC( sched_lock, lock_data );
+    };
+#endif
+
     // Zero the scheduler lock. This will release the CPU serializing
     // lock and allow another CPU in.
     static void zero_sched_lock()
@@ -295,6 +335,9 @@ protected:
         CYG_INSTRUMENT_SMP(LOCK_SET,CYG_KERNEL_CPU_THIS(),new_lock);        
         CYG_ASSERT( new_lock > 0, "New scheduler lock value == 0");
         CYG_ASSERT( sched_lock > 0, "Scheduler lock == 0");
+#ifdef CYGPKG_HAL_SMP_SUPPORT
+        CYG_ASSERT (lock_data.holder != HAL_SMP_CPU_NONE, "Holder not NONE");
+#endif
         HAL_SMP_SCHEDLOCK_SET( sched_lock, lock_data, new_lock );        
     };
 
@@ -302,6 +345,20 @@ protected:
     {
         return sched_lock;
     };
+
+#if defined(CYGPKG_HAL_SMP_SUPPORT) && defined(CYGINT_HAL_ARM_ARCH_ARM_MULTICORE)
+    // Return the lock holder. Use to test of try_sched_lock
+    // gained the lock or not.
+    static cyg_ucount32 get_sched_lock_holder()
+    {
+        return lock_data.holder;
+    };
+
+    static cyg_ucount32 get_smp_sched_lock()
+    {
+        return (lock_data.holder != CYG_KERNEL_CPU_THIS()) ? 0 : sched_lock;
+    }
+#endif
 };
 
 #define CYGIMP_KERNEL_SCHED_LOCK_DEFINITIONS                    \
@@ -431,6 +488,14 @@ protected:
         sched_lock++;
     };
 
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+    // Increment the scheduler lock. This version will not fail.
+    static void try_sched_lock()
+    {
+        sched_lock++;
+    };
+#endif
+
     static void zero_sched_lock()
     {
         CYG_ASSERT( sched_lock != 0, "Scheduler lock already zero");
@@ -450,6 +515,15 @@ protected:
     {
         return sched_lock;
     };
+
+#ifdef CYGPKG_KERNEL_SMP_SUPPORT
+    // Get the holder, which is always CPU zero in a non
+    // SMP system.
+    static cyg_ucount32 get_sched_lock_holder()
+    {
+        return 0;
+    };
+#endif
 };
 
 #define CYGIMP_KERNEL_SCHED_LOCK_DEFINITIONS                    \
