@@ -41,7 +41,7 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Ant Micro <www.antmicro.com>
+// Author(s):    Antmicro <www.antmicro.com>
 // Date:         2012-07-31
 // Purpose:      Mars ZX3 board specific registers
 // Description:

@@ -38,7 +38,7 @@
 // ####ECOSGPLCOPYRIGHTEND####                                              
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Ant Micro <www.antmicro.com>
+// Author(s):    Antmicro <www.antmicro.com>
 // Date:         2012-07-27
 // Purpose:      
 // Description:  

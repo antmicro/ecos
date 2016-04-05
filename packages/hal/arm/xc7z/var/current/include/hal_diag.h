@@ -42,7 +42,7 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):   Ant Micro <www.antmicro.com
+// Author(s):   Antmicro <www.antmicro.com>
 // (based on at91 .h file)
 // Contributors:
 // Date:        2012-10-01
