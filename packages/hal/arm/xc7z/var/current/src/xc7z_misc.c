@@ -205,6 +205,13 @@ void hal_hardware_init(void)
     HAL_PLF_HARDWARE_INIT();
 #endif
 
+#ifdef CYGSEM_HAL_ENABLE_DCACHE_ON_STARTUP
+    HAL_DCACHE_ENABLE();        // Enable DCache
+#endif
+#ifdef CYGSEM_HAL_ENABLE_ICACHE_ON_STARTUP
+    HAL_ICACHE_ENABLE();        // Enable ICache
+#endif
+
     // Set up eCos/ROM interfaces
     hal_if_init();
 
