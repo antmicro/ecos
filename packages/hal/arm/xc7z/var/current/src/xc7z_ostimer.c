@@ -158,13 +158,10 @@ void hal_clock_reset(cyg_uint32 vector, cyg_uint32 period)
 void hal_clock_read(cyg_uint32 *pvalue)
 {
     cyg_uint32 i;
-    //TODO: check this fcn, 
-    //	if _period is ok ? right now it's hardcoded to 76667 in hal_hardware_init 
     //
     // Private timer counts down. So need to convert value to eCOS requirements.
     //
     HAL_READ_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_COUNTER_OFFSET, i);
-    //diag_printf("%s: period=%d, ret=%d\n",__func__,_period, _period-i);
     *pvalue = _period - i;
 }
 
@@ -172,7 +169,6 @@ void hal_clock_read(cyg_uint32 *pvalue)
 /**
 *
 * HAL us delay
-* (CPUCLK = 667MHz)
 *
 * @param    usecs - number of usecs for delay.
 *
