@@ -175,17 +175,15 @@ void hal_clock_read(cyg_uint32 *pvalue)
 * @return   none
 *
 *****************************************************************************/
-#define US_LIMIT 75 // TODO: should depend on clock settings
 
+#define US_LIMIT ((CYGHWR_HAL_ARM_SOC_PROCESSOR_CLOCK/CYGNUM_HAL_RTC_CPU_CLOCK_DIVIDER)/1000000)
 void hal_delay_us(cyg_int32 usecs)
 {
     cyg_uint32 stat0, stat, i;
-
     // Wait for the compare
     for (i = 0; i < usecs; i++)
     {
         hal_clock_read(&stat0);
-
         do {
             hal_clock_read(&stat);
         } while ((stat - stat0) < US_LIMIT);
