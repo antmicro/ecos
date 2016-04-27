@@ -100,8 +100,8 @@ void hal_clock_initialize(cyg_uint32 period)
     dwVal |= XSCUTIMER_CONTROL_AUTO_RELOAD_MASK;
     /* Clear prescaler control bits */
     dwVal &= ~XSCUTIMER_CONTROL_PRESCALER_MASK;
-    /* Set prescaler value /2 */
-    dwVal |= (1 << XSCUTIMER_CONTROL_PRESCALER_SHIFT);
+    /* Set prescaler value */
+    dwVal |= ((CYGHWR_HAL_ARM_SOC_PRIVATE_TIMER_PRESCALER - 1) << XSCUTIMER_CONTROL_PRESCALER_SHIFT);
     /* Enable the decrementer */
     dwVal |= XSCUTIMER_CONTROL_ENABLE_MASK;
     /* Enable the interrupt */
