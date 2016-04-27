@@ -13,37 +13,37 @@
 //      HAL timer code using the Private Timer Counter
 //
 //==========================================================================
-// ####ECOSGPLCOPYRIGHTBEGIN####                                            
-// -------------------------------------------                              
-// This file is part of eCos, the Embedded Configurable Operating System.   
+// ####ECOSGPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
 // Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 //
-// eCos is free software; you can redistribute it and/or modify it under    
-// the terms of the GNU General Public License as published by the Free     
-// Software Foundation; either version 2 or (at your option) any later      
-// version.                                                                 
+// eCos is free software; you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 or (at your option) any later
+// version.
 //
-// eCos is distributed in the hope that it will be useful, but WITHOUT      
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
-// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
-// for more details.                                                        
+// eCos is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
 //
-// You should have received a copy of the GNU General Public License        
-// along with eCos; if not, write to the Free Software Foundation, Inc.,    
-// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+// You should have received a copy of the GNU General Public License
+// along with eCos; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// As a special exception, if other files instantiate templates or use      
-// macros or inline functions from this file, or you compile this file      
-// and link it with other works to produce a work based on this file,       
-// this file does not by itself cause the resulting work to be covered by   
-// the GNU General Public License. However the source code for this file    
-// must still be made available in accordance with section (3) of the GNU   
-// General Public License v2.                                               
+// As a special exception, if other files instantiate templates or use
+// macros or inline functions from this file, or you compile this file
+// and link it with other works to produce a work based on this file,
+// this file does not by itself cause the resulting work to be covered by
+// the GNU General Public License. However the source code for this file
+// must still be made available in accordance with section (3) of the GNU
+// General Public License v2.
 //
-// This exception does not invalidate any other reasons why a work based    
-// on this file might be covered by the GNU General Public License.         
-// -------------------------------------------                              
-// ####ECOSGPLCOPYRIGHTEND####                                              
+// This exception does not invalidate any other reasons why a work based
+// on this file might be covered by the GNU General Public License.
+// -------------------------------------------
+// ####ECOSGPLCOPYRIGHTEND####
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
@@ -106,15 +106,15 @@ void hal_clock_initialize(cyg_uint32 period)
     dwVal |= XSCUTIMER_CONTROL_ENABLE_MASK;
     /* Enable the interrupt */
     dwVal |= XSCUTIMER_CONTROL_IRQ_ENABLE_MASK;
-    
+
     HAL_WRITE_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_CONTROL_OFFSET, dwVal);
-    
+
     /* Clear INT bit */
-    HAL_WRITE_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_ISR_OFFSET, 
+    HAL_WRITE_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_ISR_OFFSET,
                      XSCUTIMER_ISR_EVENT_FLAG_MASK);
-    
+
     /* Interrupt for private timer always enabled in GIC */
-    
+
     _period = period;
 }
 
@@ -132,15 +132,15 @@ void hal_clock_initialize(cyg_uint32 period)
 void hal_clock_reset(cyg_uint32 vector, cyg_uint32 period)
 {
     HAL_WRITE_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_ISR_OFFSET, XSCUTIMER_ISR_EVENT_FLAG_MASK);
-	//cyg_uint32 period = 100000;	
-    
+	//cyg_uint32 period = 100000;
+
     // Clear pending interrupt bit
     HAL_INTERRUPT_ACKNOWLEDGE(vector);
-    
+
     if (period != _period)
         {
             HAL_WRITE_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_LOAD_OFFSET, period);
-            
+
             _period = period;
         }
 }
