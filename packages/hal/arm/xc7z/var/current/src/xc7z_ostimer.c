@@ -66,7 +66,6 @@
 #include <cyg/hal/hal_arch.h>           // Register state info
 #include <cyg/hal/hal_intr.h>           // necessary?
 #include <cyg/hal/var_io.h>
-
 /* Internal tick units */
 static cyg_uint32 _period;
 
@@ -115,6 +114,9 @@ void hal_clock_initialize(cyg_uint32 period)
 
     /* Interrupt for private timer always enabled in GIC */
 
+    /* Initialize TTC Counter1 to be used for hal_delay_us */
+    hal_ttc_counter_init();
+
     _period = period;
 }
 
@@ -132,7 +134,7 @@ void hal_clock_initialize(cyg_uint32 period)
 void hal_clock_reset(cyg_uint32 vector, cyg_uint32 period)
 {
     HAL_WRITE_UINT32(XC7Z_SCU_TIMER_BASEADDR + XSCUTIMER_ISR_OFFSET, XSCUTIMER_ISR_EVENT_FLAG_MASK);
-	//cyg_uint32 period = 100000;
+    //cyg_uint32 period = 100000;
 
     // Clear pending interrupt bit
     HAL_INTERRUPT_ACKNOWLEDGE(vector);
@@ -165,6 +167,65 @@ void hal_clock_read(cyg_uint32 *pvalue)
     *pvalue = _period - i;
 }
 
+
+/****************************************************************************/
+/**
+*
+* HAL Triple Timer Counter init
+*
+* @param    none
+*
+* @return   none
+*
+* *****************************************************************************/
+void hal_ttc_counter_init()
+{
+    cyg_uint32 reg_val;
+    cyg_uint32 ticks_per_us;
+
+    /* Determine CPU Clock Ratio Mode */
+    HAL_READ_UINT32(XC7Z_SYS_CTRL_BASEADDR + 0x1C4, reg_val);
+    if (reg_val & 0x01)
+    {
+        ticks_per_us = CYGHWR_HAL_ARM_SOC_PROCESSOR_CLOCK/6000000;
+    } else {
+        ticks_per_us = CYGHWR_HAL_ARM_SOC_PROCESSOR_CLOCK/4000000;
+    }
+
+    /* Stop TTC counter before initialization */
+    HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+    reg_val |= (1 << XTTC_CNTCONTROL_DIS_SHIFT);
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+
+    /* Setup Counter Control register */
+    HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+    /* Set DECR to 1 - enable decrementing */
+    reg_val |= (1 << XTTC_CNTCONTROL_DECR_SHIFT);
+    /* Set INT to 1 - enable interval mode */
+    reg_val |= (1 << XTTC_CNTCONTROL_INT_SHIFT);
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+
+    /* Setup Clock Control register */
+    /* Clear PS_EN bit - disable prescaler to get clock equal to CPU_1x */
+    HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_CLOCK_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+    reg_val &= XTTC_CLKCONTROL_PRE_EN_CLR_MASK;
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_CLOCK_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+
+    /* Setup Interrupt Enable register */
+    /*
+        Set interrupt enable for interval so the interval interrupt bit is set
+        each time the TTC counter reach zero
+    */
+    HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_INTERRUPT_EN_OFFSET + XTTC_COUNTER_1, reg_val);
+    reg_val |= (1 << XTTC_INTEN_INTERVAL_SHIFT);
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_INTERRUPT_EN_OFFSET + XTTC_COUNTER_1, reg_val);
+
+    /* Setup Interval Counter register */
+    /* Set interval to value equal to 1 microsecond */
+    reg_val = ticks_per_us & XTTC_INTERVAL_VALUE_MASK;
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_INTERVAL_COUNTER_OFFSET + XTTC_COUNTER_1, reg_val);
+}
+
 /****************************************************************************/
 /**
 *
@@ -174,20 +235,28 @@ void hal_clock_read(cyg_uint32 *pvalue)
 *
 * @return   none
 *
-*****************************************************************************/
-
-#define US_LIMIT ((CYGHWR_HAL_ARM_SOC_PROCESSOR_CLOCK/CYGNUM_HAL_RTC_CPU_CLOCK_DIVIDER)/1000000)
+* *****************************************************************************/
 void hal_delay_us(cyg_int32 usecs)
 {
-    cyg_uint32 stat0, stat, i;
-    // Wait for the compare
-    for (i = 0; i < usecs; i++)
-    {
-        hal_clock_read(&stat0);
+    // start counting
+    cyg_uint32 reg_val;
+    HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+    reg_val &= XTTC_CNTCONTROL_DIS_CLR_MASK;
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+
+    do {
+        // wait until interval interrupt bit is set
         do {
-            hal_clock_read(&stat);
-        } while ((stat - stat0) < US_LIMIT);
-    }
+            HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_INTERRUPT_OFFSET + XTTC_COUNTER_1, reg_val);
+        } while (!(reg_val & XTTC_INT_INTERVAL_MASK));
+
+        usecs--;
+    } while(usecs);
+
+    // stop counting
+    HAL_READ_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
+    reg_val |= XTTC_CNTCONTROL_DIS_SET_MASK;
+    HAL_WRITE_UINT32(XC7Z_TTC0_BASEADDR + XTTC_COUNTER_CONTROL_OFFSET + XTTC_COUNTER_1, reg_val);
 }
 
 // xc7z_ostimer.c

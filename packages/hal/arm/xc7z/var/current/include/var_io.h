@@ -59,6 +59,7 @@
 #include <cyg/hal/xc7z020_xptimer.h>          // SCU PTMR
 #include <cyg/hal/xc7z020_xcwdtimer.h>        // SCU WDT
 #include <cyg/hal/xc7z020_xsuart.h>           // USART
+#include <cyg/hal/xc7z020_xttc.h>			  // TTC
 
 //-----------------------------------------------------------------------------
 // end of var_io.h
