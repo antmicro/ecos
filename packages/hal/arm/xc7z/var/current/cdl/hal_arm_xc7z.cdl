@@ -57,7 +57,7 @@ cdl_package CYGPKG_HAL_ARM_XC7Z {
         The XC7Z HAL package provides the support needed to run
         eCos on Xilinx XC7Z based targets."
 
-    compile       xc7z_misc.c xc7z_ostimer.c hal_diag.c
+    compile       xc7z_cache.c xc7z_misc.c xc7z_ostimer.c hal_diag.c
 
     implements    CYGINT_HAL_DEBUG_GDB_STUBS
     implements    CYGINT_HAL_DEBUG_GDB_STUBS_BREAK
