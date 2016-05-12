@@ -43,7 +43,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):    nickg, gthomas
-// Contributors: nickg, gthomas
+// Contributors: nickg, gthomas, Deimos Space <www.deimos-space.com>, Antmicro <www.antmicro.com>
 // Date:         1999-02-20
 // Purpose:      Define architecture abstractions
 // Usage:        #include <cyg/hal/hal_arch.h>
@@ -132,12 +132,24 @@
 #define HAL_THREAD_CONTEXT_LAST         10
 #define HAL_NUM_THREAD_CONTEXT_REGS     (HAL_THREAD_CONTEXT_LAST - \
                                           HAL_THREAD_CONTEXT_FIRST+1)
+// PEPP TBM: include definition: it is only the general registers, currently 11
+#define HAL_NUM_THREAD_CONTEXT_FPU_D_REGS 32
+#define HAL_NUM_THREAD_CONTEXT_FPU_S_REGS 16
 
 // It seems that r0-r3,r12 are considered scratch by function calls
 
 typedef struct 
 {
     // These are common to all saved states
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+    // DMS: include in context the FPU registers: fields fpu_d, fpu_s,
+    // fpexc, fpscr
+    cyg_uint64  fpu_d[HAL_NUM_THREAD_CONTEXT_FPU_D_REGS];
+    cyg_uint32  fpu_s[HAL_NUM_THREAD_CONTEXT_FPU_S_REGS];
+    cyg_uint32  fpexc;
+    cyg_uint32  fpscr;
+#endif
+
     cyg_uint32  d[HAL_NUM_THREAD_CONTEXT_REGS] ;  // Data regs (r0..r10)
     cyg_uint32  fp;                               // (r11) Frame pointer
     cyg_uint32  ip;                               // (r12)
@@ -180,6 +192,25 @@ externC int hal_msbindex(int);
 // _entry_ entry point address.
 // _id_ bit pattern used in initializing registers, for debugging.
 
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+#define HAL_THREAD_INIT_CONTEXT( _sparg_, _thread_, _entry_, _id_ )         \
+    CYG_MACRO_START                                                         \
+    register CYG_WORD _sp_ = ((CYG_WORD)_sparg_) &~15;                      \
+    register HAL_SavedRegisters *_regs_;                                    \
+    int _i_;                                                                \
+    _regs_ = (HAL_SavedRegisters *)((_sp_) - sizeof(HAL_SavedRegisters));   \
+    for( _i_ = HAL_THREAD_CONTEXT_FIRST; _i_ <= HAL_THREAD_CONTEXT_LAST;    \
+           _i_++ )                                                          \
+        (_regs_)->d[_i_] = (_id_)|_i_;                                      \
+    (_regs_)->d[00] = (CYG_WORD)(_thread_); /* R0 = arg1 = thread ptr */    \
+    (_regs_)->sp = (CYG_WORD)(_sp_);        /* SP = top of stack      */    \
+    (_regs_)->lr = (CYG_WORD)(_entry_);     /* LR = entry point       */    \
+    (_regs_)->pc = (CYG_WORD)(_entry_);     /* PC = [initial] entry point */\
+    (_regs_)->cpsr = (CPSR_THREAD_INITIAL); /* PSR = Interrupt enabled */   \
+    (_regs_)->fpscr = 0x00000000;           /* FPSCR = FPU Status Reg */    \
+    _sparg_ = (CYG_ADDRESS)_regs_;                                          \
+    CYG_MACRO_END
+#else
 #define HAL_THREAD_INIT_CONTEXT( _sparg_, _thread_, _entry_, _id_ )         \
     CYG_MACRO_START                                                         \
     register CYG_WORD _sp_ = ((CYG_WORD)_sparg_) &~15;                      \
@@ -196,6 +227,7 @@ externC int hal_msbindex(int);
     (_regs_)->cpsr = (CPSR_THREAD_INITIAL); /* PSR = Interrupt enabled */   \
     _sparg_ = (CYG_ADDRESS)_regs_;                                          \
     CYG_MACRO_END
+#endif
 
 //--------------------------------------------------------------------------
 // Context switch macros.

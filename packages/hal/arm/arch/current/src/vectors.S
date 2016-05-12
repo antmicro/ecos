@@ -40,7 +40,7 @@
 // ######DESCRIPTIONBEGIN####
 // #
 // # Author(s):     nickg, gthomas
-// # Contributors:  nickg, gthomas
+// # Contributors:  nickg, gthomas, Antmicro <www.antmicro.com>
 // # Date:          1999-02-20
 // # Purpose:       ARM exception vectors
 // # Description:   This file defines the code placed into the exception
@@ -849,6 +849,17 @@ return_from_exception:
 
         ldr     r0,[sp,#armreg_cpsr]
 
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+        // restore FPU registers
+        vldmia  sp!,{d16-d31}
+        vldmia  sp!,{d0-d15}
+        vldmia  sp!,{s0-s15}
+        ldmfd   sp!,{r5}
+        // vmsr    FPEXC, r5
+        ldmfd   sp!,{r5}
+        vmsr    FPSCR, r5
+#endif
+
         // return to supervisor mode is simple
         and     r1,r0,#CPSR_MODE_BITS
         cmp     r1,#CPSR_SUPERVISOR_MODE
@@ -1073,6 +1084,17 @@ IRQ:
         // now save pre-exception r0-r7 on current stack
         ldmfd   r3,{r0-r5}
         stmfd   sp!,{r0-r7}
+
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+        // save FPU registers
+        vmrs    r5, FPSCR
+        stmfd   sp!,{r5}
+        //vmrs    r5, FPEXC
+        stmfd   sp!,{r5}
+        vstmdb  sp!,{s0-s15}
+        vstmdb  sp!,{d0-d15}
+        vstmdb  sp!,{d16-d31}
+#endif
 
         // sp needs fixing if exception occured in SVC mode.
         ldr     r1,[sp,#armreg_cpsr]

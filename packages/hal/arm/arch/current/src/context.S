@@ -40,7 +40,7 @@
 // ######DESCRIPTIONBEGIN####
 // #
 // # Author(s):    nickg, gthomas
-// # Contributors: nickg, gthomas
+// # Contributors: nickg, gthomas, Deimos Space <www.deimos-space.com>, Antmicro <www.antmicro.com>
 // # Date:         1998-09-15
 // # Purpose:      ARM context switch code
 // # Description:  This file contains implementations of the thread context 
@@ -96,6 +96,17 @@ FUNC_START_ARM(hal_thread_switch_context, r2)
         sub     sp,sp,#(ARMREG_SIZE - armreg_lr - 4) // skip svc_sp, svc_lr, vector, cpsr, and pc
         stmfd   sp!,{ip,lr}
         stmfd   sp!,{r0-r10,fp,ip}
+
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+        vmrs    r5, FPSCR
+        stmfd   sp!,{r5}
+        //vmrs    r5, FPEXC
+        stmfd   sp!,{r5}
+        vstmdb  sp!,{s0-s15}
+        vstmdb  sp!,{d0-d15}
+        vstmdb  sp!,{d16-d31}
+#endif
+
         mrs     r2,cpsr
         str     r2,[sp,#armreg_cpsr]
         str     sp,[r1]                 // return new stack pointer
@@ -120,6 +131,17 @@ FUNC_START_ARM(hal_thread_load_context, r2)
         msr     cpsr,r0
         ldr     r0,[fp,#armreg_cpsr]
         msr     spsr,r0
+
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+        vldmia  fp!,{d16-d31}
+        vldmia  fp!,{d0-d15}
+        vldmia  fp!,{s0-s15}
+        ldmfd   fp!,{r5}
+        // vmsr    FPEXC, r5
+        ldmfd   fp!,{r5}
+        vmsr    FPSCR, r5
+#endif
+
         ldmfd   fp,{r0-r10,fp,ip,sp,lr}
 #ifdef __thumb__
         mrs     r1,spsr                 // r1 is scratch 

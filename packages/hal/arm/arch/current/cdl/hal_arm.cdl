@@ -41,7 +41,7 @@
 #
 # Author(s):      bartv
 # Original data:  gthomas
-# Contributors:   jld
+# Contributors:   jld, Antmicro <www.antmicro.com>
 # Date:           1999-06-13
 #
 #####DESCRIPTIONEND####
@@ -106,6 +106,18 @@ cdl_package CYGPKG_HAL_ARM {
           legal_values  2
           default_value 2
       }
+    }
+
+    # Note that currently there is only one supported ARM taget - Cortex-A9. When adding
+    # new CPU, there may be need to distinguish between NEON and other engines.
+    cdl_option CYGHWR_HAL_ARM_ENABLE_FPU {
+        display          "Enable FPU support"
+        active_if        { CYGHWR_HAL_ARM_FPU && CYGHWR_HAL_ARM_NEON }
+        default_value    0
+        description      "
+        Enable support for hardware FPU instruction set (NEON in ARM Cortex-A9). It is
+        necessary when using -mfpu=neon -mfloat-abi=softfp (or -mfloat-abi=hard). This
+        option adds FPU initialization and multithreading FPU support."
     }
 
     cdl_interface CYGINT_HAL_ARM_THUMB_ARCH {

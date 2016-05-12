@@ -96,6 +96,35 @@ void hal_plf_hardware_init(void) {
   HAL_WRITE_UINT32(XC7Z_SCU_WDT_BASEADDR + XSCUWDTIMER_DISABLE_OFFSET, XSCUWDTIMER_WD_DISABLE_SEQ1); 
   HAL_WRITE_UINT32(XC7Z_SCU_WDT_BASEADDR + XSCUWDTIMER_DISABLE_OFFSET, XSCUWDTIMER_WD_DISABLE_SEQ2); 
 #endif
+
+#ifdef CYGHWR_HAL_ARM_ENABLE_FPU
+    // Enable FPU
+
+    // ARM Cortex-A9 NEON Media Processing Engine
+    // Revision: r3p0
+    // Technical Reference Manual
+    //
+    // Code:
+    //
+    // MRC p15,0,r0,c1,c0,2   ; Read CPACR into r0
+    // ORR r0,r0,#(3<<20)     ; OR in User and Privileged access for CP10
+    // ORR r0,r0,#(3<<22)     ; OR in User and Privileged access for CP11
+    // BIC r0, r0, #(3<<30)   ; Clear ASEDIS/D32DIS if set
+    // MCR p15,0,r0,c1,c0,2   ; Store new access permissions into CPACR
+    // ISB                    ; Ensure side-effect of CPACR is visible
+    // MOV r0,#(1<<30)        ; Create value with FPEXC (bit 30) set in r0
+    // VMSR FPEXC,r0          ; Enable VFP and SIMD extensions
+
+    asm volatile ("MRC p15,0,r0,c1,c0,2");
+    asm volatile ("ORR r0,r0,#(3<<20)");
+    asm volatile ("ORR r0,r0,#(3<<22)");
+    asm volatile ("BIC r0, r0, #(3<<30)");
+    asm volatile ("MCR p15,0,r0,c1,c0,2");
+    asm volatile ("ISB");
+    asm volatile ("MOV r0,#(1<<30)");
+    asm volatile ("VMSR FPEXC,r0");
+#endif
+
 }
 
 // -------------------------------------------------------------------------
