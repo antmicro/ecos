@@ -79,6 +79,7 @@
 #endif
 #include <cyg/hal/var_io.h>
 
+#define errno (*__errno())
 
 /************************** Functions Definitions *****************************/
 #ifdef CYGPKG_HAL_SMP_SUPPORT
@@ -509,6 +510,77 @@ void hal_show_IRQ(int vector, int data, int handler)
 {
 //    UNDEFINED(__FUNCTION__);  // FIXME
 }
+
+//-------------------------------------------------------------------------
+//reset
+void hal_reset(void)
+{
+    /* Unlock SLCR regs */
+    HAL_WRITE_UINT32(XC7Z_SYS_CTRL_BASEADDR + XSLCR_UNLOCK_OFFSET, XSLCR_UNLOCK_KEY);
+
+    /* Tickle soft reset bit */
+    HAL_WRITE_UINT32(0xF8000200, 1);
+
+    while (1);
+}
+
+// When compiling C++ code with static objects the compiler
+// inserts a call to __cxa_atexit() with __dso_handle as one of the
+// arguments. __cxa_atexit() would normally be provided by glibc, and
+// __dso_handle is part of crtstuff.c. eCos applications
+// are linked rather differently, so either a differently-configured
+// compiler is needed or dummy versions of these symbols should be
+// provided. If these symbols are not actually used then providing
+// them is still harmless, linker garbage collection will remove them.
+
+void
+__cxa_atexit(void (*arg1)(void*), void* arg2, void* arg3)
+{
+}
+
+void*   __dso_handle = (void*) &__dso_handle;
+
+
+// -------------------------------------------------------------------------
+// Helper functions
+
+#if (__GNUC__ >= 3)
+// Versions of gcc/g++ after 3.0 (approx.), when configured for Linux
+// native development (specifically, --with-__cxa_enable), have
+// additional dependencies related to the destructors for static
+// objects. When compiling C++ code with static objects the compiler
+// inserts a call to __cxa_atexit() with __dso_handle as one of the
+// arguments. __cxa_atexit() would normally be provided by glibc, and
+// __dso_handle is part of crtstuff.c. Synthetic target applications
+// are linked rather differently, so either a differently-configured
+// compiler is needed or dummy versions of these symbols should be
+// provided. If these symbols are not actually used then providing
+// them is still harmless, linker garbage collection will remove them.
+
+// gcc 3.2.2 (approx). The libsupc++ version of the new operator pulls
+// in exception handling code, even when using the nothrow version and
+// building with -fno-exceptions. libgcc_eh.a provides the necessary
+// functions, but requires a dl_iterate_phdr() function. That is related
+// to handling dynamically loaded code so is not applicable to eCos.
+int
+dl_iterate_phdr(void* arg1, void* arg2)
+{
+    return -1;
+}
+
+//XXX: workaround for the non eCos compiler
+void* __attribute__ ((weak)) _impure_ptr;
+#endif
+
+#ifndef CYGPKG_LIBC_STDIO
+//-------------------------------------------------------------------------
+//sprintf function stub (library libsupc++ needs it)
+int
+sprintf(const char * format, ...)
+{
+    return 0;
+}
+#endif
 
 
 //--------------------------------------------------------------------------

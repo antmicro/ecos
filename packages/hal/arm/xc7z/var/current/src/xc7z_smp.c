@@ -51,7 +51,7 @@
 
 #include <cyg/hal/hal_intr.h>
 #include <cyg/hal/var_intr.h>
-#include <cyg/hal/xc7z020_xslcr.h>
+#include <cyg/hal/xc7z_xslcr.h>
 #include <cyg/hal/drv_api.h>
 #include <cyg/hal/hal_cache.h>
 #include <stdio.h>

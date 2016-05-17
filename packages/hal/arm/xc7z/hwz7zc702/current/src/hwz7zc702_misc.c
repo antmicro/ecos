@@ -51,8 +51,8 @@
 // Date:         2012-06-27
 // Purpose:      HAL board support
 // Description:  Implementations of HAL board interfaces
-//
 //####DESCRIPTIONEND####
+//
 //
 //========================================================================*/
 
@@ -61,10 +61,6 @@
 
 #include <cyg/hal/hal_io.h>             // IO macros
 #include <cyg/hal/hal_diag.h>
-
-#define errno (*__errno())
-
-//extern int *__errno ( void );
 
 // -------------------------------------------------------------------------
 // Hardware init
@@ -81,37 +77,6 @@ hal_plf_hardware_init (void)
   HAL_WRITE_UINT32(XC7Z_SCU_WDT_BASEADDR + XSCUWDTIMER_DISABLE_OFFSET, XSCUWDTIMER_WD_DISABLE_SEQ2); 
 #endif
 }
-
-// -------------------------------------------------------------------------
-// Helper functions
-
-#if (__GNUC__ >= 3)
-// Versions of gcc/g++ after 3.0 (approx.), when configured for Linux
-// native development (specifically, --with-__cxa_enable), have
-// additional dependencies related to the destructors for static
-// objects. When compiling C++ code with static objects the compiler
-// inserts a call to __cxa_atexit() with __dso_handle as one of the
-// arguments. __cxa_atexit() would normally be provided by glibc, and
-// __dso_handle is part of crtstuff.c. Synthetic target applications
-// are linked rather differently, so either a differently-configured
-// compiler is needed or dummy versions of these symbols should be
-// provided. If these symbols are not actually used then providing
-// them is still harmless, linker garbage collection will remove them.
-
-// gcc 3.2.2 (approx). The libsupc++ version of the new operator pulls
-// in exception handling code, even when using the nothrow version and
-// building with -fno-exceptions. libgcc_eh.a provides the necessary
-// functions, but requires a dl_iterate_phdr() function. That is related
-// to handling dynamically loaded code so is not applicable to eCos.
-int
-dl_iterate_phdr(void* arg1, void* arg2)
-{
-    return -1;
-}
-
-//XXX: workaround for the non eCos compiler
-void* __attribute__ ((weak)) _impure_ptr;
-#endif
 
 //--------------------------------------------------------------------------
 // EOF hwz7zc702_misc.c

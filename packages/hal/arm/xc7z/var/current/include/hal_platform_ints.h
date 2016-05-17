@@ -42,7 +42,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):    ITR-GmbH
-// Contributors: 
+// Contributors:
 // Date:         2012-06-25
 // Purpose:      Define Interrupt support
 // Description:  The interrupt specifics for the Xilinx XC7Z platform are
@@ -62,7 +62,7 @@
 #define CYGNUM_HAL_INTERRUPT_FIQ                28  /* FIQ from FPGA fabric */
 #define CYGNUM_HAL_INTERRUPT_SCU_CPUTMR         29  /* SCU Private Timer interrupt */
 #define CYGNUM_HAL_INTERRUPT_SCU_WDTTMR         30  /* SCU Private WDT interrupt */
-#define CYGNUM_HAL_INTERRUPT_IRQ                31  /* IRQ from FPGA fabric */ 
+#define CYGNUM_HAL_INTERRUPT_IRQ                31  /* IRQ from FPGA fabric */
 
 
 // Shared Peripheral Interrupts (SPI)

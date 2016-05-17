@@ -81,9 +81,6 @@ CYG_DEVS_FLASH_SPI_M25PXX_DRIVER (
 #endif
 #endif
 
-#define errno (*__errno())
-
-
 // -------------------------------------------------------------------------
 // Hardware init
 
@@ -158,61 +155,6 @@ void hal_mmu_init(void) {
     ARC_X_ARM_MMU_SECTION(0xF80, 0xF80,   16, ARC_ARM_UNCACHEABLE, ARC_ARM_UNBUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); //System registers
     ARC_X_ARM_MMU_SECTION(0xFFF, 0xFFF,    1, ARC_ARM_UNCACHEABLE, ARC_ARM_UNBUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); //OCM
 
-}
-
-// -------------------------------------------------------------------------
-// Helper functions
-
-#if (__GNUC__ >= 3)
-
-// Versions of gcc/g++ after 3.0 (approx.), when configured for Linux
-// native development (specifically, --with-__cxa_enable), have
-// additional dependencies related to the destructors for static
-// objects. When compiling C++ code with static objects the compiler
-// inserts a call to __cxa_atexit() with __dso_handle as one of the
-// arguments. __cxa_atexit() would normally be provided by glibc, and
-// __dso_handle is part of crtstuff.c. Synthetic target applications
-// are linked rather differently, so either a differently-configured
-// compiler is needed or dummy versions of these symbols should be
-// provided. If these symbols are not actually used then providing
-// them is still harmless, linker garbage collection will remove them.
-
-// gcc 3.2.2 (approx). The libsupc++ version of the new operator pulls
-// in exception handling code, even when using the nothrow version and
-// building with -fno-exceptions. libgcc_eh.a provides the necessary
-// functions, but requires a dl_iterate_phdr() function. That is related
-// to handling dynamically loaded code so is not applicable to eCos.
-int
-dl_iterate_phdr(void* arg1, void* arg2)
-{
-    return -1;
-}
-
-//XXX: workaround for the non eCos compiler
-void* __attribute__ ((weak)) _impure_ptr;
-#endif
-
-#ifndef CYGPKG_LIBC_STDIO
-//-------------------------------------------------------------------------
-//sprintf function stub (library libsupc++ needs it)
-int
-sprintf(const char * format, ...)
-{
-    return 0;
-}
-#endif
-
-//-------------------------------------------------------------------------
-//reset platfrom
-void hal_reset(void)
-{
-    /* Unlock SLCR regs */
-    HAL_WRITE_UINT32(XC7Z_SYS_CTRL_BASEADDR + XSLCR_UNLOCK_OFFSET, XSLCR_UNLOCK_KEY);
-    
-    /* Tickle soft reset bit */
-    HAL_WRITE_UINT32(0xF8000200, 1);
-
-    while (1);
 }
 
 //--------------------------------------------------------------------------

@@ -1,14 +1,14 @@
 /*****************************************************************************/
 /**
 *
-* @file     xc7z020_xttc.h
+* @file     xc7z_xttc.h
 *
 * @brief    Triple timer counter header
 *
 ******************************************************************************/
 
-#ifndef XC7Z020_XTTC_H /* prevent circular inclusions */
-#define XC7Z020_XTTC_H /* by using protection macros */
+#ifndef XC7Z_XTTC_H /* prevent circular inclusions */
+#define XC7Z_XTTC_H /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -100,4 +100,3 @@ extern "C" {
 #endif
 
 #endif            /* end of protection macro */
-

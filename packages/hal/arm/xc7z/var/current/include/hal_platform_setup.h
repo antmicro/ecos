@@ -124,7 +124,7 @@ __disable_cache:
         nop
         nop
         nop
-        
+
         // Disable ints and turn Supervisor mode
         mov     r0, #(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_SUPERVISOR_MODE)
         msr     cpsr, r0
@@ -132,21 +132,21 @@ __disable_cache:
         mov     r0, #(CPSR_IRQ_DISABLE|CPSR_FIQ_DISABLE|CPSR_SUPERVISOR_MODE)
         msr     spsr_cxsf, r0
         mrs     r0, spsr
-       
+
         // unlock slcr, remap sram, lock slcr
         ldr r0, =0xdf0d
         ldr r1, =0xf8000008
         str r0, [r1]
         ldr r0, =0xf
         ldr r1, =0xf8000910
-        str r0, [r1] 
+        str r0, [r1]
 	ldr r0, =0x0
 	ldr r1, =0xf8f00040
 	str r0, [r1]
         ldr r0, =0x767b
         ldr r1, =0xf8000008
         str r0, [r1]
-        
+
         nop
         nop
         nop
@@ -165,7 +165,7 @@ __disable_cache:
 	mcr p15, 0, r1, c1, c0, 0
 
         .endm
-#endif 
+#endif
 
 
 #define PLATFORM_SETUP1 _setup
@@ -193,24 +193,24 @@ __disable_cache:
         mcr     p15, 0, r0, c1, c0, 1   @ Write ACTLR
 
         // Disable strict align check
-    	mrc     p15, 0, r0, c1, c0, 0
-    	bic     r0, r0, #(0x1<<1)       @ Clear A bit of SCTLR
-    	mcr     p15, 0, r0, c1, c0, 0
+	mrc     p15, 0, r0, c1, c0, 0
+	bic     r0, r0, #(0x1<<1)       @ Clear A bit of SCTLR
+	mcr     p15, 0, r0, c1, c0, 0
 
-    	// Disable branch prediction
+	// Disable branch prediction
         mrc     p15, 0, r0, c1, c0, 0                 @ Read SCTLR
-    	orr     r0, r0, #(1 << 11)                    @ Set the Z bit (bit 11)
-    	mcr     p15, 0,r0, c1, c0, 0                  @ Write SCTLR
+	orr     r0, r0, #(1 << 11)                    @ Set the Z bit (bit 11)
+	mcr     p15, 0,r0, c1, c0, 0                  @ Write SCTLR
 
-    	// Invalidate L1 I-cache
-    	mov	r1,	#0x0
-    	mcr p15, 0, r1, c7, c5, 0       @ Invalidate I-Cache
+	// Invalidate L1 I-cache
+	mov	r1,	#0x0
+	mcr p15, 0, r1, c7, c5, 0       @ Invalidate I-Cache
         mcr p15, 0, r1, c7, c5, 6       @ Invalidate Branch Predictor
         mov  r1, #0x1800
         mcr p15, 0, r1, c1, c0, 0       @ Enable I-Cache and Branch Predictor
         isb
 
-    	// Invalidate L1 D-cache
+	// Invalidate L1 D-cache
         mov     r0, #0
         mcr     p15, 2, r0, c0, c0, 0
         mrc     p15, 1, r0, c0, c0, 0

@@ -4,13 +4,13 @@
 //
 //      plf_io.h
 //
-//      Zynq-7000 specific registers
+//      HWZ7ZC702 board specific registers
 //
 //=============================================================================
 // ####ECOSGPLCOPYRIGHTBEGIN####
 // -------------------------------------------
 // This file is part of eCos, the Embedded Configurable Operating System.
-// Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+// Copyright (C) 1998, 1999, 2000, 2001, 2002, 2008 Free Software Foundation, Inc.
 //
 // eCos is free software; you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free
@@ -41,18 +41,16 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):   Owen Kirby
-// Contributors:
-// Date:        2012-06-28
-// Purpose:     Xilinx Zynq-7000 board specific registers
+// Author(s):    Antmicro Ltd <www.antmicro.com>
+// Date:         2016-05-20
+// Purpose:      HWZ7ZC702 board specific registers
 // Description:
-// Usage:       #include <cyg/hal/plf_io.h>
+// Usage:        #include <cyg/hal/plf_io.h>
 //
 //####DESCRIPTIONEND####
 //
 //=============================================================================
-#include <pkgconf/hal_arm_xc7z020.h>
-
+// On-chip device base addresses
 
 
 //----------------------------------------------------------------------
@@ -68,4 +66,3 @@ extern void hal_plf_hardware_init(void);
 
 
 #endif //CYGONCE_HAL_PLF_IO_H
-

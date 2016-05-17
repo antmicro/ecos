@@ -1,14 +1,14 @@
 /*****************************************************************************/
 /**
 *
-* @file     xc7z020_xcwdtimer.h
+* @file     xc7z_xcwdtimer.h
 *
 * @brief    Watchdog timer header
 *
 ******************************************************************************/
 
-#ifndef XC7Z020_XCWDTIMER_H /* prevent circular inclusions */
-#define XC7Z020_XCWDTIMER_H /* by using protection macros */
+#ifndef XC7Z_XCWDTIMER_H /* prevent circular inclusions */
+#define XC7Z_XCWDTIMER_H /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,4 +80,3 @@ extern "C" {
 #endif
 
 #endif            /* end of protection macro */
-

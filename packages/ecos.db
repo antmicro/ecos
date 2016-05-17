@@ -7722,7 +7722,6 @@ target hwz7zc702 {
     alias { "Xilinx HWZ7ZC702 evaluation board" xc7z_hwz7zc702 }
     packages { CYGPKG_HAL_ARM
            CYGPKG_HAL_ARM_XC7Z
-           CYGPKG_HAL_ARM_XC7Z020
            CYGPKG_HAL_ARM_HWZ7ZC702
            CYGPKG_IO_SPI
            CYGPKG_IO_I2C
@@ -7737,7 +7736,6 @@ target mars_zx3 {
     alias { "Enclustra ZX3 module" xc7z_mars_zx3 }
     packages { CYGPKG_HAL_ARM
            CYGPKG_HAL_ARM_XC7Z
-           CYGPKG_HAL_ARM_XC7Z020
            CYGPKG_HAL_ARM_MARS_ZX3
            CYGPKG_IO_SPI
            CYGPKG_IO_I2C
@@ -7753,24 +7751,21 @@ target mars_zx3 {
     Enclustra ZX3 module."
 }
 
-
-target mercury_zx1_minimal {
-    alias { "Enclustra ZX1 module - minimal set of packages" xc7z_mercury_zx1_minimal }
+target mars_zx3_minimal {
+    alias { "Enclustra ZX3 module - minimal set of packages" xc7z_mars_zx3_minimal }
     packages { CYGPKG_HAL_ARM
            CYGPKG_HAL_ARM_XC7Z
-           CYGPKG_HAL_ARM_XC7Z020
-           CYGPKG_HAL_ARM_MERCURY_ZX1
+           CYGPKG_HAL_ARM_MARS_ZX3
     }
     description "
-    The mercury_zx1_minimal target provides the minimal set of packages needed to run eCos on an
-    Enclustra ZX1 module."
+    The mars_zx3_minimal target provides the minimal set of packages needed to run eCos on an
+    Enclustra ZX3 module."
 }
 
-target mercury_zx3 {
+target mercury_zx1 {
     alias { "Enclustra ZX1 module" xc7z_mercury_zx1 }
     packages { CYGPKG_HAL_ARM
            CYGPKG_HAL_ARM_XC7Z
-           CYGPKG_HAL_ARM_XC7Z020
            CYGPKG_HAL_ARM_MERCURY_ZX1
            CYGPKG_IO_SPI
            CYGPKG_IO_I2C
@@ -7786,18 +7781,17 @@ target mercury_zx3 {
     Enclustra ZX1 module."
 }
 
-
-target mars_zx3_minimal {
-    alias { "Enclustra ZX3 module - minimal set of packages" xc7z_mars_zx3_minimal }
+target mercury_zx1_minimal {
+    alias { "Enclustra ZX1 module - minimal set of packages" xc7z_mercury_zx1_minimal }
     packages { CYGPKG_HAL_ARM
            CYGPKG_HAL_ARM_XC7Z
-           CYGPKG_HAL_ARM_XC7Z020
-           CYGPKG_HAL_ARM_MARS_ZX3
+           CYGPKG_HAL_ARM_MERCURY_ZX1
     }
     description "
-    The mars_zx3_minimal target provides the minimal set of packages needed to run eCos on an
-    Enclustra ZX3 module."
+    The mercury_zx1_minimal target provides the minimal set of packages needed to run eCos on an
+    Enclustra ZX1 module."
 }
+
 package CYGPKG_HAL_ARM_XC7Z {
     alias       { "Xilinx XC7Z variant HAL" hal_arm_xc7z arm_xc7z_hal }
     directory   hal/arm/xc7z/var
@@ -7807,15 +7801,7 @@ package CYGPKG_HAL_ARM_XC7Z {
         The xc7z HAL package provides the support needed to run eCos on Xilinx
         XC7Z based targets."
 }
-package CYGPKG_HAL_ARM_XC7Z020 {
-    alias       { "Xilinx XC7Z020" hal_arm_xc7z020 arm_xc7z020_hal }
-    directory   hal/arm/xc7z/xc7z020
-    script      hal_arm_xc7z_xc7z020.cdl
-    hardware
-    description "
-        The XC7Z020 HAL package provides the support needed to run eCos on
-    an Xilinx XC7Z020 family of CPUs."
-}
+
 package CYGPKG_HAL_ARM_HWZ7ZC702 {
     alias       { "Xilinx HWZ7ZC702" hal_arm_xc7z_hwz7zc702 arm_xc7z_hwz7zc702 }
     directory   hal/arm/xc7z/hwz7zc702

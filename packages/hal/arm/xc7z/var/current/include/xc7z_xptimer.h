@@ -1,14 +1,14 @@
 /*****************************************************************************/
 /**
 *
-* @file     xc7z020_xptimer.h
+* @file     xc7z_xptimer.h
 *
 * @brief    Private timer header
 *
 ******************************************************************************/
 
-#ifndef XC7Z020_XPTIMER_H /* prevent circular inclusions */
-#define XC7Z020_XPTIMER_H /* by using protection macros */
+#ifndef XC7Z_XPTIMER_H /* prevent circular inclusions */
+#define XC7Z_XPTIMER_H /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,10 +47,9 @@ extern "C" {
 
 #define XSCUTIMER_ISR_EVENT_FLAG_MASK           0x00000001 /**< Event flag */
 /*@}*/
- 
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif            /* end of protection macro */
-

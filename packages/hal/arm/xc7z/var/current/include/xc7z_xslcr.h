@@ -1,14 +1,14 @@
 /*****************************************************************************/
 /**
 *
-* @file     xc7z020_xslcr.h
+* @file     xc7z_xslcr.h
 *
 * @brief    Private timer header
 *
 ******************************************************************************/
 
-#ifndef XC7Z020_PTIMER_H /* prevent circular inclusions */
-#define XC7Z020_PTIMER_H /* by using protection macros */
+#ifndef XC7Z_PTIMER_H /* prevent circular inclusions */
+#define XC7Z_PTIMER_H /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -99,10 +99,9 @@ extern "C" {
 
 /* @} */
 
- 
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif            /* end of protection macro */
-

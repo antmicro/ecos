@@ -1,65 +1,65 @@
-#ifndef CYGONCE_XC7Z020_H
-#define CYGONCE_XC7Z020_H
+#ifndef CYGONCE_XC7Z_H
+#define CYGONCE_XC7Z_H
 
 //=============================================================================
 //
-//      xc7z020.h
+//      xc7z.h
 //
 //      Platform specific support (register layout, etc)
 //
 //=============================================================================
-// ####ECOSGPLCOPYRIGHTBEGIN####                                            
-// -------------------------------------------                              
-// This file is part of eCos, the Embedded Configurable Operating System.   
+// ####ECOSGPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
 // Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 //
-// eCos is free software; you can redistribute it and/or modify it under    
-// the terms of the GNU General Public License as published by the Free     
-// Software Foundation; either version 2 or (at your option) any later      
-// version.                                                                 
+// eCos is free software; you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 or (at your option) any later
+// version.
 //
-// eCos is distributed in the hope that it will be useful, but WITHOUT      
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
-// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
-// for more details.                                                        
+// eCos is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
 //
-// You should have received a copy of the GNU General Public License        
-// along with eCos; if not, write to the Free Software Foundation, Inc.,    
-// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+// You should have received a copy of the GNU General Public License
+// along with eCos; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// As a special exception, if other files instantiate templates or use      
-// macros or inline functions from this file, or you compile this file      
-// and link it with other works to produce a work based on this file,       
-// this file does not by itself cause the resulting work to be covered by   
-// the GNU General Public License. However the source code for this file    
-// must still be made available in accordance with section (3) of the GNU   
-// General Public License v2.                                               
+// As a special exception, if other files instantiate templates or use
+// macros or inline functions from this file, or you compile this file
+// and link it with other works to produce a work based on this file,
+// this file does not by itself cause the resulting work to be covered by
+// the GNU General Public License. However the source code for this file
+// must still be made available in accordance with section (3) of the GNU
+// General Public License v2.
 //
-// This exception does not invalidate any other reasons why a work based    
-// on this file might be covered by the GNU General Public License.         
-// -------------------------------------------                              
-// ####ECOSGPLCOPYRIGHTEND####                                              
+// This exception does not invalidate any other reasons why a work based
+// on this file might be covered by the GNU General Public License.
+// -------------------------------------------
+// ####ECOSGPLCOPYRIGHTEND####
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):    ITR-GmbH
-// Contributors: 
+// Contributors:
 // Date:         2012-06-27
 // Purpose:      Zynq-7000 platform specific support definitions
-// Description: 
-// Usage:        #include <cyg/hal/xc7z020.h>
+// Description:
+// Usage:        #include <cyg/hal/xc7z.h>
 //
 //####DESCRIPTIONEND####
 //
 //=============================================================================
 
-#include <pkgconf/hal_arm_xc7z020.h>
+#include <pkgconf/hal_arm_xc7z.h>
 
 // Memory mapping
 
 // Canonical definitions for DDR MEMORY
 #define XC7Z_DDR_MEM_BASEADDR           0x00000000
-#define XC7Z_DDR_MEM_HIGHADDR           0x3FFFFFFF 
+#define XC7Z_DDR_MEM_HIGHADDR           0x3FFFFFFF
 
 //
 // This block contains constant declarations for the peripherals
@@ -126,7 +126,7 @@
 #define XC7Z_ICC_ICR_BASEADDR           0xF8F00100
 #define XC7Z_ICC_BPR_BASEADDR           0xF8F00108
 
- 
+
 #define XC7Z_XQSPIPS_0_LINEAR_BASEADDR  XC7Z_QSPI_LINEAR_BASEADDR
 #define XC7Z_XPARPORTPS_CTRL_BASEADDR   XC7Z_PARPORT_CRTL_BASEADDR
 
@@ -139,10 +139,10 @@
 
 // Canonical definitions for Global Timer
 #define XC7Z_GLOBAL_TMR_BASEADDR        (XC7Z_SCU_PERIPH_BASE + 0x0200)
- 
 
 
 
-#endif // CYGONCE_XC7Z020_H
+
+#endif // CYGONCE_XC7Z_H
 //-----------------------------------------------------------------------------
-// end of xc7z020.h
+// end of xc7z.h

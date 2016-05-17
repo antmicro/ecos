@@ -61,7 +61,7 @@
 #include <cyg/hal/hal_io.h>
 #include <cyg/hal/plf_io.h>
 #include <cyg/hal/hal_diag.h>
-#include <cyg/hal/xc7z020.h>
+#include <cyg/hal/xc7z.h>
 #include <cyg/hal/var_io.h>
 
 #include <cyg/hal/hal_arch.h>

@@ -1,16 +1,16 @@
 /*****************************************************************************/
 /**
 *
-* @file     xc7z020_xsuart.h
+* @file     xc7z_xsuart.h
 *
 * @brief    UART header
 *
 ******************************************************************************/
-#ifndef CYGONCE_HAL_XC7Z020_XSUART_H
-#define CYGONCE_HAL_XC7Z020_XSUART_H
+#ifndef CYGONCE_HAL_XC7Z_XSUART_H
+#define CYGONCE_HAL_XC7Z_XSUART_H
 //=============================================================================
 //
-//      xc7z020_xsuart.h
+//      xc7z_xsuart.h
 //
 //      USART specific registers
 //
@@ -54,7 +54,7 @@
 // Date:        2012-06-27
 // Purpose:     Zynq-7000 variant specific registers
 // Description:
-// Usage:       #include <cyg/hal/xc7z020_xsuart.h>
+// Usage:       #include <cyg/hal/xc7z_xsuart.h>
 //
 //####DESCRIPTIONEND####
 //
@@ -248,6 +248,6 @@
  * level of the flow delay trigger and the flow delay trigger is not activated.
  * A value less than 4 disables the flow delay.
  */
-#define XDFUART_FLOWDEL_MASK            XDFUART_RXWM_MASK  /* Valid bit mask */ 
+#define XDFUART_FLOWDEL_MASK            XDFUART_RXWM_MASK  /* Valid bit mask */
 
-#endif // CYGONCE_HAL_XC7Z020_XSUART_H
+#endif // CYGONCE_HAL_XC7Z_XSUART_H

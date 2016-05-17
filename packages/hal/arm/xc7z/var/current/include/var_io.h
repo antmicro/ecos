@@ -53,13 +53,13 @@
 //=============================================================================
 
 #include <cyg/hal/plf_io.h>
-#include <cyg/hal/xc7z020.h>                  // platform registers
-#include <cyg/hal/xc7z020_xslcr.h>            // SLCR
-#include <cyg/hal/xc7z020_xscugic.h>          // SCU GIC
-#include <cyg/hal/xc7z020_xptimer.h>          // SCU PTMR
-#include <cyg/hal/xc7z020_xcwdtimer.h>        // SCU WDT
-#include <cyg/hal/xc7z020_xsuart.h>           // USART
-#include <cyg/hal/xc7z020_xttc.h>			  // TTC
+#include <cyg/hal/xc7z.h>                  // platform registers
+#include <cyg/hal/xc7z_xslcr.h>            // SLCR
+#include <cyg/hal/xc7z_xscugic.h>          // SCU GIC
+#include <cyg/hal/xc7z_xptimer.h>          // SCU PTMR
+#include <cyg/hal/xc7z_xcwdtimer.h>        // SCU WDT
+#include <cyg/hal/xc7z_xsuart.h>           // USART
+#include <cyg/hal/xc7z_xttc.h>			  // TTC
 
 //-----------------------------------------------------------------------------
 // end of var_io.h

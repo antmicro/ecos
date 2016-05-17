@@ -1,14 +1,14 @@
 /*****************************************************************************/
 /**
 *
-* @file     xc7z020_xscugic.h
+* @file     xc7z_xscugic.h
 *
 * @brief    GIC header
 *
 ******************************************************************************/
 
-#ifndef XC7Z020_XSCUGIC_H /* prevent circular inclusions */
-#define XC7Z020_XSCUGIC_H /* by using protection macros */
+#ifndef XC7Z_XSCUGIC_H /* prevent circular inclusions */
+#define XC7Z_XSCUGIC_H /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -384,4 +384,3 @@ extern "C" {
 #endif
 
 #endif            /* end of protection macro */
-
