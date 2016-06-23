@@ -39,7 +39,7 @@
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Antmicro <www.antmicro.com>
+// Author(s):    Antmicro Ltd <www.antmicro.com>
 // Contributors: 
 // Date:         2012-08-15
 // Purpose:      Xilinx Zynq Cadence UART driver

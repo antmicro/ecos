@@ -42,7 +42,7 @@
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Antmicro <www.antmicro.com>
+// Author(s):    Antmicro Ltd <www.antmicro.com>
 // Date:         2012-07-23
 // Purpose:
 // Description:  I2C driver for Xilinx Zynq

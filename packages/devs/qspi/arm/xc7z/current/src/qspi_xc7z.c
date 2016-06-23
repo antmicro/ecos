@@ -50,7 +50,7 @@
 // Author(s):     ITR-GmbH
 // Date:          2012-07-11
 //
-// Contributor(s): Antmicro <www.antmicro.com>
+// Contributor(s): Antmicro Ltd <www.antmicro.com>
 //
 //####DESCRIPTIONEND####
 //

@@ -40,7 +40,7 @@
 // ######DESCRIPTIONBEGIN####
 // #
 // # Author(s):    nickg, gthomas
-// # Contributors: nickg, gthomas, Deimos Space <www.deimos-space.com>, Antmicro <www.antmicro.com>
+// # Contributors: nickg, gthomas, Deimos Space <www.deimos-space.com>, Antmicro Ltd <www.antmicro.com>
 // # Date:         1998-09-15
 // # Purpose:      ARM context switch code
 // # Description:  This file contains implementations of the thread context 

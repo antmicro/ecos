@@ -39,7 +39,7 @@
 //####ECOSGPLCOPYRIGHTEND####
 //=============================================================================
 // ####DESCRITPIONBEGIN####
-// Contributors: Antmicro <www.antmicro.com>
+// Contributors: Antmicro Ltd <www.antmicro.com>
 // Date:         05.2016
 // Purpose:      cache control
 //

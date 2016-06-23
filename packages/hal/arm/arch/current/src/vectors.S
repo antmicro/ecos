@@ -40,7 +40,7 @@
 // ######DESCRIPTIONBEGIN####
 // #
 // # Author(s):     nickg, gthomas
-// # Contributors:  nickg, gthomas, Antmicro <www.antmicro.com>
+// # Contributors:  nickg, gthomas, Antmicro Ltd <www.antmicro.com>
 // # Date:          1999-02-20
 // # Purpose:       ARM exception vectors
 // # Description:   This file defines the code placed into the exception

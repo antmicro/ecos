@@ -43,7 +43,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):    nickg, gthomas
-// Contributors: nickg, gthomas, Deimos Space <www.deimos-space.com>, Antmicro <www.antmicro.com>
+// Contributors: nickg, gthomas, Deimos Space <www.deimos-space.com>, Antmicro Ltd <www.antmicro.com>
 // Date:         1999-02-20
 // Purpose:      Define architecture abstractions
 // Usage:        #include <cyg/hal/hal_arch.h>

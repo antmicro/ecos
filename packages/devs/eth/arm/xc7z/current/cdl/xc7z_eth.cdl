@@ -40,7 +40,7 @@
 #==========================================================================
 ######DESCRIPTIONBEGIN####
 # 
-# Author(s):    Antmicro <www.antmicro.com>
+# Author(s):    Antmicro Ltd <www.antmicro.com>
 # Date:         2012-07-26
 # Purpose:      
 # Description:  Ethernet drivers for Xilinx Zynq

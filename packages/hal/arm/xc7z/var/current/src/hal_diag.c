@@ -47,7 +47,7 @@
 //=============================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):   ITR-GmbH, Antmicro <www.antmicro.com>
+// Author(s):   ITR-GmbH, Antmicro Ltd <www.antmicro.com>
 // Contributors:
 // Date:        2012-09-27
 // Purpose:     HAL diagnostic output

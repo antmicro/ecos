@@ -42,7 +42,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):      ITR-GmbH
-// Contributor(s): Antmicro <www.antmicro.com>
+// Contributor(s): Antmicro Ltd <www.antmicro.com>
 // Date:           2012-06-27
 // Purpose:        Zynq-7000 variant specific registers
 // Description:

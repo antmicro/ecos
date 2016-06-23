@@ -39,7 +39,7 @@
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
-// Author(s):    Antmicro <www.antmicro.com>
+// Author(s):    Antmicro Ltd <www.antmicro.com>
 // Date:         2012-07-12
 // Description:  Based on hwz7zc702 platform HAL
 //

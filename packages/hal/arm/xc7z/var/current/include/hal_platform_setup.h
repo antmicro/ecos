@@ -43,7 +43,7 @@
 //#####DESCRIPTIONBEGIN####
 //
 // Author(s):   ITR-GmbH
-// Contributors:Antmicro <www.antmicro.com>
+// Contributors:Antmicro Ltd <www.antmicro.com>
 // Date:        2012-06-27
 // Purpose:     Zynq-7000 platform specific support routines
 // Description:
