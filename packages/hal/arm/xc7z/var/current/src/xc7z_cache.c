@@ -142,7 +142,7 @@ void hal_dcache_cmd(cyg_uint32 cmd)
 void hal_dcache_cmd_reg(cyg_uint32 cmd, volatile cyg_uint32 base,
                         cyg_uint32 size)
 {
-    cyg_uint32 addr = base;
+    cyg_uint32 addr = base & ~(HAL_DCACHE_LINE_SIZE - 1U);
 
     for (; addr < (base + size); addr += HAL_DCACHE_LINE_SIZE) {
         switch(cmd) {
@@ -156,6 +156,7 @@ void hal_dcache_cmd_reg(cyg_uint32 cmd, volatile cyg_uint32 base,
             break;
         }
     }
+    asm volatile("dsb" ::: "memory");
 }
 
 void hal_dcache_enable(void)
