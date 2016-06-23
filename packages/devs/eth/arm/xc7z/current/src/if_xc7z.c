@@ -64,6 +64,8 @@
 #include <cyg/infra/diag.h>
 #include <cyg/io/eth/netdev.h>
 
+#include <cyg/kernel/kapi.h>
+
 // this solves ia_ifa error
 #if defined(CYGPKG_KERNEL)
 #define _KERNEL
@@ -126,8 +128,8 @@ typedef struct {
 typedef struct
 {
     // bd descriptor buffers
-    zynq_eth_bd tx_bd[CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT];
-    zynq_eth_bd rx_bd[CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT];
+    zynq_eth_bd *tx_bd;
+    zynq_eth_bd *rx_bd;
     // max link speed
     cyg_uint16 max_link_speed;
     // link speed
@@ -150,14 +152,14 @@ typedef struct
     zynq_eth_bdring tx_ring;
     zynq_eth_bdring rx_ring;
     // Buffer to store received frames
-    char rx_buffer[CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT][CYGPKG_DEVS_ETH_ARM_XC7Z_PACKETLEN];
+    char **rx_buffer;
     int rx_buf_count;
     // Number of rx buffer descriptor that ETHMAC is pointing to
     int rx_head;
     // Array of keys (handlers given by the stack) 
     unsigned long tx_key[CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT];
     // Buffer to store frames for transmission
-    char tx_buffer[CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT][CYGPKG_DEVS_ETH_ARM_XC7Z_PACKETLEN];
+    char **tx_buffer;
     int tx_buf_count;
     // Interrupt resources
     int irq_no;
@@ -171,6 +173,10 @@ static int zynq_eth_mdio_read(cyg_uint32 base_addr, int mii_id, int phyreg);
 
 volatile zynq_eth_bd *last_added_bd = NULL;
 volatile zynq_eth_bd *last_tx_bd = NULL;
+
+extern char *uncacheable_mem; /* pointer to statically allocated memory */
+static cyg_mempool_var if_mem_pool;
+static cyg_handle_t if_mem;
 
 #if defined(CYGPKG_DEVS_ETH_ARM_XC7Z_ETH0) || defined(CYGPKG_DEVS_ETH_ARM_XC7Z_ETH1)
 #ifdef CYGPKG_DEVS_ETH_PHY                                      
@@ -741,12 +747,49 @@ static bool zynq_eth_init(struct cyg_netdevtab_entry *tab)
     struct eth_drv_sc *sc = tab->device_instance;
     zynq_eth_t *data = sc->driver_private;
     cyg_uint32 regval;
+    size_t if_pool_total_size;
     int i, phy_state;
 
 #ifndef CYGPKG_DEVS_ETH_PHY
     DEBUG("ERROR: No phy attached.\n");
     return false; // phy is needed for the driver to work
 #endif
+
+
+
+    // Create memory pool for RX and TX buffers
+    if_pool_total_size = ( CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT + CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT + 1) * sizeof(zynq_eth_bd);
+    if_pool_total_size += ( CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT + CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT + 3) * CYGPKG_DEVS_ETH_ARM_XC7Z_PACKETLEN ;
+
+    cyg_mempool_var_create(uncacheable_mem,
+                           if_pool_total_size,
+                           &if_mem,
+                           &if_mem_pool);
+
+    // allocate RX bd
+    data->rx_bd = cyg_mempool_var_alloc(if_mem,
+                            sizeof(zynq_eth_bd)* CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT );
+
+    // allocate TX bd
+    data->tx_bd = cyg_mempool_var_alloc(if_mem,
+                            sizeof(zynq_eth_bd)* CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT );
+
+    // allocate RX buffer
+    data->rx_buffer = cyg_mempool_var_alloc(if_mem,
+                            sizeof(char *) * CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT );
+
+    for(i = 0; i < CYGPKG_DEVS_ETH_ARM_XC7Z_RXBUF_COUNT ; i++) {
+        data->rx_buffer[i] = cyg_mempool_var_alloc(if_mem,
+                            sizeof(char) * CYGPKG_DEVS_ETH_ARM_XC7Z_PACKETLEN);
+    }
+    // allocate TX buffer
+    data->tx_buffer = cyg_mempool_var_alloc(if_mem,
+                            sizeof(char *) * CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT );
+
+    for(i = 0; i < CYGPKG_DEVS_ETH_ARM_XC7Z_TXBUF_COUNT ; i++) {
+        data->tx_buffer[i] = cyg_mempool_var_alloc(if_mem,
+                            sizeof(char) * CYGPKG_DEVS_ETH_ARM_XC7Z_PACKETLEN);
+    }
 
     zynq_eth_reset_hw(data);
 
@@ -782,8 +825,8 @@ static bool zynq_eth_init(struct cyg_netdevtab_entry *tab)
 
     zynq_eth_setup_ring(data);
 
-    zynq_eth_write(data->base_addr, XEMACPS_RXQBASE_OFFSET, (cyg_uint32)&data->rx_bd);
-    zynq_eth_write(data->base_addr, XEMACPS_TXQBASE_OFFSET, (cyg_uint32)&data->tx_bd);
+    zynq_eth_write(data->base_addr, XEMACPS_RXQBASE_OFFSET, (cyg_uint32)data->rx_bd);
+    zynq_eth_write(data->base_addr, XEMACPS_TXQBASE_OFFSET, (cyg_uint32)data->tx_bd);
     // DMA Configuration
     // MAX_LEN_FRAME_1536
     regval = (0x18 << XEMACPS_DMACR_RXBUF_SHIFT);

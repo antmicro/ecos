@@ -386,5 +386,8 @@ union ARC_ARM_MMU_SECOND_LEVEL_DESCRIPTOR {
 #define ARC_ARM_ACCESS_PERM_RW_RO                   2
 #define ARC_ARM_ACCESS_PERM_RW_RW                   3
 
+#define ARC_ARM_ACT_BASE_SHIFT                      20
+#define ARC_ARM_ACT_BASE_MASK                       0x00000FFF
+
 #endif//CYGONCE_VAR_MMU_H
 

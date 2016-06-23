@@ -81,6 +81,10 @@ CYG_DEVS_FLASH_SPI_M25PXX_DRIVER (
 #endif
 #endif
 
+#define MEM_POOL_SIZE 1024*1024
+char *uncacheable_mem = 0xdeadbeef;
+char mem_pool_array[MEM_POOL_SIZE];
+
 // -------------------------------------------------------------------------
 // Hardware init
 
@@ -133,6 +137,8 @@ void hal_mmu_init(void) {
 
     cyg_uint32 reg;
     cyg_uint32 ttb_base = (cyg_uint32)mmu_table;
+    // Prepare address value for MMU mapping macro
+    cyg_uint32 addr_to_map = (((cyg_uint32)mem_pool_array) >> ARC_ARM_ACT_BASE_SHIFT) & ARC_ARM_ACT_BASE_MASK;
 
     // Set the TTB registers
     asm volatile ("mcr  p15,0,%0,c2,c0,0" : : "r"(ttb_base));
@@ -151,10 +157,13 @@ void hal_mmu_init(void) {
     //                Base     Base     MB    cached?              buffered?             access permissions
     //                xxx00000 xxx00000
     ARC_X_ARM_MMU_SECTION(0x000, 0x000, 4096,   ARC_ARM_CACHEABLE,   ARC_ARM_BUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); //RAM
+    ARC_X_ARM_MMU_SECTION(addr_to_map, addr_to_map, 1, ARC_ARM_UNCACHEABLE, ARC_ARM_UNBUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); // uncacheable memory pool
     ARC_X_ARM_MMU_SECTION(0xE00, 0xE00,    3, ARC_ARM_UNCACHEABLE, ARC_ARM_UNBUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); //IO
     ARC_X_ARM_MMU_SECTION(0xF80, 0xF80,   16, ARC_ARM_UNCACHEABLE, ARC_ARM_UNBUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); //System registers
     ARC_X_ARM_MMU_SECTION(0xFFF, 0xFFF,    1, ARC_ARM_UNCACHEABLE, ARC_ARM_UNBUFFERABLE, ARC_ARM_ACCESS_PERM_RW_RW); //OCM
 
+    // Set uncacheable_mem to point at statically allocated memory
+    uncacheable_mem = mem_pool_array;
 }
 
 //--------------------------------------------------------------------------
